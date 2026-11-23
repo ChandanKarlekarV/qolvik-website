@@ -13,6 +13,19 @@ Date: 24 Nov 2026 · Scope: the public marketing website (`index`, `projects`, `
 
 ---
 
+## Update — gaps closed (24 Nov 2026)
+
+| Gap | Fix | Verified |
+|---|---|---|
+| Content invisible to non-JS crawlers (Bing, LinkedIn/WhatsApp previews, AI search) | `npm run build` pre-renders services, catalog, stack, team, FAQ, ERP features, projects, socials, stats and contact details into the HTML from the same templates the browser uses (`scripts/templates.js`) | All key text found in `dist/*.html`; tabs not duplicated when JS re-renders |
+| No phone / WhatsApp / location | `CONTACT` in `config.js`; floating "Chat on WhatsApp" button on every page (hides over the contact form), WhatsApp + phone + city in the contact section, `ProfessionalService` structured data with address and phone for local search | Links correct; contrast passes |
+| No version control | Git repo, first commit, `.gitattributes`; secret scan of every staged file | Clean tree, no secrets, no `node_modules`/`dist`/`.env` committed |
+| Visitors could load mixed old/new files after an update | Every script/style URL gets `?v=<build hash>`, including imports inside modules; those files now cache for 1 year | All modules load with the version; `npm run check` fails if any URL is unversioned |
+
+> Git author is set **for this repo only** to "Dotforge / hello@dotforge.studio". Change it with `git config user.name "Your Name"` and `git config user.email "you@yourdomain"`.
+
+---
+
 ## 1. Done and verified on this website
 
 | Item | Status | How it was verified |
