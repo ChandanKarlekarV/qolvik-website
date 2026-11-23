@@ -329,8 +329,7 @@
             <span class="ring-btn__core"><svg><use href="#arrow"/></svg></span>
           </a>
         </div>
-        <form class="cta__form" id="contact-form" name="contact" method="POST" data-netlify="true" netlify-honeypot="company_website" novalidate>
-          <input type="hidden" name="form-name" value="contact" />
+        <form class="cta__form" id="contact-form" name="contact" method="POST" action="/api/contact" novalidate>
           <p class="hp" aria-hidden="true"><label>Leave this empty <input name="company_website" tabindex="-1" autocomplete="off" /></label></p>
           <fieldset class="cta__chips">
             <legend class="field__label">I'm interested in</legend>

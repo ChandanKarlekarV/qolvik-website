@@ -457,12 +457,28 @@ function contactForm() {
 
     btn.disabled = true; form.setAttribute("aria-busy", "true");
     setLabel(label, "Sending…");
-    const data = new URLSearchParams(new FormData(form));
+    const data = new FormData(form);
     const name = field("name").value.trim();
     try {
       if (!isBot) {
-        const res = await fetch("/", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: data.toString() });
-        if (!res.ok) throw new Error(String(res.status));
+        const res = await fetch("/api/contact", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email: field("email").value.trim(), message: field("message").value.trim(), interest: data.getAll("interest"), company_website: field("company_website").value }),
+        });
+        const out = await res.json().catch(() => ({}));
+        if (res.status === 422 && out.errors) {
+          // Server-side validation disagreed — show its messages on the fields
+          for (const [n, msg] of Object.entries(out.errors)) {
+            const el = field(n); if (!el) continue;
+            el.classList.add("is-invalid"); el.setAttribute("aria-invalid", "true");
+            $(`#${el.getAttribute("aria-describedby").split(" ")[0]}`).textContent = msg;
+          }
+          form.querySelector(".is-invalid")?.focus();
+          return;
+        }
+        if (res.status === 429) { setStatus(out.error || "Too many messages — please try again in a few minutes.", "warn"); return; }
+        if (!res.ok || !out.ok) throw new Error(String(res.status));
       }
       lastSent = Date.now();
       form.reset();
