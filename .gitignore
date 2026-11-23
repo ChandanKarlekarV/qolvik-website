@@ -1,0 +1,15 @@
+# dependencies & build output
+node_modules/
+dist/
+
+# secrets — never commit these
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# local tooling
+.claude/settings.local.json
+.DS_Store
+Thumbs.db

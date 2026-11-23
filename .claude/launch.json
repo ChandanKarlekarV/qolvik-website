@@ -1,0 +1,7 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    { "name": "dotforge", "runtimeExecutable": "node", "runtimeArgs": ["server.js"], "port": 5173 },
+    { "name": "dotforge-dist", "runtimeExecutable": "node", "runtimeArgs": ["-e", "process.env.ROOT='dist';process.env.PORT='5180';require('./server.js')"], "port": 5180 }
+  ]
+}

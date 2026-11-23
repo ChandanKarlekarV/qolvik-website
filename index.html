@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dotforge — UI/UX Design, Web Apps, MVPs & Campus ERP Studio</title>
+  <meta name="description" content="Dotforge is a design and engineering studio in India. We design and build MVPs, web applications, websites and custom ERP for schools and colleges." />
+  <link rel="canonical" href="__SITE_URL__/" />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <meta name="theme-color" content="#000000" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Dotforge" />
+  <meta property="og:title" content="Dotforge — Design & engineering studio" />
+  <meta property="og:description" content="UI/UX design, web applications, MVPs, websites and campus ERP — designed and built by one team." />
+  <meta property="og:url" content="__SITE_URL__/" />
+  <meta property="og:image" content="__SITE_URL__/assets/og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Dotforge — We design and build products people love." />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Dotforge — Design & engineering studio" />
+  <meta name="twitter:description" content="UI/UX design, web applications, MVPs, websites and campus ERP." />
+  <meta name="twitter:image" content="__SITE_URL__/assets/og-image.jpg" />
+  <link rel="icon" href="assets/logo-mark.svg" type="image/svg+xml" />
+  <link rel="icon" href="assets/favicon-32.png" type="image/png" sizes="32x32" />
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
+  <!--LD-JSON-->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@500;600;700&family=JetBrains+Mono:wght@500;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="vendor/lenis.css" />
+  <link rel="stylesheet" href="styles/tokens.css" />
+  <link rel="stylesheet" href="styles/components.css" />
+  <link rel="stylesheet" href="styles/site.css" />
+  <link rel="stylesheet" href="styles/minis.css" />
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="logo-mark" viewBox="0 0 48 48">
+      <rect width="48" height="48" rx="14" fill="var(--logo-bg, #141414)"/>
+      <g fill="var(--logo-dot, #FBF8F2)">
+        <circle cx="14" cy="14" r="3.2"/><circle cx="24" cy="14" r="3.2"/>
+        <circle cx="14" cy="24" r="3.2"/><circle cx="24" cy="24" r="3.2"/><circle cx="34" cy="24" r="3.2"/>
+        <circle cx="14" cy="34" r="3.2"/><circle cx="24" cy="34" r="3.2"/><circle cx="34" cy="34" r="3.2" opacity=".35"/>
+      </g>
+      <circle cx="34" cy="14" r="4.6" fill="#CDB88E"/>
+    </symbol>
+    <symbol id="arrow" viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="pointer" viewBox="0 0 24 24"><path d="M5 3l14 7-6 2-2 6L5 3Z" fill="currentColor" stroke="#141414" stroke-width="1.2" stroke-linejoin="round"/></symbol>
+  </svg>
+
+  <!-- ============ NAV (floating) ============ -->
+  <header class="nav" id="top">
+    <div class="nav__pill">
+      <a href="#top" class="brand" aria-label="Dotforge home">
+        <svg class="brand__mark" aria-hidden="true"><use href="#logo-mark"/></svg>
+        <span class="brand__word">Dotforge</span>
+      </a>
+      <nav class="nav__links" aria-label="Main">
+        <a href="#services">Services</a>
+        <a href="#catalog">Catalog</a>
+        <a href="projects.html">Work</a>
+        <a href="#stack">Stack</a>
+        <a href="#team">Team</a>
+      </nav>
+      <a href="#contact" class="btn btn--light btn--sm nav__cta"><span class="btn__label">Let's talk</span></a>
+      <button class="nav__burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="menu"><i></i><i></i></button>
+    </div>
+  </header>
+  <div class="menu" id="menu" aria-hidden="true" inert>
+    <nav aria-label="Mobile">
+      <a href="#services">Services</a><a href="#catalog">Catalog</a><a href="projects.html">Work</a><a href="#stack">Stack</a><a href="#team">Team</a><a href="#contact">Contact</a>
+    </nav>
+  </div>
+
+  <main id="main">
+    <!-- ============ HERO (dark) ============ -->
+    <section class="hero on-dark">
+      <div class="hero__glow" aria-hidden="true"></div>
+      <div class="container hero__inner">
+        <div class="frame-lines" aria-hidden="true"><i class="plus tl"></i><i class="plus tr"></i></div>
+
+        <a href="#contact" class="hero__badge" data-reveal><span class="pulse"></span>Available for new projects<svg><use href="#arrow"/></svg></a>
+
+        <h1 class="hero__title">
+          <span class="hero__line hero__line--in">We design and build</span>
+          <span class="hero__line hero__line--in" style="--d:.08s"><span class="ws serif" data-swap="products,MVPs,web apps,websites,campus ERP">products</span></span>
+          <span class="hero__line hero__line--muted hero__line--in" style="--d:.16s">that people love to use.</span>
+        </h1>
+
+        <div class="hero__row">
+          <p class="hero__lead" data-reveal data-delay="0.4">A design &amp; engineering studio. UI/UX, web apps, MVPs, websites and campus ERP — crafted by the people who design and write every line.</p>
+          <div class="hero__actions" data-reveal data-delay="0.5">
+            <a href="#contact" class="btn btn--light btn--lg" data-magnetic><span class="btn__label">Start a project</span><span class="btn__arrow" aria-hidden="true"><svg><use href="#arrow"/></svg><svg><use href="#arrow"/></svg></span></a>
+            <a href="#design" class="btn btn--ghost-dark btn--lg"><span class="btn__label">How we design</span></a>
+          </div>
+        </div>
+
+        <!-- Motion graphic: Design → Code studio -->
+        <div class="studio" data-studio aria-hidden="true">
+          <div class="studio__bar">
+            <span class="studio__dots"><i></i><i></i><i></i></span>
+            <span class="studio__file">project.fig <em>→</em> app.tsx</span>
+            <span class="studio__live"><span class="pulse"></span>Live</span>
+          </div>
+          <div class="studio__body">
+            <div class="studio__design">
+              <div class="studio__tools"><i class="is-on" data-tool></i><i></i><i></i><i></i></div>
+              <div class="studio__canvas">
+                <div class="studio__frame" data-frame>
+                  <div class="sb sb--nav" data-block></div>
+                  <div class="sb sb--hero" data-block data-hero-block><span></span><span></span><span class="sb__btn"></span></div>
+                  <div class="sb sb--card" data-block></div>
+                  <div class="sb sb--card" data-block></div>
+                  <div class="sb sb--card" data-block></div>
+                </div>
+                <div class="studio__select" data-select><i></i><i></i><i></i><i></i></div>
+              </div>
+              <div class="studio__swatches"><i></i><i></i><i data-swatch></i><i></i></div>
+            </div>
+            <div class="studio__code">
+              <div class="studio__tabs"><span class="is-on">app.tsx</span><span>schema.sql</span></div>
+              <pre class="studio__pre"><code data-code></code><span class="caret"></span></pre>
+            </div>
+          </div>
+          <div class="mcursor mcursor--design" data-cursor-design><svg><use href="#pointer"/></svg><span>Designer</span></div>
+          <div class="mcursor mcursor--dev" data-cursor-dev><svg><use href="#pointer"/></svg><span>Engineer</span></div>
+          <div class="studio__toast" data-deploy><span>✓</span>Deployed to production · 1.2s</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ STACK MARQUEE ============ -->
+    <section class="marquee" aria-label="Technologies we use">
+      <p class="marquee__label mono">Built with a modern stack</p>
+      <div class="marquee__row"><div class="marquee__track" data-marquee="0"></div></div>
+      <div class="marquee__row marquee__row--rev"><div class="marquee__track" data-marquee="1"></div></div>
+    </section>
+
+    <!-- ============ STATEMENT ============ -->
+    <section class="section statement">
+      <div class="container">
+        <span class="eyebrow" data-reveal>About Dotforge</span>
+        <p class="statement__text" data-scroll-text>Dotforge is a design and engineering studio. We turn ideas into MVPs, web applications, websites and campus ERP — with interfaces people enjoy using and code that is built to last.</p>
+        <div class="stats" data-stagger>
+          <div><b><span data-count="5"></span></b><span>Core services</span></div>
+          <div><b><span data-count="24" data-count-stack></span></b><span>Technologies in our stack</span></div>
+          <div><b>Weekly</b><span>Working demos</span></div>
+          <div><b><span data-count="100" data-suffix="%"></span></b><span>Code &amp; design you own</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SERVICES ============ -->
+    <section class="section services-sec" id="services">
+      <div class="container">
+        <div class="sec-head">
+          <div><span class="eyebrow" data-reveal>Services</span><h2 class="h2" data-words>What we do <span class="muted">— end to end.</span></h2></div>
+          <p class="lead" data-reveal>Design and engineering under one roof, so nothing gets lost between the mockup and the product.</p>
+        </div>
+        <div class="services" data-services></div>
+      </div>
+      <div class="spreview" data-spreview aria-hidden="true"></div>
+    </section>
+
+    <!-- ============ DESIGN CATALOG (interactive minis) ============ -->
+    <section class="section catalog-sec" id="catalog">
+      <div class="container">
+        <div class="sec-head">
+          <div><span class="eyebrow" data-reveal>Design catalog</span><h2 class="h2" data-words>Don't just look. <span class="serif">Try them.</span></h2></div>
+          <div class="catalog-sec__side">
+            <p class="lead" data-reveal>Six small, working designs from our studio. Tap, toggle and click through them — this is how our products feel.</p>
+            <div class="segmented" data-cat-tabs role="group" aria-label="Filter designs" data-reveal><span class="segmented__pill" aria-hidden="true"></span></div>
+          </div>
+        </div>
+        <div class="cgrid" data-catalog></div>
+        <div class="catalog-sec__more" data-reveal>
+          <a href="projects.html" class="btn btn--primary btn--lg" data-magnetic><span class="btn__label">See all projects</span><span class="btn__arrow" aria-hidden="true"><svg><use href="#arrow"/></svg><svg><use href="#arrow"/></svg></span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ HOW WE DESIGN (pinned horizontal) ============ -->
+    <section class="hscroll" id="design">
+      <div class="hscroll__sticky">
+        <div class="container hscroll__head">
+          <div><span class="eyebrow" data-reveal>UI/UX design</span><h2 class="h2" data-words>How we design <span class="serif">interfaces</span> people love.</h2></div>
+          <div class="hscroll__count mono"><span data-hs-num>01</span> / 05<div class="hscroll__bar"><i data-hs-bar></i></div></div>
+        </div>
+        <div class="hscroll__viewport">
+          <div class="hscroll__track" data-hs-track>
+            <article class="dpanel" data-dpanel>
+              <div class="dpanel__art art-research"><i></i><i></i><i></i><i></i><i></i><i></i><span>Insights</span></div>
+              <div class="dpanel__text"><span class="mono">01</span><h3>Research</h3><p>Interviews, analytics and workflow mapping. We learn how your users really work before drawing a single box.</p></div>
+            </article>
+            <article class="dpanel" data-dpanel>
+              <div class="dpanel__art art-wire"><div class="wf"><i></i><i></i><i></i><i></i><i class="box"></i><i class="box"></i><i class="box"></i></div></div>
+              <div class="dpanel__text"><span class="mono">02</span><h3>Wireframes</h3><p>Low-fidelity layouts and user flows to agree structure fast — cheap to change, easy to test.</p></div>
+            </article>
+            <article class="dpanel" data-dpanel>
+              <div class="dpanel__art art-visual"><div class="vs"><b>Aa</b><div class="vs__sw"><i></i><i></i><i></i><i></i><i></i></div><div class="vs__btn"></div></div></div>
+              <div class="dpanel__text"><span class="mono">03</span><h3>Visual design</h3><p>Colour, type and imagery that express your brand — pixel-perfect screens for every state.</p></div>
+            </article>
+            <article class="dpanel" data-dpanel>
+              <div class="dpanel__art art-proto"><div class="ph"><div class="ph__screen"><div class="ph__a"></div><div class="ph__b"></div></div><span class="ph__tap"></span></div></div>
+              <div class="dpanel__text"><span class="mono">04</span><h3>Prototype &amp; test</h3><p>Clickable prototypes in real users' hands. We watch, measure and refine before engineering starts.</p></div>
+            </article>
+            <article class="dpanel" data-dpanel>
+              <div class="dpanel__art art-system"><div class="dsys"><span class="dsys__btn">Button</span><span class="dsys__tog"><i></i></span><span class="dsys__chip">Chip</span><span class="dsys__in"></span><span class="dsys__av"></span><span class="dsys__av"></span></div></div>
+              <div class="dpanel__text"><span class="mono">05</span><h3>Design system</h3><p>Tokens and components shared by design and code, so your product stays consistent as it grows. <a class="link" href="design-system.html">See ours</a></p></div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ STACK (dark) ============ -->
+    <section class="section stack on-dark" id="stack">
+      <div class="container">
+        <div class="sec-head">
+          <div><span class="eyebrow eyebrow--light" data-reveal>Technology</span><h2 class="h2" data-words>Languages, frameworks <span class="muted">&amp; databases we trust.</span></h2></div>
+          <div class="segmented segmented--dark" data-stack-tabs role="group" aria-label="Stack category" data-reveal><span class="segmented__pill" aria-hidden="true"></span></div>
+        </div>
+        <div class="stack__grid">
+          <div class="stack__tiles" data-stack-tiles></div>
+          <!-- Motion graphic: live database schema -->
+          <div class="schema" data-schema aria-hidden="true">
+            <div class="schema__head"><span class="mono">schema · campus_db</span><span class="schema__ok"><span class="pulse"></span>connected</span></div>
+            <div class="schema__board">
+              <svg class="schema__lines" viewBox="0 0 400 320" preserveAspectRatio="none"><path d="M160 139 C 205 139, 195 69, 240 69"/><path d="M160 139 C 205 139, 195 229, 240 229"/></svg>
+              <div class="tbl tbl--a"><b>students</b><i data-row>id</i><i data-row>name</i><i data-row>class_id</i></div>
+              <div class="tbl tbl--b"><b>fees</b><i data-row>student_id</i><i data-row>amount</i></div>
+              <div class="tbl tbl--c"><b>attendance</b><i data-row>student_id</i><i data-row>date</i></div>
+            </div>
+            <div class="schema__query"><span class="mono schema__prompt">sql&gt;</span><code data-query></code></div>
+            <div class="schema__result mono" data-result></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CAMPUS ERP (interactive showcase) ============ -->
+    <section class="erp2 on-dark" id="erp">
+      <div class="erp2__glow" aria-hidden="true"></div>
+      <div class="container">
+        <div class="erp2__head">
+          <span class="eyebrow" data-reveal>Flagship product · Campus ERP</span>
+          <h2 class="erp2__title" data-words>One system that runs <span class="serif">your whole campus.</span></h2>
+          <p class="lead" data-reveal>Admissions to alumni — attendance, fees, exams and timetables, built around your rules. Click around the live demo below.</p>
+          <div class="segmented segmented--dark" data-erp-tabs role="group" aria-label="Institution type" data-reveal><span class="segmented__pill" aria-hidden="true"></span><button type="button" data-value="school" aria-pressed="true">Schools</button><button type="button" data-value="college" aria-pressed="false">Colleges</button><button type="button" data-value="university" aria-pressed="false">Universities</button></div>
+        </div>
+
+        <div class="erp2__stage" data-erp-stage>
+          <div class="erp2__tilt" data-erp-tilt>
+            <div class="ea" data-erp-app></div>
+          </div>
+          <div class="efloat efloat--a" aria-hidden="true"><span class="efloat__icon">✉</span><div><b>Fee reminders sent</b><small>248 parents · just now</small></div></div>
+          <div class="efloat efloat--b" aria-hidden="true">
+            <svg viewBox="0 0 44 44"><circle cx="22" cy="22" r="18"/><circle class="efloat__arc" cx="22" cy="22" r="18" data-float-arc/></svg>
+            <div><b data-float-att>96%</b><small>Present today</small></div>
+          </div>
+          <div class="efloat efloat--c" aria-hidden="true"><span class="efloat__icon efloat__icon--beige">₹</span><div><b>₹12,400 received</b><small>Term 2 · Aarav S.</small></div></div>
+        </div>
+
+        <ul class="erp2__feats" data-erp-list data-stagger></ul>
+
+        <div class="erp2__mods" aria-label="Modules">
+          <div class="erp2__mods-track">
+            <span>Admissions</span><span>Fees &amp; payments</span><span>Attendance</span><span>Exams &amp; results</span><span>Timetable</span><span>Staff &amp; payroll</span><span>Library</span><span>Transport</span><span>Hostel</span><span>Parent app</span>
+            <span>Admissions</span><span>Fees &amp; payments</span><span>Attendance</span><span>Exams &amp; results</span><span>Timetable</span><span>Staff &amp; payroll</span><span>Library</span><span>Transport</span><span>Hostel</span><span>Parent app</span>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- ============ PROCESS (sticky) ============ -->
+    <section class="section process" id="process">
+      <div class="container process__grid">
+        <div class="process__side">
+          <span class="eyebrow" data-reveal>Process</span>
+          <h2 class="h2" data-words>A calm, predictable way to build.</h2>
+          <div class="ring" aria-hidden="true">
+            <svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52"/><circle class="ring__arc" cx="60" cy="60" r="52" data-ring/></svg>
+            <b data-ring-num>01</b>
+          </div>
+        </div>
+        <ol class="psteps">
+          <li class="pstep is-active" data-pstep="01"><span class="mono">01 — Week 1</span><h3>Discover</h3><p>We learn your goals, users and constraints. Workshops, interviews, and a hard look at what matters most.</p></li>
+          <li class="pstep" data-pstep="02"><span class="mono">02 — Week 1–2</span><h3>Design</h3><p>Flows, wireframes and high-fidelity screens. You review a clickable prototype before we write code.</p></li>
+          <li class="pstep" data-pstep="03"><span class="mono">03 — Weekly sprints</span><h3>Build</h3><p>Clean, tested code with a working demo every week. Your feedback shapes the next sprint.</p></li>
+          <li class="pstep" data-pstep="04"><span class="mono">04 — Launch</span><h3>Launch &amp; care</h3><p>Deployment, data migration, training and documentation — and we stay on to support you.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============ TEAM (dark) ============ -->
+    <section class="section team on-dark" id="team">
+      <div class="container">
+        <div class="sec-head">
+          <div><span class="eyebrow eyebrow--light" data-reveal>Team</span><h2 class="h2" data-words>The people <span class="serif">behind every pixel.</span></h2><p class="lead lead--light" data-reveal data-team-count></p></div>
+          <div class="segmented segmented--dark" data-team-tabs role="group" aria-label="Filter team" data-reveal><span class="segmented__pill" aria-hidden="true"></span></div>
+        </div>
+        <div class="team__grid" data-team></div>
+      </div>
+    </section>
+
+    <!-- ============ FAQ ============ -->
+    <section class="section faq-sec" id="faq">
+      <div class="container faq">
+        <div class="faq__side">
+          <span class="eyebrow" data-reveal>FAQ</span><h2 class="h2" data-words>Questions, <span class="serif">answered.</span></h2>
+          <div class="faq__ex" data-faq-ex data-reveal>
+            <div class="faq__ex-frame" data-faq-mini></div>
+            <div class="faq__ex-meta"><small class="mono">Example work · try it</small><b data-faq-title></b><p data-faq-note></p><a class="link" href="projects.html" data-faq-link>See the project <svg><use href="#arrow"/></svg></a></div>
+          </div>
+        </div>
+        <div class="accordion" data-faq data-reveal></div>
+      </div>
+    </section>
+
+    <!-- ============ CTA + CONTACT ============ -->
+    <section class="cta on-dark" id="contact">
+      <div class="container">
+        <div class="cta__top">
+          <h2 class="cta__title" data-words>Let's build something <span class="serif">people love.</span></h2>
+          <a href="#contact-form" class="ring-btn" data-magnetic="0.4" data-cursor="Go">
+            <svg viewBox="0 0 200 200" class="ring-btn__text"><defs><path id="circ" d="M100,100 m-78,0 a78,78 0 1,1 156,0 a78,78 0 1,1 -156,0"/></defs><text><textPath href="#circ">START A PROJECT • START A PROJECT • </textPath></text></svg>
+            <span class="ring-btn__core"><svg><use href="#arrow"/></svg></span>
+          </a>
+        </div>
+        <form class="cta__form" id="contact-form" name="contact" method="POST" data-netlify="true" netlify-honeypot="company_website" novalidate>
+          <input type="hidden" name="form-name" value="contact" />
+          <p class="hp" aria-hidden="true"><label>Leave this empty <input name="company_website" tabindex="-1" autocomplete="off" /></label></p>
+          <fieldset class="cta__chips">
+            <legend class="field__label">I'm interested in</legend>
+            <div class="chips">
+              <label class="chip-opt"><input type="checkbox" name="interest" value="UI/UX Design" checked /><span>UI/UX Design</span></label>
+              <label class="chip-opt"><input type="checkbox" name="interest" value="Web application" /><span>Web application</span></label>
+              <label class="chip-opt"><input type="checkbox" name="interest" value="MVP" /><span>MVP</span></label>
+              <label class="chip-opt"><input type="checkbox" name="interest" value="Website" /><span>Website</span></label>
+              <label class="chip-opt"><input type="checkbox" name="interest" value="Campus ERP" /><span>Campus ERP</span></label>
+            </div>
+          </fieldset>
+          <div class="form-row">
+            <div class="field"><label class="field__label" for="f-name">Name</label><input class="input" id="f-name" name="name" autocomplete="name" required minlength="2" maxlength="80" aria-describedby="e-name" /><span class="field__error" id="e-name" aria-live="polite"></span></div>
+            <div class="field"><label class="field__label" for="f-email">Email</label><input class="input" id="f-email" name="email" type="email" autocomplete="email" required maxlength="120" aria-describedby="e-email" /><span class="field__error" id="e-email" aria-live="polite"></span></div>
+          </div>
+          <div class="field"><label class="field__label" for="f-msg">Tell us about your project</label><textarea class="textarea" id="f-msg" name="message" required minlength="20" maxlength="2000" placeholder="Goals, timeline, anything helpful…" aria-describedby="e-msg c-msg"></textarea><span class="field__row"><span class="field__error" id="e-msg" aria-live="polite"></span><span class="field__hint" id="c-msg" data-count-for="f-msg">0 / 2000</span></span></div>
+          <p class="cta__consent">By sending this form you agree to our <a class="link" href="privacy.html">privacy policy</a>. We only use your details to reply.</p>
+          <div class="cta__submit">
+            <button class="btn btn--accent btn--lg" type="submit" data-submit><span class="btn__label">Send message</span><span class="btn__arrow" aria-hidden="true"><svg><use href="#arrow"/></svg><svg><use href="#arrow"/></svg></span></button>
+            <a class="btn btn--ghost-dark btn--lg" href="#" data-whatsapp><span class="btn__label">Chat on WhatsApp</span></a>
+          </div>
+          <div class="cta__reach">
+            <span><b>Email</b><a class="link" data-brand-email href="#"></a></span>
+            <span><b>Call</b><a class="link" data-brand-phone href="#"></a></span>
+            <span><b>Studio</b><span data-brand-city></span></span>
+          </div>
+          <div class="form-status" data-form-status role="status" aria-live="polite" hidden></div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer on-dark">
+    <div class="container">
+      <div class="connect" id="connect">
+        <div class="connect__head"><span class="eyebrow eyebrow--light">Connect with us</span><h3>Follow the studio</h3><p>Design drops, behind-the-scenes and new launches.</p></div>
+        <div class="connect__grid" data-socials></div>
+      </div>
+      <div class="footer__grid">
+        <div class="footer__brand">
+          <a href="#top" class="brand brand--light" aria-label="Dotforge home"><svg class="brand__mark" aria-hidden="true"><use href="#logo-mark"/></svg><span class="brand__word">Dotforge</span></a>
+          <p>Design &amp; engineering studio.<br />We forge products, dot by dot.</p>
+        </div>
+        <nav aria-label="Services"><b>Services</b><a href="#services">UI/UX Design</a><a href="#services">Web applications</a><a href="#services">MVP development</a><a href="#services">Websites</a><a href="#erp">Campus ERP</a></nav>
+        <nav aria-label="Studio"><b>Studio</b><a href="#design">How we design</a><a href="#stack">Tech stack</a><a href="#process">Process</a><a href="#team">Team</a></nav>
+        <nav aria-label="Resources"><b>Resources</b><a href="projects.html">Projects</a><a href="design-system.html">Design system</a><a href="#faq">FAQ</a><a href="#contact">Contact</a></nav>
+      </div>
+      <div class="footer__word" data-hop aria-hidden="true">Dotforge</div>
+      <div class="footer__bottom"><span>© <span data-year></span> Dotforge · <a class="link" href="privacy.html">Privacy</a> · <a class="link" href="terms.html">Terms</a></span><a href="#top" class="link">Back to top ↑</a></div>
+    </div>
+  </footer>
+
+  <script src="vendor/motion.js" defer></script>
+  <script type="module" src="scripts/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+/* =========================================================
+   DOTFORGE DESIGN TOKENS
+   Source of truth: tokens/tokens.json (W3C design-token format)
+   Layer 1 = primitives · Layer 2 = semantic (what UI uses)
+   ========================================================= */
+
+:root {
+  /* ---------- Primitive: Mono (white → black) ---------- */
+  --mono-0:    #FFFFFF;
+  --mono-50:   #F7F7F7;
+  --mono-100:  #EDEDED;
+  --mono-200:  #DADADA;
+  --mono-300:  #BDBDBD;
+  --mono-400:  #9A9A9A;
+  --mono-500:  #767676;
+  --mono-600:  #5A5A5A;
+  --mono-700:  #3F3F3F;
+  --mono-800:  #262626;
+  --mono-900:  #141414;
+  --mono-1000: #000000;
+
+  /* ---------- Primitive: Beige ---------- */
+  --beige-50:  #FBF8F2;
+  --beige-100: #F5EFE3;
+  --beige-200: #EBE1CC;
+  --beige-300: #DFD0B0;
+  --beige-400: #CDB88E;
+  --beige-500: #B89F70;
+  --beige-600: #776243;
+  --beige-700: #5E4C33;
+
+  /* ---------- Semantic: color ---------- */
+  --color-bg:            var(--beige-50);
+  --color-surface:       var(--mono-0);
+  --color-surface-alt:   var(--beige-100);
+  --color-surface-muted: var(--mono-50);
+  --color-text:          var(--mono-900);
+  --color-text-muted:    var(--mono-600);
+  --color-text-subtle:   var(--mono-600);
+  --color-border:        var(--beige-200);
+  --color-border-strong: var(--mono-300);
+  --color-accent:        var(--beige-400);
+  --color-accent-strong: var(--beige-600);
+  --color-inverse-bg:    var(--mono-900);
+  --color-inverse-text:  var(--beige-50);
+  --color-inverse-muted: var(--mono-400);
+  --color-focus:         var(--beige-600);
+  --color-danger:        #B5543C;
+  --color-success:       #4E7A4A;
+
+  /* ---------- Typography ---------- */
+  --font-display: "Inter Tight", "Manrope", system-ui, sans-serif;
+  --font-serif:   "Instrument Serif", Georgia, serif;
+  --font-body:    "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono:    "JetBrains Mono", ui-monospace, Consolas, monospace;
+
+  --text-xs:  0.75rem;
+  --text-sm:  0.875rem;
+  --text-md:  1rem;
+  --text-lg:  1.125rem;
+  --text-xl:  1.375rem;
+  --text-2xl: 1.75rem;
+  --text-3xl: clamp(2.1rem, 4.4vw, 3.5rem);
+  --text-4xl: clamp(2.8rem, 7vw, 6rem);
+
+  --leading-tight: 1.05;
+  --leading-snug:  1.3;
+  --leading-body:  1.65;
+
+  /* ---------- Spacing (4px base) ---------- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --space-9: 6rem;
+  --space-10: 8rem;
+  --section-y: clamp(6rem, 11vw, 9.5rem);
+
+  /* ---------- Radius ---------- */
+  --radius-sm:   8px;
+  --radius-md:   14px;
+  --radius-lg:   22px;
+  --radius-xl:   32px;
+  --radius-pill: 999px;
+
+  /* ---------- Elevation ---------- */
+  --shadow-sm: 0 1px 2px rgb(20 20 20 / 0.06);
+  --shadow-md: 0 10px 30px -12px rgb(20 20 20 / 0.18);
+  --shadow-lg: 0 30px 70px -24px rgb(20 20 20 / 0.32);
+
+  /* ---------- Motion ---------- */
+  --ease-out:    cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur-fast: 180ms;
+  --dur-base: 380ms;
+  --dur-slow: 700ms;
+  --motion-spring-stiffness: 380;
+  --motion-spring-damping: 30;
+
+  /* ---------- Layout ---------- */
+  --container: 1240px;
+  --gutter: clamp(20px, 4vw, 48px);
+  --nav-h: 80px;
+}
