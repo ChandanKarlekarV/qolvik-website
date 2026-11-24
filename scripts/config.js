@@ -9,6 +9,14 @@ export const BRAND = {
 };
 
 // ---------------------------------------------------------
+//  CONTACT FORM DELIVERY — Web3Forms (free, 250 messages/month).
+//  Get a key at https://web3forms.com (enter the inbox that should receive messages),
+//  paste it below. This key is designed to be public — it only lets people send TO you.
+//  Empty = the form falls back to the /api/contact function (Resend) if that is configured.
+// ---------------------------------------------------------
+export const FORM = { web3formsKey: "" };
+
+// ---------------------------------------------------------
 //  CONTACT — PLACEHOLDERS: replace with your real number and city.
 //  phone is shown on the site; city is used for local search
 // ---------------------------------------------------------

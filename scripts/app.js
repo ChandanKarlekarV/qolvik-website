@@ -1,7 +1,7 @@
 // =========================================================
 //  QOLVIK — homepage
 // =========================================================
-import { BRAND, SERVICES, STACK, TEAM, TEAM_GROUPS, FAQ, PROJECTS } from "./config.js";
+import { BRAND, SERVICES, STACK, TEAM, TEAM_GROUPS, FAQ, PROJECTS, FORM } from "./config.js";
 import { initErpApp } from "./erp-app.js";
 import { icon } from "./icons.js";
 import {
@@ -497,12 +497,33 @@ function contactForm() {
     const name = field("name").value.trim();
     try {
       if (!isBot) {
-        const res = await fetch("/api/contact", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name, email: field("email").value.trim(), message: field("message").value.trim(), interest: data.getAll("interest"), company_website: field("company_website").value }),
-        });
-        const out = await res.json().catch(() => ({}));
+        const email = field("email").value.trim(), message = field("message").value.trim(), interest = data.getAll("interest");
+        let res, out;
+        if (FORM.web3formsKey) {
+          // Direct delivery to your inbox via Web3Forms (works locally and on Vercel)
+          res = await fetch("https://api.web3forms.com/submit", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Accept: "application/json" },
+            body: JSON.stringify({
+              access_key: FORM.web3formsKey,
+              subject: `New enquiry: ${interest.join(", ") || "General"} — ${name}`,
+              from_name: `${BRAND.name} website`,
+              name, email, replyto: email, message,
+              "Interested in": interest.join(", ") || "Not specified",
+              botcheck: "",
+            }),
+          });
+          out = await res.json().catch(() => ({}));
+          out.ok = res.ok && out.success === true;
+        } else {
+          // Fallback: our own Vercel function (needs RESEND_API_KEY + CONTACT_TO)
+          res = await fetch("/api/contact", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, email, message, interest, company_website: field("company_website").value }),
+          });
+          out = await res.json().catch(() => ({}));
+        }
         if (res.status === 422 && out.errors) {
           // Server-side validation disagreed — show its messages on the fields
           for (const [n, msg] of Object.entries(out.errors)) {
