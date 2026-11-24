@@ -1,5 +1,5 @@
 /* =========================================================
-   DOTFORGE DESIGN TOKENS
+   QOLVIK DESIGN TOKENS
    Source of truth: tokens/tokens.json (W3C design-token format)
    Layer 1 = primitives · Layer 2 = semantic (what UI uses)
    ========================================================= */
@@ -19,32 +19,42 @@
   --mono-900:  #141414;
   --mono-1000: #000000;
 
-  /* ---------- Primitive: Beige ---------- */
-  --beige-50:  #FBF8F2;
-  --beige-100: #F5EFE3;
-  --beige-200: #EBE1CC;
-  --beige-300: #DFD0B0;
-  --beige-400: #CDB88E;
-  --beige-500: #B89F70;
-  --beige-600: #776243;
-  --beige-700: #5E4C33;
+  /* ---------- Primitive: Clay (from the Qolvik logo) ---------- */
+  --clay-50:  #FBF7F3;   /* warm ivory page background */
+  --clay-100: #F5EDE5;
+  --clay-200: #EADBCD;   /* borders */
+  --clay-300: #F2B783;   /* apricot highlight */
+  --clay-400: #E8853D;   /* copper — main accent */
+  --clay-500: #C2501A;   /* rust — deep accent */
+  --clay-600: #8E3412;   /* accent text on light */
+  --clay-700: #5E1F0C;   /* mahogany */
+
+  /* ---------- Primitive: Teal (contrast colour) ---------- */
+  --teal-200: #BFE0DD;
+  --teal-300: #7FC4BE;
+  --teal-500: #1E5F66;
+  --teal-700: #123A3F;
+
+  /* ---------- Brand blends ---------- */
+  --brand-gradient: linear-gradient(120deg, var(--clay-300) 0%, var(--clay-400) 42%, var(--clay-500) 100%);
+  --brand-gradient-deep: linear-gradient(120deg, var(--clay-400) 0%, var(--clay-500) 55%, var(--clay-700) 100%);
 
   /* ---------- Semantic: color ---------- */
-  --color-bg:            var(--beige-50);
+  --color-bg:            var(--clay-50);
   --color-surface:       var(--mono-0);
-  --color-surface-alt:   var(--beige-100);
+  --color-surface-alt:   var(--clay-100);
   --color-surface-muted: var(--mono-50);
   --color-text:          var(--mono-900);
   --color-text-muted:    var(--mono-600);
   --color-text-subtle:   var(--mono-600);
-  --color-border:        var(--beige-200);
+  --color-border:        var(--clay-200);
   --color-border-strong: var(--mono-300);
-  --color-accent:        var(--beige-400);
-  --color-accent-strong: var(--beige-600);
+  --color-accent:        var(--clay-400);
+  --color-accent-strong: var(--clay-600);
   --color-inverse-bg:    var(--mono-900);
-  --color-inverse-text:  var(--beige-50);
+  --color-inverse-text:  var(--clay-50);
   --color-inverse-muted: var(--mono-400);
-  --color-focus:         var(--beige-600);
+  --color-focus:         var(--clay-600);
   --color-danger:        #B5543C;
   --color-success:       #4E7A4A;
 

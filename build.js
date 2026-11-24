@@ -1,6 +1,6 @@
 // Build the deployable site into ./dist
 //   npm run build                                         → default address below
-//   $env:SITE_URL="https://dotforge.in"; npm run build    → your real domain
+//   $env:SITE_URL="https://qolvik.com"; npm run build    → your real domain
 //
 // What it does:
 //   1. Copies only website files (whitelist) into ./dist
@@ -12,12 +12,12 @@ const path = require("path");
 const crypto = require("crypto");
 const { pathToFileURL } = require("url");
 
-const SITE_URL = (process.env.SITE_URL || "https://dotforge.netlify.app").replace(/\/$/, "");
+const SITE_URL = (process.env.SITE_URL || "https://qolvik.vercel.app").replace(/\/$/, "");
 const root = __dirname;
 const out = path.join(root, "dist");
 const PAGES = ["index.html", "projects.html", "design-system.html", "privacy.html", "terms.html", "404.html"];
 const COPY = [...PAGES, "assets", "scripts", "styles", "vendor", "tokens", "favicon.ico", "_headers"];
-const SKIP = new Set(["package.json"]);
+const SKIP = new Set(["package.json", "brand", "qolvik-logo.png", "qolvik-mark.png"]); // source artwork stays out of the build
 
 async function main() {
   const T = await import(pathToFileURL(path.join(root, "scripts/templates.js")).href);
@@ -54,7 +54,6 @@ async function main() {
     .replace(/<span data-year><\/span>/g, `<span data-year>${new Date().getFullYear()}</span>`)
     .replace(/(<a\b[^>]*data-brand-email)([^>]*)href="#"([^>]*)><\/a>/g, `$1$2href="mailto:${C.BRAND.email}"$3>${C.BRAND.email}</a>`)
     .replace(/(<a\b[^>]*data-brand-phone)([^>]*)href="#"([^>]*)><\/a>/g, `$1$2href="${T.telHref()}"$3>${C.CONTACT.phone}</a>`)
-    .replace(/(<a\b[^>]*)href="#"([^>]*data-whatsapp[^>]*>)/g, `$1href="${T.whatsappHref()}" target="_blank" rel="noopener"$2`)
     .replace(/<span data-brand-city><\/span>/g, `<span data-brand-city>${C.CONTACT.city}, India</span>`);
 
   const prerender = {

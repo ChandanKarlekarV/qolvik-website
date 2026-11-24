@@ -57,10 +57,10 @@ export const erpFeatsHTML = (key) => ERP_FEATS[key].map(([t, d], i) => `<li><spa
 
 // ---------- Team ----------
 const TONES = [
-  { tone: "var(--mono-800)", ink: "var(--beige-100)" },
-  { tone: "var(--beige-400)", ink: "var(--mono-900)" },
-  { tone: "var(--mono-700)", ink: "var(--beige-200)" },
-  { tone: "var(--beige-200)", ink: "var(--mono-900)" },
+  { tone: "var(--mono-800)", ink: "var(--clay-100)" },
+  { tone: "var(--clay-400)", ink: "var(--mono-900)" },
+  { tone: "var(--mono-700)", ink: "var(--clay-200)" },
+  { tone: "var(--clay-200)", ink: "var(--mono-900)" },
   { tone: "var(--mono-600)", ink: "var(--mono-0)" },
 ];
 const initials = (n) => n.split(/\s+/).map((w) => w[0]).join("").slice(0, 2).toUpperCase();
@@ -83,7 +83,7 @@ export const teamHTML = () => TEAM.map((m, i) => {
       <span class="join-plus">+</span>
       <h3>Your seat is here</h3>
       <p>We're always looking for designers and engineers who care about craft.</p>
-      <a class="btn btn--light btn--sm" href="#contact"><span class="btn__label">Join Dotforge</span></a>
+      <a class="btn btn--light btn--sm" href="#contact"><span class="btn__label">Join Qolvik</span></a>
     </article>`;
 
 // ---------- FAQ ----------
@@ -121,4 +121,3 @@ export const socialsHTML = () => SOCIALS.map((s) => `
 
 // ---------- Contact helpers ----------
 export const telHref = () => `tel:${CONTACT.phone.replace(/[^\d+]/g, "")}`;
-export const whatsappHref = (text = `Hi ${BRAND.name}, I'd like to discuss a project.`) => `https://wa.me/${CONTACT.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(text)}`;

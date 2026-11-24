@@ -1,5 +1,5 @@
 // =========================================================
-//  DOTFORGE MOTION KIT — shared animation helpers
+//  QOLVIK MOTION KIT — shared animation helpers
 //  Motion (motion.dev) for orchestration, Lenis for smooth scroll,
 //  CSS transitions for hovers, rAF easing for cursor-follow.
 // =========================================================

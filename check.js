@@ -69,9 +69,9 @@ for (const f of files) { const s = fs.statSync(f).size; total += s; if (s > 250 
 const cfg = fs.readFileSync(path.join(dist, "scripts/config.js"), "utf8");
 if (cfg.includes('url: "#"')) warns.push("config.js: social links are still '#' placeholders");
 if (cfg.includes("Founder Name")) warns.push("config.js: team names are still placeholders");
-if (cfg.includes("hello@dotforge.studio")) warns.push("config.js: contact email is still the placeholder");
+if (cfg.includes("hello@qolvik.com")) warns.push("config.js: contact email is still the placeholder");
 if (cfg.includes('cloudflareToken: ""')) warns.push("config.js: analytics token not set (analytics off)");
-if (cfg.includes("00000 00000") || cfg.includes("Your City")) warns.push("config.js: phone / WhatsApp / city are still placeholders");
+if (cfg.includes("00000 00000") || cfg.includes("Your City")) warns.push("config.js: phone / city are still placeholders");
 for (const f of html) { const s = fs.readFileSync(f, "utf8"); if (/(?:src|href)="(?:scripts|styles|vendor)\/[^"?]+"/.test(s)) errors.push(`: unversioned asset URL (cache-busting missing)`); }
 
 console.log(`Checked ${html.length} pages, ${files.length} files, ${Math.round(total / 1024)} KB total.`);

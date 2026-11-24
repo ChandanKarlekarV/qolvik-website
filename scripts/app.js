@@ -1,5 +1,5 @@
 // =========================================================
-//  DOTFORGE — homepage
+//  QOLVIK — homepage
 // =========================================================
 import { BRAND, SERVICES, STACK, TEAM, TEAM_GROUPS, FAQ, PROJECTS } from "./config.js";
 import { initErpApp } from "./erp-app.js";
@@ -9,7 +9,7 @@ import {
   spotlights, countUps, segmented, accordion, animateIn, toast, scrollText, wordSwap, customCursor, whileVisible,
 } from "./motion-kit.js";
 import { mountMini } from "./minis.js";
-import { renderSocials, mountCards, initAnalytics, fillContact, initWhatsApp } from "./shared.js";
+import { renderSocials, mountCards, initAnalytics, fillContact } from "./shared.js";
 import {
   STACK_ALL, PILL, tabButtons, marqueeHTML, servicesHTML, catalogHTML, CATALOG_TABS, STACK_TABS, stackTilesHTML,
   erpFeatsHTML, TEAM_TABS, teamHTML, teamCountText, faqHTML,
@@ -56,7 +56,6 @@ processSteps();
 erpMotion();
 contactForm();
 initAnalytics();
-initWhatsApp();
 
 segmented($("[data-cat-tabs]"), filterCatalog);
 segmented($("[data-stack-tabs]"), (v) => renderStack(v, true));
@@ -136,79 +135,108 @@ const SNIPPET = [
 
 function studio() {
   const root = $("[data-studio]");
+  const canvas = $(".studio__canvas", root);
   const cd = $("[data-cursor-design]"), cv = $("[data-cursor-dev]");
   const sel = $("[data-select]"), blocks = $$("[data-block]", root), code = $("[data-code]");
   const deploy = $("[data-deploy]"), heroBlock = $("[data-hero-block]"), swatch = $("[data-swatch]"), tool = $("[data-tool]");
+
+  let typing = 0; // bumps to cancel an in-progress typewriter
   const writeCode = async (speed) => {
+    const run = ++typing;
     code.innerHTML = "";
     for (const [cls, text] of SNIPPET) {
       const span = document.createElement("span");
       if (cls) span.className = cls;
       code.append(span);
       if (!speed) { span.textContent = text; continue; }
-      for (const ch of text) { span.textContent += ch; if (ch !== " ") await sleep(speed); }
+      for (const ch of text) { if (run !== typing) return; span.textContent += ch; if (ch !== " ") await sleep(speed); }
     }
   };
-  if (!useMotion) { writeCode(0); cd.style.display = cv.style.display = "none"; return; }
-
-  const box = () => root.getBoundingClientRect();
-  const at = (el, fx = 0.5, fy = 0.5) => {
-    const r = box(), e = el.getBoundingClientRect();
-    return { x: e.left - r.left + el.offsetWidth * fx, y: e.top - r.top + el.offsetHeight * fy, l: e.left - r.left, t: e.top - r.top, w: el.offsetWidth, h: el.offsetHeight };
+  // Layout position of el inside an ancestor — ignores transforms, so it stays exact mid-animation
+  const offsetIn = (el, anc) => {
+    let x = 0, y = 0;
+    for (let n = el; n && n !== anc; n = n.offsetParent) { x += n.offsetLeft; y += n.offsetTop; }
+    return { x, y, w: el.offsetWidth, h: el.offsetHeight };
   };
+  const TIP = { x: (20 * 5) / 24, y: (20 * 3) / 24 }; // arrow tip inside the 20px cursor icon
+  const pt = (el, fx = 0.5, fy = 0.5) => { const o = offsetIn(el, root); return { x: o.x + o.w * fx - TIP.x, y: o.y + o.h * fy - TIP.y }; };
+  const frame = (el, pad = 4) => { const o = offsetIn(el, canvas); return { x: o.x - pad, y: o.y - pad, w: o.w + pad * 2, h: o.h + pad * 2 }; };
+  const place = (c, p) => M.animate(c, { x: p.x, y: p.y }, { duration: 0 });
   const move = (c, p, d = 0.7) => M.animate(c, { x: p.x, y: p.y }, { duration: d, ease: [0.45, 0, 0.2, 1] }).finished;
   const click = (c) => M.animate(c.querySelector("svg"), { scale: [1, 0.72, 1] }, { duration: 0.28 }).finished;
-  const select = (p) => {
-    Object.assign(sel.style, { width: p.w + 8 + "px", height: p.h + 8 + "px", transform: `translate(${p.l - 4}px, ${p.t - 4}px)` });
-    M.animate(sel, { opacity: [0, 1] }, { duration: 0.2 });
+  const setSel = (f, size = true) => {
+    sel.style.transform = `translate(${f.x}px, ${f.y}px)`;
+    if (size) { sel.style.width = f.w + "px"; sel.style.height = f.h + "px"; }
+  };
+  const showComplete = () => {
+    blocks.forEach((b) => { b.style.opacity = "1"; b.style.transform = "scale(1)"; });
+    heroBlock.classList.add("is-beige");
+    writeCode(0);
+    deploy.style.opacity = "1"; deploy.style.transform = "none";
+    sel.style.opacity = "0";
   };
 
-  M.animate(cd, { x: root.clientWidth * 0.25, y: 260 }, { duration: 0 });
-  M.animate(cv, { x: root.clientWidth * 0.85, y: 380 }, { duration: 0 });
-  // Entrance of the whole studio
+  if (!useMotion) { showComplete(); cd.style.display = cv.style.display = "none"; return; }
+
+  // Start with a finished design on screen, cursors resting nearby
+  showComplete();
+  requestAnimationFrame(() => { place(cd, pt(heroBlock, 0.7, 0.8)); place(cv, pt($(".studio__pre", root), 0.7, 0.7)); });
   M.animate(root, { opacity: [0, 1], transform: ["translateY(60px) scale(.97)", "translateY(0px) scale(1)"] }, { duration: 1.2, ease, delay: 0.6 });
 
-  whileVisible(root, async () => {
+  const isOn = whileVisible(root, async () => {
+    // 1. Hold the finished design. If the visitor scrolled away, stop here — it stays complete.
+    await sleep(2600);
+    if (!isOn()) return;
     const hasCode = !!$(".studio__code", root).offsetParent;
     cv.style.display = hasCode ? "" : "none";
-    blocks.forEach((b) => { b.style.transform = "scale(0)"; b.style.opacity = "0"; });
-    heroBlock.classList.remove("is-beige");
-    code.innerHTML = "";
-    sel.style.opacity = 0;
-    deploy.style.opacity = 0;
 
-    await move(cd, at(tool)); await click(cd);
+    // 2. Clear the canvas smoothly
+    typing++;
+    await M.animate([...blocks, deploy, code], { opacity: 0 }, { duration: 0.35 }).finished;
+    blocks.forEach((b) => (b.style.transform = "scale(0)"));
+    heroBlock.classList.remove("is-beige");
+    code.innerHTML = ""; code.style.opacity = "1";
+    deploy.style.transform = "translateY(14px) scale(.9)";
+
+    // 3. Designer picks the tool, then drags out each block — box and cursor stay on its corners
+    await move(cd, pt(tool)); await click(cd);
     for (const b of blocks) {
-      const p = at(b, 0, 0);
-      await move(cd, p, 0.5);
+      await move(cd, pt(b, 0, 0), 0.5);
       await click(cd);
+      const f = frame(b);
+      setSel(f, false);
+      sel.style.width = sel.style.height = "8px";
+      sel.style.opacity = "1";
       b.style.opacity = "1";
-      select(p);
-      M.animate(cd, { x: p.x + p.w, y: p.y + p.h }, { duration: 0.55, ease });
-      await M.animate(b, { transform: ["scale(0)", "scale(1)"] }, { duration: 0.55, ease }).finished;
+      const end = pt(b, 1, 1);
+      await Promise.all([
+        M.animate(b, { transform: ["scale(0)", "scale(1)"] }, { duration: 0.6, ease }).finished,
+        M.animate(sel, { width: ["8px", f.w + "px"], height: ["8px", f.h + "px"] }, { duration: 0.6, ease }).finished,
+        M.animate(cd, { x: end.x, y: end.y }, { duration: 0.6, ease }).finished,
+      ]);
     }
-    await move(cd, at(swatch)); await click(cd);
+
+    // 4. Pick a colour for the hero block
+    await move(cd, pt(swatch)); await click(cd);
     heroBlock.classList.add("is-beige");
-    select(at(heroBlock, 0, 0));
+    setSel(frame(heroBlock));
     await sleep(500);
     M.animate(sel, { opacity: 0 }, { duration: 0.3 });
-    M.animate(cd, { x: at(heroBlock).x, y: at(heroBlock).y + 40 }, { duration: 0.8, ease });
+    M.animate(cd, pt(heroBlock, 0.7, 0.8), { duration: 0.8, ease });
 
+    // 5. Engineer writes the code
     if (hasCode) {
       const pre = $(".studio__pre", root);
-      await move(cv, at(pre, 0.15, 0.08), 0.6);
+      await move(cv, pt(pre, 0.12, 0.1), 0.6);
       await click(cv);
-      M.animate(cv, { x: at(pre, 0.6, 0.75).x, y: at(pre, 0.6, 0.75).y }, { duration: 3, ease: "linear" });
+      M.animate(cv, pt(pre, 0.6, 0.75), { duration: 3, ease: "linear" });
       await writeCode(14);
     } else await sleep(600);
 
+    // 6. Ship it
     await M.animate(deploy, { opacity: [0, 1], transform: ["translateY(14px) scale(.9)", "translateY(0px) scale(1)"] }, { type: "spring", stiffness: 320, damping: 20 }).finished;
-    await sleep(2400);
-    await M.animate([...blocks, deploy], { opacity: 0 }, { duration: 0.4 }).finished;
-    await sleep(300);
   });
 }
-
 // =========================================================
 //  How we design — pinned horizontal scroll (desktop) / swipe (mobile)
 // =========================================================
@@ -383,14 +411,15 @@ function footerHop() {
 
 function navBehaviour() {
   const nav = $(".nav");
+  const links = $$(".nav__links a");
   let last = 0;
   addEventListener("scroll", () => {
     const y = scrollY;
     nav.classList.toggle("is-hidden", y > 500 && y > last + 2 && !$(".menu.is-open"));
     if (y < last - 2) nav.classList.remove("is-hidden");
+    if (y < innerHeight * 0.5) links.forEach((l) => l.classList.remove("is-active")); // back at the hero: nothing active
     last = y;
   }, { passive: true });
-  const links = $$(".nav__links a");
   const io = new IntersectionObserver((es) => es.forEach((e) => {
     if (!e.isIntersecting) return;
     links.forEach((l) => l.classList.toggle("is-active", l.getAttribute("href") === `#${e.target.id}`));

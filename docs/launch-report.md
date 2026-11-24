@@ -1,4 +1,4 @@
-# Dotforge website — launch report
+# Qolvik website — launch report
 
 Date: 24 Nov 2026 · Scope: the public marketing website (`index`, `projects`, `design-system`, `privacy`, `terms`, `404`).
 
@@ -22,7 +22,7 @@ Date: 24 Nov 2026 · Scope: the public marketing website (`index`, `projects`, `
 | No version control | Git repo, first commit, `.gitattributes`; secret scan of every staged file | Clean tree, no secrets, no `node_modules`/`dist`/`.env` committed |
 | Visitors could load mixed old/new files after an update | Every script/style URL gets `?v=<build hash>`, including imports inside modules; those files now cache for 1 year | All modules load with the version; `npm run check` fails if any URL is unversioned |
 
-> Git author is set **for this repo only** to "Dotforge / hello@dotforge.studio". Change it with `git config user.name "Your Name"` and `git config user.email "you@yourdomain"`.
+> Git author is set **for this repo only** to "Qolvik / hello@qolvik.com". Change it with `git config user.name "Your Name"` and `git config user.email "you@yourdomain"`.
 
 ---
 

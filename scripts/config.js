@@ -1,20 +1,19 @@
 // =========================================================
-//  DOTFORGE — SITE CONFIG  (edit content here)
+//  QOLVIK — SITE CONFIG  (edit content here)
 // =========================================================
 
 export const BRAND = {
-  name: "Dotforge",
-  tagline: "We forge products, dot by dot.",
-  email: "hello@dotforge.studio", // placeholder — replace with your real email
+  name: "Qolvik",
+  tagline: "From sketch to scale.",
+  email: "hello@qolvik.com", // placeholder — replace with your real email
 };
 
 // ---------------------------------------------------------
 //  CONTACT — PLACEHOLDERS: replace with your real number and city.
-//  whatsapp: country code + number, digits only (e.g. "919812345678")
+//  phone is shown on the site; city is used for local search
 // ---------------------------------------------------------
 export const CONTACT = {
   phone: "+91 00000 00000",
-  whatsapp: "910000000000",
   city: "Your City",
   region: "Your State",
   country: "IN",
@@ -99,10 +98,10 @@ export const FAQ = [
 //  SOCIAL LINKS — replace "#" with your real profile URLs
 // ---------------------------------------------------------
 export const SOCIALS = [
-  { key: "linkedin",  name: "LinkedIn",  handle: "/company/dotforge", url: "#" },
-  { key: "instagram", name: "Instagram", handle: "@dotforge.studio",  url: "#" },
-  { key: "facebook",  name: "Facebook",  handle: "/dotforgestudio",   url: "#" },
-  { key: "x",         name: "X",         handle: "@dotforge",         url: "#" },
+  { key: "linkedin",  name: "LinkedIn",  handle: "/company/qolvik", url: "#" },
+  { key: "instagram", name: "Instagram", handle: "@qolvik.studio",  url: "#" },
+  { key: "facebook",  name: "Facebook",  handle: "/qolvikstudio",   url: "#" },
+  { key: "x",         name: "X",         handle: "@qolvik",         url: "#" },
 ];
 
 // ---------------------------------------------------------

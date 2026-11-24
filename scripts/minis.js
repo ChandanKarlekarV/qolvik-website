@@ -129,7 +129,7 @@ export const MINIS = {
             <h4>Everyday Mug</h4>
             <b class="shop__price">₹899</b>
             <div class="shop__label">Colour · <span data-cname>Charcoal</span></div>
-            <div class="shop__sw">${[["#141414", "Charcoal"], ["#CDB88E", "Sand"], ["#9A9A9A", "Stone"]].map(([c, n], i) => `<button type="button" style="--c:${c}" data-color="${c}" data-name="${n}" aria-label="${n}"${i === 0 ? ' class="is-on"' : ""}></button>`).join("")}</div>
+            <div class="shop__sw">${[["#141414", "Charcoal"], ["#E8853D", "Sand"], ["#9A9A9A", "Stone"]].map(([c, n], i) => `<button type="button" style="--c:${c}" data-color="${c}" data-name="${n}" aria-label="${n}"${i === 0 ? ' class="is-on"' : ""}></button>`).join("")}</div>
             <div class="shop__sizes">${["S", "M", "L"].map((s, i) => `<button type="button" data-size${i === 1 ? ' class="is-on"' : ""}>${s}</button>`).join("")}</div>
             <button type="button" class="shop__add" data-add>Add to bag</button>
           </div>

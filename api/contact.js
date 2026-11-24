@@ -6,7 +6,7 @@
 //    RESEND_API_KEY  (secret)  from resend.com → API Keys
 //    CONTACT_TO                the inbox that receives enquiries
 //                              (without a verified domain, must be your Resend sign-up email)
-//    CONTACT_FROM   (optional) e.g. "Dotforge <hello@yourdomain.com>" once your domain is verified
+//    CONTACT_FROM   (optional) e.g. "Qolvik <hello@yourdomain.com>" once your domain is verified
 //    CONTACT_DRY_RUN (optional, local testing) "1" = validate everything but don't send
 //
 //  Security: POST only, same-origin only, 10 KB body limit, server-side validation,
@@ -113,7 +113,7 @@ module.exports = async function handler(req, res) {
     const r = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ from: process.env.CONTACT_FROM || "Dotforge Website <onboarding@resend.dev>", to: [to], reply_to: data.email, subject, text }),
+      body: JSON.stringify({ from: process.env.CONTACT_FROM || "Qolvik Website <onboarding@resend.dev>", to: [to], reply_to: data.email, subject, text }),
     });
     if (!r.ok) {
       console.error("[contact] Resend error", r.status, (await r.text()).slice(0, 300));

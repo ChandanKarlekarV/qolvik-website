@@ -1,4 +1,4 @@
-# Dotforge — layout plan v3
+# Qolvik — layout plan v3
 
 References: Linear (two-tone headlines, dark hero, product canvas under the fold),
 Vercel (visible grid lines, "+" crosshair corners, mono labels), top agency sites

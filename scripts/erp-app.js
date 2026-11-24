@@ -74,7 +74,7 @@ export function initErpApp(root, { M, useMotion, ease } = {}) {
           <div class="ea-card ea-card--chart">
             <div class="ea-card__head"><b>Attendance this week</b><span class="ea-pill">Live</span></div>
             <svg class="ea-area" viewBox="0 0 ${W} ${H + 10}" preserveAspectRatio="none">
-              <defs><linearGradient id="eaG" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#CDB88E" stop-opacity=".55"/><stop offset="1" stop-color="#CDB88E" stop-opacity="0"/></linearGradient></defs>
+              <defs><linearGradient id="eaG" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#E8853D" stop-opacity=".55"/><stop offset="1" stop-color="#E8853D" stop-opacity="0"/></linearGradient></defs>
               <path d="${line} L${W} ${H + 10} L0 ${H + 10}Z" fill="url(#eaG)"/>
               <path class="ea-area__line" d="${line}" />
               ${pts.map((p) => `<circle cx="${p[0]}" cy="${p[1]}" r="3.2"/>`).join("")}

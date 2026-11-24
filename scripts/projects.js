@@ -1,10 +1,10 @@
 // =========================================================
-//  DOTFORGE — projects page
+//  QOLVIK — projects page
 // =========================================================
 import { PROJECTS } from "./config.js";
 import { M, useMotion, ease, getLenis, initSmoothScroll, reveals, enhanceButtons, segmented, animateIn, customCursor } from "./motion-kit.js";
 import { MINIS, mountMini } from "./minis.js";
-import { renderSocials, initAnalytics, fillContact, initWhatsApp } from "./shared.js";
+import { renderSocials, initAnalytics, fillContact } from "./shared.js";
 import { projectCardsHTML, PROJECT_TABS, PILL, tabButtons } from "./templates.js";
 
 const $ = (s, r = document) => r.querySelector(s);
@@ -20,7 +20,6 @@ $("[data-p-tabs]").innerHTML = PILL + tabButtons(PROJECT_TABS);
 renderSocials($("[data-socials]"));
 fillContact();
 initAnalytics();
-initWhatsApp();
 $$("[data-year]").forEach((el) => (el.textContent = new Date().getFullYear()));
 
 initSmoothScroll();
@@ -36,9 +35,11 @@ segmented($("[data-p-tabs]"), (cat) => {
 // ---------- Detail sheet ----------
 const sheet = $("[data-sheet]"), overlay = $("[data-sheet-overlay]"), content = $("[data-sheet-content]");
 let lastFocus;
+let currentId = null;
 function openProject(id) {
   const p = PROJECTS.find((x) => x.id === id);
-  if (!p) return;
+  if (!p || (currentId === id && sheet.classList.contains("is-open"))) return;
+  currentId = id;
   lastFocus = document.activeElement;
   $("[data-sheet-cat]").textContent = p.concept ? `${p.category} · Concept` : p.category;
   content.innerHTML = `
@@ -66,6 +67,8 @@ function openProject(id) {
   if (useMotion) M.animate([...content.querySelectorAll(".sheet__info > *")], { opacity: [0, 1], transform: ["translateY(20px)", "translateY(0px)"] }, { duration: 0.7, ease, delay: M.stagger(0.06, { startDelay: 0.25 }) });
 }
 function closeProject() {
+  if (!sheet.classList.contains("is-open")) return;
+  currentId = null;
   sheet.classList.remove("is-open");
   overlay.classList.remove("is-open");
   sheet.setAttribute("aria-hidden", "true");
@@ -73,15 +76,29 @@ function closeProject() {
   getLenis()?.start();
   lastFocus?.focus();
 }
-grid.addEventListener("click", (e) => { const c = e.target.closest(".pcard"); if (c) openProject(c.dataset.id); });
-$("[data-sheet-close]").addEventListener("click", closeProject);
-overlay.addEventListener("click", closeProject);
-document.addEventListener("keydown", (e) => { if (e.key === "Escape" && sheet.classList.contains("is-open")) closeProject(); });
+// URL <-> panel: opening adds #project-id (shareable, and the Back button closes it)
+function showProject(id) {
+  if (history.state?.sheet !== id) history.pushState({ sheet: id }, "", `#${id}`);
+  openProject(id);
+}
+function hideProject() {
+  // Synchronous URL update (no history.back) so rapid open/close can never re-open a stale panel
+  if (location.hash) history.replaceState(null, "", location.pathname + location.search);
+  closeProject();
+}
+const syncFromUrl = () => {
+  const id = location.hash.slice(1);
+  if (PROJECTS.some((p) => p.id === id)) openProject(id);
+  else closeProject();
+};
+grid.addEventListener("click", (e) => { const c = e.target.closest(".pcard"); if (c) showProject(c.dataset.id); });
+$("[data-sheet-close]").addEventListener("click", hideProject);
+overlay.addEventListener("click", hideProject);
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && sheet.classList.contains("is-open")) hideProject(); });
+addEventListener("popstate", syncFromUrl);
+addEventListener("hashchange", syncFromUrl);
+setTimeout(syncFromUrl, 400); // deep link: projects.html#campus-one
 
-// Deep link: projects.html#campus-one opens that project
-const fromHash = () => { const id = location.hash.slice(1); if (PROJECTS.some((p) => p.id === id)) openProject(id); };
-setTimeout(fromHash, 400);
-addEventListener("hashchange", fromHash);
 
 // ---------- Mobile menu ----------
 const burger = $(".nav__burger"), menu = $("#menu");

@@ -1,5 +1,5 @@
 // =========================================================
-//  DOTFORGE — design system page (live component catalog)
+//  QOLVIK — design system page (live component catalog)
 // =========================================================
 import { initAnalytics } from "./shared.js";
 import { M, useMotion, ease, cssVar, initSmoothScroll, reveals, enhanceButtons, spotlights, segmented, accordion, toast, customCursor } from "./motion-kit.js";

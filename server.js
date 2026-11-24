@@ -50,4 +50,4 @@ http.createServer((req, res) => {
   const file = path.normalize(path.join(root, p));
   if (!file.startsWith(root + path.sep) || /(^|[\\/])\.(?!well-known)/.test(path.relative(root, file))) { res.writeHead(403, headers); return res.end("Forbidden"); }
   fs.stat(file, (err, st) => (err || !st.isFile() ? send(res, 404, path.join(root, "404.html")) : send(res, 200, file)));
-}).listen(port, () => console.log(`Dotforge running at http://localhost:${port} (serving ${path.relative(__dirname, root) || "source"})`));
+}).listen(port, () => console.log(`Qolvik running at http://localhost:${port} (serving ${path.relative(__dirname, root) || "source"})`));
