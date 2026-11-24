@@ -24,6 +24,17 @@ export function initSmoothScroll() {
     lenis = new Lenis({ lerp: 0.1, smoothWheel: true });
     const raf = (t) => { lenis.raf(t); requestAnimationFrame(raf); };
     requestAnimationFrame(raf);
+
+    // The visitor always wins: while Lenis is gliding (after a link click or form focus) it ignores the
+    // browser's own scrolling and would drag the page back. Hand control over on keyboard, scrollbar,
+    // touch, or any outside jump (Home key, find-in-page, "back to top", scroll restoration).
+    const yieldToUser = () => { if (lenis.isScrolling === "smooth") lenis.scrollTo(window.scrollY, { immediate: true, force: true }); };
+    addEventListener("keydown", (e) => { if (["Home", "End", "PageUp", "PageDown", "ArrowUp", "ArrowDown", " "].includes(e.key)) yieldToUser(); });
+    addEventListener("mousedown", (e) => { if (e.clientX >= document.documentElement.clientWidth) yieldToUser(); }); // scrollbar drag
+    addEventListener("touchstart", yieldToUser, { passive: true });
+    addEventListener("scroll", () => {
+      if (lenis.isScrolling === "smooth" && Math.abs(window.scrollY - lenis.animatedScroll) > 120) yieldToUser();
+    }, { passive: true });
   }
   document.addEventListener("click", (e) => {
     const a = e.target.closest('a[href^="#"]');

@@ -382,27 +382,31 @@ function renderFaq() {
 // Left column shows a live example for whichever question is open
 function faqExamples() {
   const box = $("[data-faq-ex]");
-  let current = null;
-  const show = (acc) => {
-    const id = acc?.dataset.ex;
+  let shown = null, latest = 0;
+  // Always renders whatever question is open *right now* — so rapid clicks can't leave a stale example
+  const render = () => {
+    const id = $("[data-faq] .acc.is-open")?.dataset.ex;
     const p = PROJECTS.find((x) => x.id === id);
-    if (!p || id === current) return;
-    current = id;
-    const f = FAQ.find((x) => x.ex === id);
-    const swap = () => {
-      mountMini($("[data-faq-mini]", box), p.mini);
-      $("[data-faq-title]", box).textContent = `${p.title} — ${p.type}`;
-      $("[data-faq-note]", box).textContent = f.exNote;
-      $("[data-faq-link]", box).href = `projects.html#${p.id}`;
-    };
-    if (!useMotion || !box.dataset.ready) { swap(); box.dataset.ready = "1"; return; }
+    if (!p) return;
+    shown = id;
+    mountMini($("[data-faq-mini]", box), p.mini);
+    $("[data-faq-title]", box).textContent = `${p.title} — ${p.type}`;
+    $("[data-faq-note]", box).textContent = FAQ.find((x) => x.ex === id).exNote;
+    $("[data-faq-link]", box).href = `projects.html#${p.id}`;
+  };
+  const show = () => {
+    const id = $("[data-faq] .acc.is-open")?.dataset.ex;
+    if (!id || id === shown) return;
+    if (!useMotion || !box.dataset.ready) { render(); box.dataset.ready = "1"; return; }
+    const ticket = ++latest; // only the most recent click is allowed to finish the swap
     M.animate(box, { opacity: 0, transform: "translateY(10px) scale(.98)" }, { duration: 0.2 }).then(() => {
-      swap();
+      if (ticket !== latest) return;
+      render();
       M.animate(box, { opacity: 1, transform: "translateY(0px) scale(1)" }, { duration: 0.5, ease });
     });
   };
-  show($("[data-faq] .acc.is-open"));
-  $$("[data-faq] .acc__btn").forEach((b) => b.addEventListener("click", () => requestAnimationFrame(() => show($("[data-faq] .acc.is-open")))));
+  show();
+  $$("[data-faq] .acc__btn").forEach((b) => b.addEventListener("click", () => requestAnimationFrame(show)));
 }
 
 function footerHop() {
@@ -451,6 +455,8 @@ const RULES = {
   email: (v) => (!v ? "Please enter your email so we can reply." : !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v) ? "That email doesn't look right — check for typos (e.g. name@company.com)." : ""),
   message: (v) => (v.length < 20 ? `Tell us a little more — at least 20 characters (${v.length}/20).` : v.length > 2000 ? "Message is too long (max 2000 characters)." : ""),
 };
+// Focus without the browser's instant jump, then glide there with the smooth-scroll engine
+const focusField = (el) => { if (!el) return; el.focus({ preventScroll: true }); const l = getLenis(); if (l) l.scrollTo(el, { offset: -160, duration: 0.8 }); else el.scrollIntoView({ block: "center" }); };
 function contactForm() {
   const form = $("#contact-form");
   const status = $("[data-form-status]", form), btn = $("[data-submit]", form), label = $(".btn__label", btn);
@@ -477,7 +483,7 @@ function contactForm() {
     e.preventDefault();
     const results = Object.keys(RULES).map(check);
     if (results.includes(false)) {
-      form.querySelector(".is-invalid")?.focus();
+      focusField(form.querySelector(".is-invalid"));
       if (useMotion) M.animate(form, { x: [0, -8, 8, -5, 5, 0] }, { duration: 0.4 });
       return;
     }
@@ -504,7 +510,7 @@ function contactForm() {
             el.classList.add("is-invalid"); el.setAttribute("aria-invalid", "true");
             $(`#${el.getAttribute("aria-describedby").split(" ")[0]}`).textContent = msg;
           }
-          form.querySelector(".is-invalid")?.focus();
+          focusField(form.querySelector(".is-invalid"));
           return;
         }
         if (res.status === 429) { setStatus(out.error || "Too many messages — please try again in a few minutes.", "warn"); return; }
