@@ -126,33 +126,40 @@ function servicePreview() {
 // =========================================================
 //  Hero motion graphic — designer draws UI, engineer writes code
 // =========================================================
-const SNIPPET = [
-  ["c", "// generated from our design tokens\n"],
-  ["k", "export function "], ["", "Hero() {\n  "],
-  ["k", "return "], ["", "(\n    <section className="], ["s", '"hero"'], ["", ">\n      <h1>"],
-  ["", "Admissions, simplified."], ["", "</h1>\n      <Button variant="], ["s", '"primary"'], ["", ">\n        Apply now\n      </Button>\n    </section>\n  );\n}"],
+// The demo is ALWAYS a complete, working design. Each cycle the designer selects a block and
+// recolours it, the engineer edits the matching line of code, and it "deploys". Nothing is ever wiped.
+const TONES = [
+  { name: "ivory", label: "Ivory" },
+  { name: "stone", label: "Stone" },
+  { name: "copper", label: "Copper" },
+  { name: "ink", label: "Ink" },
 ];
+const codeHTML = (target, tone) => `<span class="c">// generated from our design tokens</span>
+<span class="k">export function</span> Home() {
+  <span class="k">return</span> (
+    &lt;<span class="t">Hero</span> tone=<span class="s">"<span data-tok="hero">${target === "hero" ? tone : "ivory"}</span>"</span>&gt;
+      &lt;h1&gt;Admissions, simplified.&lt;/h1&gt;
+      &lt;<span class="t">Button</span> variant=<span class="s">"primary"</span>&gt;Apply now&lt;/<span class="t">Button</span>&gt;
+    &lt;/<span class="t">Hero</span>&gt;
+    &lt;<span class="t">Cards</span> tone=<span class="s">"<span data-tok="cards">${target === "cards" ? tone : "white"}</span>"</span> /&gt;
+  );
+}`;
 
 function studio() {
   const root = $("[data-studio]");
   const canvas = $(".studio__canvas", root);
   const cd = $("[data-cursor-design]"), cv = $("[data-cursor-dev]");
-  const sel = $("[data-select]"), blocks = $$("[data-block]", root), code = $("[data-code]");
-  const deploy = $("[data-deploy]"), heroBlock = $("[data-hero-block]"), swatch = $("[data-swatch]"), tool = $("[data-tool]");
+  const sel = $("[data-select]"), code = $("[data-code]"), deploy = $("[data-deploy]");
+  const hero = $("[data-hero-block]"), cards = $$(".sb--card", root), swatches = $$(".studio__swatches i", root);
+  const tool = $("[data-tool]");
 
-  let typing = 0; // bumps to cancel an in-progress typewriter
-  const writeCode = async (speed) => {
-    const run = ++typing;
-    code.innerHTML = "";
-    for (const [cls, text] of SNIPPET) {
-      const span = document.createElement("span");
-      if (cls) span.className = cls;
-      code.append(span);
-      if (!speed) { span.textContent = text; continue; }
-      for (const ch of text) { if (run !== typing) return; span.textContent += ch; if (ch !== " ") await sleep(speed); }
-    }
-  };
-  // Layout position of el inside an ancestor — ignores transforms, so it stays exact mid-animation
+  // Complete design + full code from the first frame
+  code.innerHTML = codeHTML("hero", "ivory");
+  hero.dataset.tone = "0";
+  cards.forEach((c) => (c.dataset.tone = "0"));
+  if (!useMotion) { cd.style.display = cv.style.display = "none"; return; }
+
+  // Layout position inside an ancestor (ignores transforms → exact even mid-animation)
   const offsetIn = (el, anc) => {
     let x = 0, y = 0;
     for (let n = el; n && n !== anc; n = n.offsetParent) { x += n.offsetLeft; y += n.offsetTop; }
@@ -160,81 +167,75 @@ function studio() {
   };
   const TIP = { x: (20 * 5) / 24, y: (20 * 3) / 24 }; // arrow tip inside the 20px cursor icon
   const pt = (el, fx = 0.5, fy = 0.5) => { const o = offsetIn(el, root); return { x: o.x + o.w * fx - TIP.x, y: o.y + o.h * fy - TIP.y }; };
-  const frame = (el, pad = 4) => { const o = offsetIn(el, canvas); return { x: o.x - pad, y: o.y - pad, w: o.w + pad * 2, h: o.h + pad * 2 }; };
-  const place = (c, p) => M.animate(c, { x: p.x, y: p.y }, { duration: 0 });
   const move = (c, p, d = 0.7) => M.animate(c, { x: p.x, y: p.y }, { duration: d, ease: [0.45, 0, 0.2, 1] }).finished;
   const click = (c) => M.animate(c.querySelector("svg"), { scale: [1, 0.72, 1] }, { duration: 0.28 }).finished;
-  const setSel = (f, size = true) => {
-    sel.style.transform = `translate(${f.x}px, ${f.y}px)`;
-    if (size) { sel.style.width = f.w + "px"; sel.style.height = f.h + "px"; }
+  // Selection box: wraps the element exactly (4px padding), glides between targets
+  // (opacity only ever changes through Motion — mixing inline styles and animations is what made the old demo go blank)
+  let selShown = false;
+  const select = (el) => {
+    const o = offsetIn(el, canvas);
+    const box = { x: o.x - 4, y: o.y - 4, width: `${o.w + 8}px`, height: `${o.h + 8}px` };
+    if (!selShown) { selShown = true; M.animate(sel, box, { duration: 0 }); return M.animate(sel, { opacity: 1 }, { duration: 0.2 }).finished; }
+    return M.animate(sel, box, { duration: 0.45, ease }).finished;
   };
-  const showComplete = () => {
-    blocks.forEach((b) => { b.style.opacity = "1"; b.style.transform = "scale(1)"; });
-    heroBlock.classList.add("is-beige");
-    writeCode(0);
-    deploy.style.opacity = "1"; deploy.style.transform = "none";
-    sel.style.opacity = "0";
+  const hideSel = () => { selShown = false; return M.animate(sel, { opacity: 0 }, { duration: 0.35 }).finished; };
+
+  const retype = async (tok, word) => {
+    const el = $(`[data-tok="${tok}"]`, code);
+    el.classList.add("is-editing");
+    while (el.textContent.length) { el.textContent = el.textContent.slice(0, -1); await sleep(45); }
+    for (const ch of word) { el.textContent += ch; await sleep(70); }
+    el.classList.remove("is-editing");
   };
 
-  if (!useMotion) { showComplete(); cd.style.display = cv.style.display = "none"; return; }
-
-  // Start with a finished design on screen, cursors resting nearby
-  showComplete();
-  requestAnimationFrame(() => { place(cd, pt(heroBlock, 0.7, 0.8)); place(cv, pt($(".studio__pre", root), 0.7, 0.7)); });
+  requestAnimationFrame(() => {
+    M.animate(cd, pt(hero, 0.75, 0.75), { duration: 0 });
+    M.animate(cv, pt($(".studio__pre", root), 0.75, 0.7), { duration: 0 });
+  });
   M.animate(root, { opacity: [0, 1], transform: ["translateY(60px) scale(.97)", "translateY(0px) scale(1)"] }, { duration: 1.2, ease, delay: 0.6 });
 
+  let step = 0;
   const isOn = whileVisible(root, async () => {
-    // 1. Hold the finished design. If the visitor scrolled away, stop here — it stays complete.
-    await sleep(2600);
+    await sleep(1600);
     if (!isOn()) return;
     const hasCode = !!$(".studio__code", root).offsetParent;
     cv.style.display = hasCode ? "" : "none";
 
-    // 2. Clear the canvas smoothly
-    typing++;
-    await M.animate([...blocks, deploy, code], { opacity: 0 }, { duration: 0.35 }).finished;
-    blocks.forEach((b) => (b.style.transform = "scale(0)"));
-    heroBlock.classList.remove("is-beige");
-    code.innerHTML = ""; code.style.opacity = "1";
-    deploy.style.transform = "translateY(14px) scale(.9)";
+    // Alternate: hero, a card, hero, next card …
+    const onHero = step % 2 === 0;
+    const target = onHero ? hero : cards[(step >> 1) % cards.length];
+    const toneIdx = (Number(target.dataset.tone) + 1 + (step % 3 === 2 ? 1 : 0)) % TONES.length;
+    step++;
 
-    // 3. Designer picks the tool, then drags out each block — box and cursor stay on its corners
+    // 1. Designer selects the block
     await move(cd, pt(tool)); await click(cd);
-    for (const b of blocks) {
-      await move(cd, pt(b, 0, 0), 0.5);
-      await click(cd);
-      const f = frame(b);
-      setSel(f, false);
-      sel.style.width = sel.style.height = "8px";
-      sel.style.opacity = "1";
-      b.style.opacity = "1";
-      const end = pt(b, 1, 1);
-      await Promise.all([
-        M.animate(b, { transform: ["scale(0)", "scale(1)"] }, { duration: 0.6, ease }).finished,
-        M.animate(sel, { width: ["8px", f.w + "px"], height: ["8px", f.h + "px"] }, { duration: 0.6, ease }).finished,
-        M.animate(cd, { x: end.x, y: end.y }, { duration: 0.6, ease }).finished,
-      ]);
-    }
+    await move(cd, pt(target, 0.18, 0.3), 0.6);
+    await click(cd);
+    await select(target);
 
-    // 4. Pick a colour for the hero block
-    await move(cd, pt(swatch)); await click(cd);
-    heroBlock.classList.add("is-beige");
-    setSel(frame(heroBlock));
-    await sleep(500);
-    M.animate(sel, { opacity: 0 }, { duration: 0.3 });
-    M.animate(cd, pt(heroBlock, 0.7, 0.8), { duration: 0.8, ease });
+    // 2. …picks a colour, the block updates
+    await move(cd, pt(swatches[toneIdx]), 0.6);
+    await click(cd);
+    target.dataset.tone = String(toneIdx);
+    if (!onHero) cards.forEach((c) => (c.dataset.tone = String(toneIdx)));
+    await sleep(350);
+    M.animate(cd, pt(target, 0.8, 0.85), { duration: 0.7, ease });
 
-    // 5. Engineer writes the code
+    // 3. Engineer edits the matching line of code
     if (hasCode) {
-      const pre = $(".studio__pre", root);
-      await move(cv, pt(pre, 0.12, 0.1), 0.6);
+      const tok = $(`[data-tok="${onHero ? "hero" : "cards"}"]`, code);
+      await move(cv, pt(tok, 1, 0.5), 0.6);
       await click(cv);
-      M.animate(cv, pt(pre, 0.6, 0.75), { duration: 3, ease: "linear" });
-      await writeCode(14);
-    } else await sleep(600);
+      await retype(onHero ? "hero" : "cards", TONES[toneIdx].name);
+    } else await sleep(500);
 
-    // 6. Ship it
+    // 4. Ship it, then tidy up
     await M.animate(deploy, { opacity: [0, 1], transform: ["translateY(14px) scale(.9)", "translateY(0px) scale(1)"] }, { type: "spring", stiffness: 320, damping: 20 }).finished;
+    await sleep(1500);
+    await Promise.all([
+      M.animate(deploy, { opacity: 0, transform: "translateY(8px) scale(.96)" }, { duration: 0.35 }).finished,
+      hideSel(),
+    ]);
   });
 }
 // =========================================================
@@ -515,10 +516,14 @@ function contactForm() {
       setStatus("", "ok");
       status.textContent = `Thanks, ${name}! Your message is on its way — we reply within one business day.`;
       toast("Message sent ✓");
-    } catch {
+    } catch (err) {
       const interests = data.getAll("interest").join(", ") || "General enquiry";
       const mail = `mailto:${BRAND.email}?subject=${encodeURIComponent(`${interests} — ${name}`)}&body=${encodeURIComponent(field("message").value)}`;
-      setStatus(`We couldn't send that right now. Your message is safe — <a class="link" href="${mail}">send it from your email app instead</a>.`, "error");
+      // 503 = email delivery not configured yet (no Resend key) — say so plainly; anything else = temporary failure
+      const notSetUp = String(err?.message) === "503";
+      setStatus(notSetUp
+        ? `Online sending isn't switched on yet — nothing is lost. <a class="link" href="${mail}">Open it in your email app</a> and it's ready to send.`
+        : `We couldn't send that right now. Your message is safe — <a class="link" href="${mail}">send it from your email app instead</a>, or try again in a minute.`, "error");
     } finally {
       btn.disabled = false; form.removeAttribute("aria-busy");
       setLabel(label, "Send message");

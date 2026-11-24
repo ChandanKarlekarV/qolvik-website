@@ -21,7 +21,7 @@ export const MINIS = {
         </div>
         <div class="fin__view" data-view="home">
           <div class="fin__row"><i></i><div><b>Coffee House</b><small>Today</small></div><em>−₹240</em></div>
-          <div class="fin__row"><i class="d"></i><div><b>Salary</b><small>Yesterday</small></div><em class="plus">+₹62,000</em></div>
+          <div class="fin__row"><i class="d"></i><div><b>Salary</b><small>Yesterday</small></div><em class="fin__plus">+₹62,000</em></div>
           <div class="fin__row"><i></i><div><b>Electricity</b><small>Mon</small></div><em>−₹1,820</em></div>
         </div>
         <div class="fin__view fin__stats" data-view="stats" hidden>

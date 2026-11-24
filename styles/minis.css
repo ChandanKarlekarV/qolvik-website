@@ -39,13 +39,13 @@
 .fin__chips span { font-size: .55em; font-weight: 700; padding: .45em .85em; border-radius: 2em; background: var(--clay-400); color: #141414; }
 .fin__chips span + span { background: #3a3a3a; color: #fff; }
 .fin__view { flex: 1; display: grid; gap: .4em; align-content: start; min-height: 0; }
-.fin__row { display: grid; grid-template-columns: 1.8em 1fr auto; gap: .5em; align-items: center; padding: .42em; border-radius: .7em; background: #fff; }
+.fin__row { display: grid; grid-template-columns: 1.8em minmax(0, 1fr) auto; gap: .5em; align-items: center; padding: .42em; border-radius: .7em; background: #fff; }
 .fin__row i { width: 1.8em; height: 1.8em; border-radius: .55em; background: var(--clay-200); }
 .fin__row i.d { background: #141414; }
 .fin__row b { display: block; font-size: .62em; }
 .fin__row small { font-size: .5em; color: #999; }
 .fin__row em { font-style: normal; font-size: .62em; font-weight: 700; }
-.fin__row em.plus { color: #4E7A4A; }
+.fin__row em.fin__plus { color: #4E7A4A; }
 .fin__stats small { font-size: .58em; color: #888; }
 .fin__bars { display: flex; align-items: flex-end; gap: .35em; height: 6.5em; padding: .6em; border-radius: .8em; background: #fff; }
 .fin__bars i { flex: 1; height: 100%; border-radius: .3em; background: var(--mono-200); transform-origin: bottom; transform: scaleY(var(--v)); }
