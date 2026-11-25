@@ -14,7 +14,8 @@ export const BRAND = {
 //  paste it below. This key is designed to be public — it only lets people send TO you.
 //  Empty = the form falls back to the /api/contact function (Resend) if that is configured.
 // ---------------------------------------------------------
-export const FORM = { web3formsKey: "" };
+// serverEmail: set to true once RESEND_API_KEY + CONTACT_TO are added in Vercel (uses /api/contact).
+export const FORM = { web3formsKey: "", serverEmail: false };
 
 // ---------------------------------------------------------
 //  CONTACT — PLACEHOLDERS: replace with your real number and city.

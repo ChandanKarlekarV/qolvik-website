@@ -515,8 +515,10 @@ function contactForm() {
           });
           out = await res.json().catch(() => ({}));
           out.ok = res.ok && out.success === true;
+        } else if (!FORM.serverEmail) {
+          throw new Error("503"); // no email service switched on → show the email-app fallback instantly
         } else {
-          // Fallback: our own Vercel function (needs RESEND_API_KEY + CONTACT_TO)
+          // Our own Vercel function (needs RESEND_API_KEY + CONTACT_TO)
           res = await fetch("/api/contact", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
