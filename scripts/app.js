@@ -549,8 +549,8 @@ function contactForm() {
       // 503 = email delivery not configured yet (no Resend key) — say so plainly; anything else = temporary failure
       const notSetUp = String(err?.message) === "503";
       setStatus(notSetUp
-        ? `Online sending isn't switched on yet — nothing is lost. <a class="link" href="${mail}">Open it in your email app</a> and it's ready to send.`
-        : `We couldn't send that right now. Your message is safe — <a class="link" href="${mail}">send it from your email app instead</a>, or try again in a minute.`, "error");
+        ? `Thanks, ${name} — one last step: <a class="link" href="${mail}">tap here to send it from your email app</a>. Everything you wrote is already filled in.`
+        : `We couldn't send that right now. Your message is safe — <a class="link" href="${mail}">send it from your email app instead</a>, or try again in a minute.`, notSetUp ? "warn" : "error");
     } finally {
       btn.disabled = false; form.removeAttribute("aria-busy");
       setLabel(label, "Send message");
