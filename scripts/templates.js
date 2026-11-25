@@ -78,13 +78,7 @@ export const teamHTML = () => TEAM.map((m, i) => {
         </div>
         <div class="member__info"><div><h3>${m.name}</h3><span class="member__role">${m.role}</span></div><span class="member__team">${m.team}</span></div>
       </article>`;
-}).join("") + `
-    <article class="member member--join" data-team-of="*">
-      <span class="join-plus">+</span>
-      <h3>Your seat is here</h3>
-      <p>We're always looking for designers and engineers who care about craft.</p>
-      <a class="btn btn--light btn--sm" href="#contact"><span class="btn__label">Join Qolvik</span></a>
-    </article>`;
+}).join("");
 
 // ---------- FAQ ----------
 export const faqHTML = () => FAQ.map((f, i) => {

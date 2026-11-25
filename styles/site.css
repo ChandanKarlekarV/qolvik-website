@@ -335,12 +335,6 @@
 .member__info h3 { font-size: var(--text-lg); letter-spacing: -0.02em; }
 .member__role { color: var(--mono-400); font-size: var(--text-sm); }
 .member__team { font: 700 10px var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--mono-400); white-space: nowrap; }
-.member--join { display: grid; place-content: center; justify-items: center; text-align: center; gap: 14px; padding: 32px; border: 1px dashed var(--mono-700); background: transparent; min-height: 100%; }
-.member--join:hover { border-color: var(--clay-400); }
-.member--join h3 { font-size: var(--text-2xl); }
-.member--join p { color: var(--mono-400); font-size: var(--text-sm); max-width: 24ch; }
-.join-plus { width: 56px; height: 56px; border-radius: 50%; border: 1px dashed var(--mono-600); display: grid; place-items: center; font-size: 26px; color: var(--clay-400); transition: transform .6s var(--ease-spring); }
-.member--join:hover .join-plus { transform: rotate(90deg) scale(1.1); }
 
 /* ---------- FAQ ---------- */
 .faq { display: grid; grid-template-columns: 1fr 1.5fr; gap: clamp(3rem, 7vw, 6rem); align-items: start; }

@@ -359,7 +359,7 @@ function renderTeam() {
 function filterTeam(group) {
   const shown = [];
   $$("[data-team] .member").forEach((m) => {
-    const show = group === "All" || m.dataset.teamOf === group || m.dataset.teamOf === "*";
+    const show = group === "All" || m.dataset.teamOf === group;
     m.hidden = !show;
     if (show) shown.push(m);
   });
