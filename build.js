@@ -89,6 +89,10 @@ async function main() {
     "projects.html": (h) => fillTabs(fill(fill(h, "data-pgrid", T.projectCardsHTML()), "data-socials", T.socialsHTML()), "data-p-tabs", T.PROJECT_TABS),
     "privacy.html": (h) => fill(h, "data-socials", T.socialsHTML()),
     "terms.html": (h) => fill(h, "data-socials", T.socialsHTML()),
+    // The source 404 uses relative paths so it also works when opened from disk.
+    // Online it is served at any depth (/a/b/c), so make every local link root-absolute.
+    "404.html": (h) => h.replace(/((?:href|src)=")(?!https?:|\/|#|data:|mailto:|tel:)([^"]*)"/g,
+      (_, a, p) => `${a}/${p.replace(/^index\.html/, "")}"`),
   };
 
   // ---------- 3 + 4. Finalise each page ----------
