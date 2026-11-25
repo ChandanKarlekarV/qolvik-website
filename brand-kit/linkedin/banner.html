@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Qolvik — LinkedIn banner</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+<style>
+  /* Render: personal 1584x396 (default) · company 1128x191 (banner.html?company) */
+  :root {
+    --clay-300: #F2B783; --clay-400: #E8853D; --clay-500: #C2501A; --clay-700: #5E1F0C;
+    --teal-300: #7FC4BE; --teal-500: #1E5F66;
+    --ivory: #FBF7F3; --ink: #15110E;
+    --grad: linear-gradient(120deg, var(--clay-300) 0%, var(--clay-400) 42%, var(--clay-500) 100%);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1584px; height: 396px; overflow: hidden; background: var(--ink); }
+  body { position: relative; font-family: "Inter Tight", system-ui, sans-serif; color: var(--ivory); }
+
+  /* ---------- background ---------- */
+  .bg { position: absolute; inset: 0;
+    background:
+      radial-gradient(520px 340px at 88% 8%, rgba(232,133,61,.30), transparent 70%),
+      radial-gradient(460px 300px at 52% 120%, rgba(194,80,26,.22), transparent 70%),
+      radial-gradient(520px 360px at 6% 100%, rgba(30,95,102,.55), transparent 70%),
+      linear-gradient(180deg, #1A1511, #120F0D); }
+  .dots { position: absolute; inset: 0;
+    background-image: radial-gradient(rgba(251,247,243,.16) 1.2px, transparent 1.4px);
+    background-size: 22px 22px;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 30%, #000 60%, transparent 100%);
+            mask-image: linear-gradient(90deg, transparent 0%, #000 30%, #000 60%, transparent 100%); }
+  .ribbon { position: absolute; width: 640px; left: -170px; top: -170px; opacity: .16; transform: rotate(-12deg); filter: saturate(1.2); }
+  .rule { position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: linear-gradient(90deg, var(--teal-500), var(--clay-400) 45%, var(--clay-500)); }
+
+  /* ---------- sketch -> scale story ---------- */
+  .story { position: absolute; left: 470px; top: 70px; width: 470px; height: 250px; }
+  .card { position: absolute; border-radius: 14px; padding: 16px; }
+  .sketch { left: 0; top: 30px; width: 190px; height: 150px; border: 1.6px dashed rgba(251,247,243,.38); transform: rotate(-5deg); background: rgba(251,247,243,.03); }
+  .sketch i { display: block; height: 10px; border-radius: 5px; border: 1.4px dashed rgba(251,247,243,.35); margin-bottom: 12px; }
+  .sketch i:nth-child(1) { width: 60%; } .sketch i:nth-child(2) { width: 90%; } .sketch i:nth-child(3) { width: 75%; }
+  .sketch .box { width: 100%; height: 40px; border-radius: 8px; border: 1.4px dashed rgba(251,247,243,.35); }
+  .lbl { position: absolute; font: 500 11px/1 "JetBrains Mono", monospace; letter-spacing: .12em; text-transform: uppercase; }
+  .sketch .lbl { left: 0; top: -24px; color: rgba(251,247,243,.55); }
+  .arrow { position: absolute; left: 190px; top: 92px; width: 80px; height: 30px; }
+  .final { left: 262px; top: 0; width: 210px; height: 200px; background: var(--ivory); color: var(--ink); transform: rotate(3deg);
+    box-shadow: 0 30px 60px -20px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.08); }
+  .final .lbl { left: 0; top: -24px; color: var(--clay-300); transform: rotate(-3deg); }
+  .final h4 { font: 700 13px/1 "Inter Tight"; display: flex; justify-content: space-between; align-items: center; }
+  .final h4 span { font: 500 10px/1 "JetBrains Mono"; color: #1E5F66; background: #BFE0DD; padding: 4px 6px; border-radius: 999px; }
+  .final .num { font: 700 30px/1 "Inter Tight"; margin: 12px 0 2px; letter-spacing: -.02em; }
+  .final .sub { font: 500 10px/1 "JetBrains Mono"; color: #767676; }
+  .bars { display: flex; align-items: flex-end; gap: 7px; height: 70px; margin-top: 14px; }
+  .bars b { flex: 1; border-radius: 4px 4px 2px 2px; background: #EADBCD; }
+  .bars b.on { background: var(--grad); }
+
+  /* ---------- identity block (right) ---------- */
+  .id { position: absolute; right: 84px; top: 50%; transform: translateY(-50%); text-align: right; }
+  .brand { display: inline-flex; align-items: center; gap: 14px; }
+  .brand img { width: 58px; height: 58px; }
+  .brand span { font-weight: 700; font-size: 44px; letter-spacing: -.035em; }
+  .tag { margin-top: 16px; font-family: "Instrument Serif", serif; font-size: 66px; line-height: .95; letter-spacing: -.01em; }
+  .tag em { font-style: italic; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: 6px; }
+  .chips { margin-top: 22px; display: flex; gap: 8px; justify-content: flex-end; }
+  .chips span { font: 500 12px/1 "JetBrains Mono", monospace; letter-spacing: .04em; padding: 8px 12px; border-radius: 999px;
+    border: 1px solid rgba(251,247,243,.18); color: rgba(251,247,243,.82); background: rgba(251,247,243,.04); }
+  .chips span.hl { border-color: rgba(127,196,190,.55); color: var(--teal-300); background: rgba(30,95,102,.25); }
+
+  /* ---------- company page cover 1128 x 191 ---------- */
+  body.company, html.company { width: 1128px; height: 191px; }
+  .company .ribbon { width: 380px; left: -110px; top: -110px; }
+  .company .story { left: 300px; top: 30px; transform: scale(.52); transform-origin: top left; }
+  .company .id { right: 48px; }
+  .company .brand img { width: 34px; height: 34px; }
+  .company .brand span { font-size: 26px; }
+  .company .tag { margin-top: 8px; font-size: 40px; }
+  .company .chips { margin-top: 12px; gap: 6px; }
+  .company .chips span { font-size: 9.5px; padding: 6px 9px; }
+  .company .rule { height: 3px; }
+</style>
+<script>if (location.search.includes("company")) document.documentElement.classList.add("company");
+  addEventListener("DOMContentLoaded", () => { if (location.search.includes("company")) document.body.classList.add("company"); });</script>
+</head>
+<body>
+  <div class="bg"></div>
+  <div class="dots"></div>
+  <img class="ribbon" src="../../assets/qolvik-logo.png" alt="" />
+
+  <div class="story">
+    <div class="card sketch"><span class="lbl">01 · Sketch</span><i></i><i></i><i></i><div class="box"></div></div>
+    <svg class="arrow" viewBox="0 0 80 30" fill="none"><path d="M4 18 C 26 4, 50 4, 70 15" stroke="#E8853D" stroke-width="2" stroke-dasharray="4 5" stroke-linecap="round"/><path d="M62 8 L72 15 L61 21" stroke="#E8853D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div class="card final"><span class="lbl">02 · Scale</span>
+      <h4>Fees collected <span>+18%</span></h4>
+      <div class="num">₹ 42.6L</div><div class="sub">This term · 3 campuses</div>
+      <div class="bars"><b style="height:38%"></b><b style="height:52%"></b><b style="height:46%"></b><b style="height:64%"></b><b class="on" style="height:78%"></b><b class="on" style="height:100%"></b></div>
+    </div>
+  </div>
+
+  <div class="id">
+    <div class="brand"><img src="../../assets/qolvik-logo.png" alt="" /><span>Qolvik</span></div>
+    <p class="tag">From sketch <em>to scale.</em></p>
+    <div class="chips"><span>UI/UX</span><span>MVPs</span><span>Web apps</span><span>Websites</span><span class="hl">Campus ERP</span></div>
+  </div>
+  <div class="rule"></div>
+</body>
+</html>

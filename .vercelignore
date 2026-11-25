@@ -6,3 +6,4 @@ tools
 *.log
 .env
 .env.*
+brand-kit
