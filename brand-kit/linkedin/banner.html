@@ -3,141 +3,38 @@
 <head>
 <meta charset="utf-8" />
 <title>Qolvik — LinkedIn banner</title>
-<!-- Built on the site's own design tokens (styles/tokens.css): colour, type, space, radius, shadow, gradient. -->
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@500;600;700&family=JetBrains+Mono:wght@500;600&family=Manrope:wght@500;600;700&display=swap" rel="stylesheet" />
+<!-- Minimal brand banner, built on the site's design tokens (styles/tokens.css). -->
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@700&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="../../styles/tokens.css" />
 <style>
   /* Render: personal 1584x396 (default) · company cover 1128x191 (banner.html?company) */
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body { width: 1584px; height: 396px; overflow: hidden; }
-  body { position: relative; background: var(--clay-50); color: var(--mono-900); font-family: var(--font-body); -webkit-font-smoothing: antialiased; }
+  body { position: relative; display: grid; place-items: center; background: var(--mono-900); -webkit-font-smoothing: antialiased; }
 
-  /* ---------- canvas: layout-grid framework + brand shape ---------- */
-  .grid { position: absolute; inset: 0;
-    background-image:
-      linear-gradient(90deg, rgb(234 219 205 / .7) 1px, transparent 1px),
-      linear-gradient(0deg,  rgb(234 219 205 / .7) 1px, transparent 1px);
-    background-size: 66px 66px; background-position: -1px -1px;
-    -webkit-mask-image: radial-gradient(70% 120% at 72% 50%, #000 20%, transparent 75%);
-            mask-image: radial-gradient(70% 120% at 72% 50%, #000 20%, transparent 75%); }
-  .glow { position: absolute; width: 640px; height: 640px; right: 60px; top: -260px; border-radius: 50%;
-    background: radial-gradient(closest-side, rgb(242 183 131 / .45), transparent); }
-  /* the arc sits behind LinkedIn's profile photo (bottom-left) */
-  .arc { position: absolute; width: 560px; height: 560px; left: -170px; top: 120px; border-radius: 50%; background: var(--brand-gradient-deep); }
-  .arc::after { content: ""; position: absolute; inset: -26px; border-radius: 50%; border: 1.5px solid var(--teal-300); opacity: .7; }
-  .ring { position: absolute; width: 860px; height: 860px; left: -320px; top: -30px; border-radius: 50%; border: 1px solid var(--clay-200); }
-  .rule { position: absolute; left: 0; right: 0; bottom: 0; height: 5px; background: linear-gradient(90deg, var(--teal-500) 0%, var(--teal-500) 22%, var(--clay-400) 22%, var(--clay-500) 100%); }
+  /* one soft copper glow behind the mark, a whisper of teal for depth */
+  body::before { content: ""; position: absolute; inset: 0;
+    background:
+      radial-gradient(420px 260px at 50% 50%, rgb(232 133 61 / .22), transparent 70%),
+      radial-gradient(900px 420px at 50% 140%, rgb(194 80 26 / .28), transparent 70%),
+      radial-gradient(700px 380px at 100% -20%, rgb(30 95 102 / .30), transparent 70%); }
 
-  /* ---------- identity ---------- */
-  .id { position: absolute; left: 430px; top: 50%; transform: translateY(-50%); }
-  .lockup { display: flex; align-items: center; gap: var(--space-3); }
-  .lockup img { width: 44px; height: 44px; }
-  .lockup b { font: 700 32px/1 var(--font-display); letter-spacing: -.04em; }
-  .lockup i { width: 1px; height: 26px; background: var(--clay-200); margin: 0 var(--space-2); }
-  .lockup small { font: 600 11px/1.35 var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--mono-500); }
-  h1 { margin-top: var(--space-5); font: 400 68px/.92 var(--font-serif); letter-spacing: -.015em; }
-  h1 em { background: var(--brand-gradient); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: 8px; }
-  .services { margin-top: var(--space-5); display: flex; align-items: center; gap: var(--space-3); font: 600 12.5px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--mono-600); }
-  .services i { width: 4px; height: 4px; border-radius: 50%; background: var(--clay-400); }
-  .services .hl { color: var(--teal-500); padding: 6px 10px; border-radius: var(--radius-pill); background: var(--teal-200); }
+  .lockup { position: relative; display: flex; align-items: center; gap: 26px; }
+  .lockup img { width: 112px; height: 112px; filter: drop-shadow(0 12px 30px rgb(194 80 26 / .45)); }
+  .lockup b { font: 700 104px/1 var(--font-display); letter-spacing: -.045em; color: var(--clay-50); }
 
-  /* ---------- product mockups ---------- */
-  .win { position: absolute; right: 44px; top: 46px; width: 500px; height: 304px; background: var(--mono-0); border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-lg), 0 0 0 1px var(--clay-200); overflow: hidden; display: grid; grid-template-rows: 34px 1fr; }
-  .bar { display: flex; align-items: center; gap: 6px; padding: 0 14px; background: var(--clay-100); border-bottom: 1px solid var(--clay-200); }
-  .bar span { width: 9px; height: 9px; border-radius: 50%; background: var(--clay-200); }
-  .bar em { margin: 0 auto; font: 500 10px/1 var(--font-mono); font-style: normal; color: var(--mono-500); padding: 5px 40px; border-radius: var(--radius-pill); background: var(--mono-0); }
-  .app { display: grid; grid-template-columns: 60px 1fr; }
-  .side { background: var(--mono-900); }
-  .main { padding: 14px 16px; }
-  .main h3 { font: 600 13px/1 var(--font-display); display: flex; justify-content: space-between; }
-  .main h3 small { font: 500 9.5px/1 var(--font-mono); color: var(--mono-500); }
-  .kpis { margin-top: 12px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-  .kpi { border: 1px solid var(--clay-200); border-radius: var(--radius-md); padding: 9px 10px; background: var(--clay-50); }
-  .kpi small { font: 600 8.5px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--mono-500); }
-  .kpi b { display: block; margin-top: 6px; font: 700 18px/1 var(--font-display); letter-spacing: -.02em; }
-  .kpi em { font: 600 8.5px/1 var(--font-mono); font-style: normal; color: var(--teal-500); }
-  .chart { margin-top: 10px; height: 118px; border: 1px solid var(--clay-200); border-radius: var(--radius-md); padding: 10px 12px; display: flex; align-items: flex-end; gap: 9px; position: relative; }
-  .chart small { position: absolute; left: 12px; top: 9px; font: 600 8.5px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--mono-500); }
-  .chart b { flex: 1; border-radius: 5px 5px 2px 2px; background: var(--clay-100); }
-  .chart b.on { background: var(--brand-gradient); }
+  .rule { position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: var(--brand-gradient); }
 
-  .phone { position: absolute; right: 480px; top: 92px; width: 150px; height: 290px; padding: 7px; border-radius: 28px; background: var(--mono-900); box-shadow: var(--shadow-lg); }
-  .screen { height: 100%; border-radius: 22px; background: var(--clay-50); padding: 22px 10px 10px; display: flex; flex-direction: column; gap: 7px; position: relative; }
-  .screen::before { content: ""; position: absolute; top: 7px; left: 50%; width: 38px; height: 5px; margin-left: -19px; border-radius: 3px; background: var(--mono-900); }
-  .screen h5 { font: 700 11px/1.1 var(--font-display); }
-  .screen h5 small { display: block; font: 500 8px/1.4 var(--font-mono); color: var(--mono-500); }
-  .note { border-radius: 10px; background: var(--mono-0); border: 1px solid var(--clay-200); padding: 7px 8px; font: 600 8.5px/1.35 var(--font-body); display: flex; gap: 6px; align-items: flex-start; }
-  .note i { flex: none; width: 7px; height: 7px; margin-top: 3px; border-radius: 50%; background: var(--teal-500); }
-  .note.warn i { background: var(--clay-400); }
-  .note small { display: block; font: 500 7.5px/1.3 var(--font-mono); color: var(--mono-500); }
-  .pay { margin-top: auto; border-radius: var(--radius-pill); background: var(--brand-gradient); color: var(--mono-0); font: 700 9.5px/1 var(--font-display); text-align: center; padding: 9px 0; }
-
-  .chip { position: absolute; right: 36px; bottom: 24px; display: flex; align-items: center; gap: 7px; padding: 8px 12px; border-radius: var(--radius-pill);
-    background: var(--mono-900); color: var(--clay-50); font: 600 10.5px/1 var(--font-mono); letter-spacing: .04em; box-shadow: var(--shadow-md); }
-  .chip i { width: 7px; height: 7px; border-radius: 50%; background: var(--teal-300); box-shadow: 0 0 0 4px rgb(127 196 190 / .25); }
-
-  /* ---------- company page cover 1128 x 191 ---------- */
   html.company, html.company body { width: 1128px; height: 191px; }
-  .company .grid { background-size: 38px 38px; }
-  .company .arc { width: 300px; height: 300px; left: -120px; top: 70px; }
-  .company .arc::after { inset: -16px; }
-  .company .ring { width: 460px; height: 460px; left: -200px; top: -60px; }
-  .company .glow { width: 380px; height: 380px; right: 40px; top: -200px; }
-  .company .id { left: 250px; }
-  .company .lockup img { width: 26px; height: 26px; }
-  .company .lockup b { font-size: 20px; }
-  .company .lockup i { height: 16px; }
-  .company .lockup small { font-size: 8px; }
-  .company h1 { margin-top: 10px; font-size: 44px; }
-  .company .services { margin-top: 12px; font-size: 8.5px; gap: 8px; }
-  .company .services .hl { padding: 4px 7px; }
-  .company .win { transform: scale(.5); transform-origin: top right; right: 28px; top: 18px; }
-  .company .phone { transform: scale(.5); transform-origin: top right; right: 246px; top: 36px; }
-  .company .chip { display: none; }
+  .company .lockup { gap: 14px; }
+  .company .lockup img { width: 62px; height: 62px; }
+  .company .lockup b { font-size: 58px; }
   .company .rule { height: 3px; }
 </style>
 <script>if (location.search.includes("company")) document.documentElement.classList.add("company");</script>
 </head>
 <body>
-  <div class="glow"></div>
-  <div class="grid"></div>
-  <div class="ring"></div>
-  <div class="arc"></div>
-
-  <div class="id">
-    <div class="lockup"><img src="../../assets/qolvik-logo.png" alt="" /><b>Qolvik</b><i></i><small>Design &amp; engineering<br/>studio</small></div>
-    <h1>From sketch <em>to scale.</em></h1>
-    <div class="services"><span>UI/UX</span><i></i><span>MVPs</span><i></i><span>Web apps</span><i></i><span>Websites</span><i></i><span class="hl">Campus ERP</span></div>
-  </div>
-
-  <div class="win">
-    <div class="bar"><span></span><span></span><span></span><em>campus.qolvik.app</em></div>
-    <div class="app">
-      <div class="side"></div>
-      <div class="main">
-        <h3>Good morning, Principal <small>Term 2 · Week 9</small></h3>
-        <div class="kpis">
-          <div class="kpi"><small>Attendance</small><b>96.4%</b><em>▲ 2.1%</em></div>
-          <div class="kpi"><small>Fees collected</small><b>₹42.6L</b><em>▲ 18%</em></div>
-          <div class="kpi"><small>Admissions</small><b>1,284</b><em>▲ 112</em></div>
-        </div>
-        <div class="chart"><small>Fee collection · monthly</small>
-          <b style="height:34%"></b><b style="height:46%"></b><b style="height:40%"></b><b style="height:55%"></b><b style="height:50%"></b><b style="height:63%"></b><b class="on" style="height:74%"></b><b class="on" style="height:88%"></b>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="phone"><div class="screen">
-    <h5>Hi, Riya's parent<small>Parent app</small></h5>
-    <div class="note"><i></i><div>Riya marked present<small>Today · 8:02 AM</small></div></div>
-    <div class="note warn"><i></i><div>Term fee due Fri<small>₹12,400 · Instalment 2</small></div></div>
-    <div class="note"><i></i><div>Maths results out<small>Grade A · View card</small></div></div>
-    <div class="pay">Pay ₹12,400</div>
-  </div></div>
-
-  <div class="chip"><i></i>Designed, built &amp; shipped by Qolvik</div>
+  <div class="lockup"><img src="../../assets/qolvik-logo.png" alt="" /><b>Qolvik</b></div>
   <div class="rule"></div>
 </body>
 </html>
