@@ -2,7 +2,7 @@
 <meta id="pb-meta" name="claude:viewport-fit-sides" content="cover">
 <link id="pb-fonts" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@600;700&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
 <style id="pb-style">
-  /* Layout: one reading column of editable price tables, a settings bar that drives every profit figure, and a planner at the end.
+  /* Layout: one reading column of editable price tables, a settings bar for price level, GST and tax, and a take-home planner at the end.
      Deliberately single-theme: white paper, solid black ink, black rules. Same look in light and dark mode. */
   :root {
     --bg: #FFFFFF; --ink: #000000; --line: #000000;
@@ -12,7 +12,7 @@
     color-scheme: light;
   }
   * { box-sizing: border-box; }
-  body { background: var(--bg); color: var(--ink); font: 400 15px/1.6 var(--body); -webkit-font-smoothing: antialiased; }
+  body { background: var(--bg); color: var(--ink); font: 400 15px/1.6 var(--body); -webkit-font-smoothing: antialiased; accent-color: #000; }
   .wrap { max-width: 1240px; margin: 0 auto; padding-block: 40px 80px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; grid-template-columns: minmax(0, 1fr); gap: 56px; }
   h1, h2, h3 { font-family: var(--display); letter-spacing: -.02em; text-wrap: balance; margin: 0; }
   h1 { font-size: clamp(2rem, 5vw, 3.2rem); line-height: 1.05; }
@@ -38,9 +38,8 @@
   body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
   .field { display: grid; gap: 5px; }
   .field > label, .field > span { font: 600 .68rem/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; }
-  .out { display: grid; gap: 5px; }
-  .out span { font: 600 .68rem/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; }
-  .out b { font: 700 1.15rem/1.1 var(--mono); }
+  .check { display: flex; align-items: center; gap: 8px; font: 600 .85rem/1 var(--body); padding-block: 8px; cursor: pointer; }
+  .check input { width: 20px; height: 20px; margin: 0; }
   .seg { display: inline-flex; border: 1.5px solid var(--line); border-radius: 10px; padding: 3px; gap: 2px; flex-wrap: wrap; }
   .seg button { font: 600 .8rem/1 var(--body); border: 0; background: var(--bg); color: var(--ink); padding: 8px 11px; border-radius: 7px; cursor: pointer; }
   .seg button[aria-pressed="true"] { outline: 1.5px solid var(--line); font-weight: 800; }
@@ -55,7 +54,8 @@
   .in.sm { width: 4.4rem; }
   .in.txt { width: 12.5rem; text-align: left; font: 500 .85rem/1.2 var(--body); }
   .in.wide { width: 9.5rem; }
-  .in:focus-visible, .seg button:focus-visible, .btn:focus-visible { outline: 2.5px solid var(--ink); outline-offset: 2px; }
+  .in.pick { width: auto; text-align: left; font: 600 .85rem/1 var(--body); padding: 8px 10px; }
+  .in:focus-visible, .seg button:focus-visible, .btn:focus-visible, .check input:focus-visible { outline: 2.5px solid var(--ink); outline-offset: 2px; }
   .in.changed { border-width: 2.5px; }
 
   /* tables */
@@ -67,28 +67,30 @@
   td.r, th.r { text-align: right; }
   tr.cat td { font: 700 .8rem/1 var(--display); letter-spacing: .02em; padding-block: 10px; }
   .pkg b { font: 700 .95rem/1.25 var(--display); display: block; }
-  .pkg small { display: block; font-size: .8rem; margin-top: 3px; min-width: 12rem; max-width: 20rem; }
+  .pkg small { display: block; font-size: .8rem; margin-top: 3px; min-width: 12rem; max-width: 22rem; }
   td.sel .in { border-width: 2.5px; font-weight: 800; }
   th.sel { text-decoration: underline; text-underline-offset: 3px; }
   .pill { display: inline-block; font: 600 .75rem/1 var(--mono); padding: 5px 8px; border-radius: 999px; border: 1px solid var(--line); }
   .pill.bad { background: var(--ink); color: var(--bg); }
 
   .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
-  .card { border: 1.5px solid var(--line); border-radius: 14px; padding: 18px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+  .card { border: 1.5px solid var(--line); border-radius: 14px; padding: 18px; display: grid; gap: 12px; align-content: start; min-width: 0; }
   .card ul, .card ol { margin: 0; padding-left: 1.1rem; display: grid; gap: 6px; }
   .card li { font-size: .9rem; }
   .note { font-size: .85rem; }
 
-  .planner { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+  .planner { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 16px; align-items: start; }
   .result { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 120px); }
   .kv { display: grid; grid-template-columns: 1fr auto; gap: 8px 14px; align-items: baseline; margin: 0; }
   .kv dt { font-size: .88rem; }
   .kv dd { margin: 0; font: 600 .95rem/1.2 var(--mono); text-align: right; font-variant-numeric: tabular-nums; }
-  .kv .big { font-size: 1.4rem; font-weight: 800; }
+  .kv .big { font-size: 1.5rem; font-weight: 800; }
   .kv hr { grid-column: 1 / -1; border: 0; border-top: 1px solid var(--line); margin: 2px 0; width: 100%; }
-  .bar { height: 12px; border-radius: 999px; border: 1.5px solid var(--line); overflow: hidden; }
-  .bar i { display: block; height: 100%; background: var(--ink); }
-  .verdict { font-size: .9rem; padding: 10px 12px; border-radius: 10px; border: 1.5px solid var(--line); }
+  .kv hr.thick { border-top-width: 2px; }
+  .take { border: 2px solid var(--line); border-radius: 12px; padding: 14px; display: grid; gap: 4px; }
+  .take span { font: 600 .68rem/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+  .take b { font: 800 2rem/1.1 var(--display); letter-spacing: -.02em; }
+  .take small { font: 600 .85rem/1.3 var(--mono); }
   footer { font-size: .82rem; display: grid; gap: 6px; }
   footer a { color: var(--ink); }
 
@@ -104,13 +106,13 @@
 <div class="wrap" id="pb-wrap">
   <header class="hero">
     <span class="eyebrow">Qolvik · Internal price book · FY 2026–27</span>
-    <h1>What we charge, what it costs us, and what we keep.</h1>
-    <p>Every price, hour, cost and percentage in a box can be changed right here. Profit, margins and the yearly planner update as you type. Press <b>Save prices</b> to keep your changes for next time.</p>
+    <h1>What we charge, and what we take home after tax.</h1>
+    <p>Every price and percentage in a box can be changed right here. The GST, tax and yearly take-home figures update as you type. Press <b>Save prices</b> to keep your changes for next time.</p>
     <div class="chips">
-      <span class="chip">Prices in ₹, excluding GST</span>
+      <span class="chip">Prices in ₹, before GST</span>
       <span class="chip">Year-1 support included in every build</span>
       <span class="chip">Third-party costs checked Nov 2026</span>
-      <span class="chip">Internal only: never send the cost or profit columns to a client</span>
+      <span class="chip">Internal only: share prices with clients, not this page</span>
     </div>
   </header>
 
@@ -124,18 +126,23 @@
     </div>
   </section>
 
-  <div class="assume" role="group" aria-label="Cost settings and saving">
-    <div class="field"><label for="a-salary">Avg cost per person / month (₹)</label><input class="in wide" id="a-salary" type="number" min="0" step="1000" data-k="assume.salary"></div>
-    <div class="field"><label for="a-overhead">Overheads %</label><input class="in sm" id="a-overhead" type="number" min="0" max="300" step="5" data-k="assume.overhead"></div>
-    <div class="field"><label for="a-hours">Billable hours / person / month</label><input class="in sm" id="a-hours" type="number" min="1" max="250" step="5" data-k="assume.hours"></div>
-    <div class="out"><span>Our cost per hour</span><b id="rate">₹0</b></div>
-    <div class="field"><span>Show profit at</span>
+  <div class="assume" role="group" aria-label="Price level, GST, tax and saving">
+    <div class="field"><span>Show prices at</span>
       <div class="seg" id="levelSeg">
         <button type="button" data-l="floor" aria-pressed="false">Floor</button>
         <button type="button" data-l="partner" aria-pressed="false">Partner</button>
         <button type="button" data-l="std" aria-pressed="true">Standard</button>
         <button type="button" data-l="max" aria-pressed="false">List</button>
       </div>
+    </div>
+    <div class="field"><span>GST</span><label class="check"><input id="a-gstOn" type="checkbox" data-k="tax.gstOn"> GST registered</label></div>
+    <div class="field"><label for="a-gst">GST %</label><input class="in sm" id="a-gst" type="number" min="0" max="40" step="1" data-k="tax.gst"></div>
+    <div class="field"><label for="a-mode">Income tax method</label>
+      <select class="in pick" id="a-mode" data-k="tax.mode">
+        <option value="normal">Proprietor · tax on actual profit</option>
+        <option value="44ada">Proprietor · presumptive 44ADA (50%)</option>
+        <option value="company">Private limited company (25.17%)</option>
+      </select>
     </div>
     <div class="save">
       <span class="status" id="saveStatus" aria-live="polite">All changes saved.</span>
@@ -146,9 +153,9 @@
 
   <section aria-labelledby="price-h">
     <div class="head"><span class="eyebrow">One-time build price</span><h2 id="price-h">Price chart</h2>
-      <p>Our cost = (build hours + included year-1 support hours) × our cost per hour + other costs (such as the client's first-year domain). AMC is the yearly maintenance fee from year 2, as a share of the price.</p></div>
+      <p>Prices are before GST. "Client pays" adds GST to the level you picked above. Direct cost is money you spend on that project, such as the client's first-year domain. AMC is the yearly maintenance fee from year 2, as a share of the price.</p></div>
     <div class="tbl"><table id="priceTbl">
-      <thead><tr><th>Package</th><th>Time</th><th class="r">Build hrs</th><th class="r">Support hrs</th><th class="r">Other cost ₹</th><th class="r" data-col="floor">Floor ₹</th><th class="r" data-col="partner">Partner ₹</th><th class="r" data-col="std">Standard ₹</th><th class="r" data-col="max">List ₹</th><th class="r">Our cost</th><th class="r">Profit</th><th class="r">Margin</th><th class="r">AMC %</th><th class="r">AMC / yr</th></tr></thead>
+      <thead><tr><th>Package</th><th>Time</th><th class="r" data-col="floor">Floor ₹</th><th class="r" data-col="partner">Partner ₹</th><th class="r" data-col="std">Standard ₹</th><th class="r" data-col="max">List ₹</th><th class="r">Client pays (with GST)</th><th class="r">Direct cost ₹</th><th class="r">AMC %</th><th class="r">AMC / yr</th></tr></thead>
       <tbody></tbody>
     </table></div>
   </section>
@@ -157,7 +164,7 @@
     <div class="head"><span class="eyebrow">Recurring revenue</span><h2 id="saas-h">Campus ERP as a subscription</h2>
       <p>For institutions that can't pay a large build fee up front. Prices are per student per year and include hosting, database, backups, updates and support. SMS and WhatsApp messages are billed separately.</p></div>
     <div class="tbl"><table id="saasTbl">
-      <thead><tr><th>Plan</th><th class="r" data-col="floor">Floor ₹</th><th class="r" data-col="partner">Partner ₹</th><th class="r" data-col="std">Standard ₹</th><th class="r" data-col="max">List ₹</th><th class="r">Our cost ₹</th><th class="r">Margin</th><th>Minimum and setup</th></tr></thead>
+      <thead><tr><th>Plan</th><th class="r" data-col="floor">Floor ₹</th><th class="r" data-col="partner">Partner ₹</th><th class="r" data-col="std">Standard ₹</th><th class="r" data-col="max">List ₹</th><th class="r">Hosting cost ₹</th><th class="r">Kept after hosting</th><th>Minimum and setup</th></tr></thead>
       <tbody></tbody>
     </table></div>
   </section>
@@ -188,7 +195,7 @@
           <li>Bug fixes for everything we delivered</li>
           <li>Security patches and library updates</li>
           <li>Uptime monitoring, and daily backups for apps and ERP</li>
-          <li>Small content edits, up to the support hours in the price chart</li>
+          <li>Small content edits</li>
           <li>Monthly health report for ERP clients</li>
         </ul>
         <p class="note">Not included: new features, redesigns, third-party bills, or problems caused by changes the client made. These are change requests.</p>
@@ -234,7 +241,7 @@
   </section>
 
   <section aria-labelledby="terms-h">
-    <div class="head"><span class="eyebrow">Contracts</span><h2 id="terms-h">Payment terms and bargaining rules</h2></div>
+    <div class="head"><span class="eyebrow">Contracts</span><h2 id="terms-h">Payment terms, GST and bargaining</h2></div>
     <div class="grid2">
       <div class="card">
         <h3>Payment milestones</h3>
@@ -246,7 +253,15 @@
           <li>Quotes are valid for 30 days. Scope is a written feature list; anything else is a change request.</li>
           <li>Two revision rounds per design stage</li>
         </ul>
-        <p class="note">GST: add 18% once Qolvik is GST-registered. Registration is required above ₹20 lakh yearly turnover for services. GST is paid to the government, so it is never profit. Confirm with a CA.</p>
+      </div>
+      <div class="card">
+        <h3>GST and tax rules</h3>
+        <ul>
+          <li><b>GST:</b> registration is required once yearly turnover passes ₹20 lakh. Once registered, add 18% GST to every invoice and pay it to the government each month or quarter. It is never your income.</li>
+          <li><b>GST on your purchases</b> (software, hosting, laptops) can be claimed back as input credit once registered.</li>
+          <li><b>TDS:</b> companies and institutions often deduct 2–10% TDS from what they pay you. It is not a loss; it counts against your income tax when you file.</li>
+          <li><b>Advance tax:</b> if your yearly tax is above ₹10,000, pay it in four instalments (June, September, December, March).</li>
+        </ul>
       </div>
       <div class="card">
         <h3>How to bargain without losing money</h3>
@@ -258,35 +273,43 @@
           <li>Never include unlimited changes or unlimited support.</li>
         </ol>
       </div>
+      <div class="card">
+        <h3>Income tax methods in the planner</h3>
+        <ul>
+          <li><b>Proprietor, actual profit:</b> tax on revenue minus business expenses, using the new-regime slabs (no tax up to ₹12 lakh, then 15–30%), plus 4% cess.</li>
+          <li><b>Proprietor, 44ADA:</b> tax on 50% of revenue for eligible professionals with receipts up to ₹75 lakh. Ask a CA whether your work qualifies.</li>
+          <li><b>Private limited company:</b> 25.17% on profit. Money paid out to you later as salary or dividend is taxed again.</li>
+        </ul>
+      </div>
     </div>
   </section>
 
   <section aria-labelledby="plan-h">
-    <div class="head"><span class="eyebrow">How much we keep</span><h2 id="plan-h">Yearly profit planner</h2>
-      <p>Enter how many projects you expect this year. Team salaries are paid every month whether or not there is work, so the real profit is revenue minus the whole team's yearly cost.</p></div>
+    <div class="head"><span class="eyebrow">How much you keep</span><h2 id="plan-h">Yearly take-home after GST and tax</h2>
+      <p>Enter how many projects you expect this year. The planner takes out GST, business expenses and income tax, and shows what is left for you.</p></div>
     <div class="planner">
       <div class="card" style="padding:0;overflow:hidden">
         <div class="tbl" style="border:0;border-radius:0"><table id="planTbl">
-          <thead><tr><th>Package</th><th class="r">Projects</th><th class="r">Revenue</th><th class="r">Hours</th></tr></thead>
+          <thead><tr><th>Package</th><th class="r">Projects</th><th class="r">Revenue (before GST)</th></tr></thead>
           <tbody></tbody>
         </table></div>
       </div>
       <div class="card result">
-        <div class="field"><label for="a-team">Team size (people paid monthly)</label><input class="in sm" id="a-team" type="number" min="1" max="200" step="1" data-k="assume.team"></div>
+        <div class="field"><label for="a-exp">Other business expenses per year (₹)</label><input class="in wide" id="a-exp" type="number" min="0" step="1000" data-k="tax.expenses"></div>
         <dl class="kv" id="planOut"></dl>
-        <div><div class="note" style="margin-bottom:6px">Team utilisation <b id="utilTxt"></b></div><div class="bar"><i id="utilBar"></i></div></div>
-        <div class="verdict" id="verdict"></div>
+        <div class="take"><span>You take home in a year, after tax</span><b id="takeYear">₹0</b><small id="takeMonth"></small></div>
+        <p class="note" id="taxNote"></p>
       </div>
     </div>
   </section>
 
   <footer>
     <p><b>Sources and assumptions.</b> 2026 Indian market ranges for websites, MVPs and education ERP come from published agency and vendor guides, such as <a href="https://www.hostinger.com/in/tutorials/website-cost" target="_blank" rel="noopener">Hostinger India</a>, <a href="https://nletschool.com/cost-breakdown-of-implementing-a-school-management-system-in-india" target="_blank" rel="noopener">NLET</a>, <a href="https://codingclave.com/blog/college-erp-software-india" target="_blank" rel="noopener">Codingclave</a> and <a href="https://edutinker.com/?p=39687" target="_blank" rel="noopener">EduTinker</a>. Hosting and SMS rates come from <a href="https://supabase.com/pricing" target="_blank" rel="noopener">Supabase</a>, <a href="https://vercel.com/pricing" target="_blank" rel="noopener">Vercel</a> and <a href="https://www.messagecentral.com/blog/a2p-sms-pricing-india" target="_blank" rel="noopener">Message Central</a>. Dollar prices are converted at about ₹85 per $1.</p>
-    <p>Hours are estimates for a team that already has the Qolvik design system and ERP base. Recheck third-party prices before quoting, and review this price book every 6 months.</p>
+    <p>Income tax uses the new-regime slabs from FY 2025-26 (rebate up to ₹12 lakh, 4% cess, surcharge above ₹50 lakh). Budget changes can move these, so confirm your final tax with a CA. Review this price book every 6 months.</p>
   </footer>
 </div>
 
-<script type="application/json" id="pb-data">{"assume":{"salary":45000,"overhead":40,"hours":140,"team":5},"pkg":[{"cat":"Websites","name":"Starter website","d":"Up to 5 pages, custom design, mobile-ready, contact form, basic SEO, custom domain","t":"2–3 wks","h":40,"s":6,"o":1500,"floor":30000,"partner":36000,"std":42000,"max":60000,"amc":15,"q":5},{"cat":"Websites","name":"Business website","d":"6–12 pages, editable content (CMS), blog, SEO setup, analytics, custom domain","t":"3–5 wks","h":90,"s":12,"o":1500,"floor":68000,"partner":80000,"std":92000,"max":130000,"amc":15,"q":3},{"cat":"Websites","name":"Animated website","d":"Scroll and hover motion, animated headlines, smooth scrolling, 5–10 pages","t":"4–6 wks","h":140,"s":16,"o":1500,"floor":105000,"partner":123000,"std":140000,"max":200000,"amc":15,"q":2},{"cat":"Websites","name":"Premium interactive website","d":"Custom interactions, 3D or WebGL scenes, live demos and a design system","t":"7–10 wks","h":280,"s":30,"o":1500,"floor":205000,"partner":243000,"std":280000,"max":400000,"amc":15,"q":1},{"cat":"Websites","name":"E-commerce or dynamic website","d":"Catalogue, cart, online checkout, orders admin, stock and invoices","t":"6–9 wks","h":260,"s":30,"o":1500,"floor":190000,"partner":225000,"std":260000,"max":375000,"amc":18,"q":1},{"cat":"Design","name":"UI/UX design for an app or portal","d":"Research, user flows, wireframes, 15–25 screens, clickable prototype, mini design system, handoff","t":"3–5 wks","h":120,"s":4,"o":0,"floor":82000,"partner":96000,"std":110000,"max":160000,"amc":0,"q":2},{"cat":"Products","name":"Lean MVP","d":"Web app with sign-in, 3–5 core features, admin panel, analytics and launch","t":"6–8 wks","h":380,"s":40,"o":0,"floor":280000,"partner":330000,"std":380000,"max":540000,"amc":18,"q":1},{"cat":"Products","name":"Web application or advanced MVP","d":"Roles and permissions, payments, dashboards, APIs and integrations, audit logs","t":"10–16 wks","h":750,"s":80,"o":0,"floor":550000,"partner":650000,"std":750000,"max":1050000,"amc":20,"q":1},{"cat":"Products","name":"Mobile app (iOS + Android)","d":"One Flutter app on both stores, push notifications, connects to a backend","t":"8–12 wks","h":400,"s":40,"o":0,"floor":290000,"partner":345000,"std":400000,"max":560000,"amc":20,"q":0},{"cat":"Campus ERP","name":"School ERP","d":"Up to ~800 students: admissions, attendance, fees and reminders, exams and report cards, parent SMS, dashboard","t":"8–10 wks","h":450,"s":60,"o":0,"floor":340000,"partner":400000,"std":460000,"max":650000,"amc":18,"q":2},{"cat":"Campus ERP","name":"College ERP","d":"800–3,000 students: School ERP plus semesters, exam cell, timetable, library, hostel, transport, parent and student app, online fees","t":"14–20 wks","h":900,"s":120,"o":0,"floor":680000,"partner":800000,"std":920000,"max":1300000,"amc":18,"q":1},{"cat":"Campus ERP","name":"University or multi-campus ERP","d":"Multiple campuses and affiliated colleges, NAAC/NIRF reports, research and faculty records, fine-grained roles, single sign-on","t":"6–9 months","h":2000,"s":250,"o":0,"floor":1500000,"partner":1750000,"std":2000000,"max":2900000,"amc":20,"q":0}],"saas":[{"name":"School ERP subscription","floor":120,"partner":150,"std":180,"max":250,"cost":50,"min":"₹50,000 a year minimum; setup ₹25,000–60,000","q":0},{"name":"College ERP subscription","floor":220,"partner":260,"std":300,"max":420,"cost":80,"min":"₹1,50,000 a year minimum; setup ₹60,000–1,50,000","q":0}],"run":[{"item":".com domain","cost":"₹1,000–1,600 / yr","charge":"₹1,800 / yr","note":"Renewals usually cost more than the first year"},{"item":".in domain","cost":"₹700–1,000 / yr","charge":"₹1,200 / yr","note":"Best for Indian schools and businesses"},{"item":".ac.in or .edu.in domain","cost":"ERNET India fee","charge":"Cost + ₹1,000","note":"Only for recognised institutions; they supply documents"},{"item":"Extra domain or microsite","cost":"₹1,000–1,600 / yr","charge":"₹2,000 setup + ₹1,800 / yr","note":"Each separate site or brand"},{"item":"Email on the client's domain","cost":"Provider's mailbox fee","charge":"₹3,000 setup","note":"Mailbox fees paid by the client to the provider"},{"item":"SSL certificate","cost":"Free","charge":"Included","note":"Automatic on modern hosting"},{"item":"Website Care (from year 2)","cost":"₹0–1,700 / month","charge":"₹6,000–12,000 / yr","note":"Domain renewal, hosting, SSL, uptime checks, backups. Vercel's free plan is non-commercial; use Cloudflare Pages, Netlify or Vercel Pro."},{"item":"Database for MVPs and apps","cost":"≈ ₹2,200 / month","charge":"Inside App Hosting","note":"Supabase Pro is about $25 a month plus usage. Never run a client app on a free tier."},{"item":"App Hosting","cost":"₹2,500–10,000 / month","charge":"₹40,000–1,20,000 / yr","note":"Server, database, backups, monitoring"},{"item":"ERP Hosting","cost":"₹5,000–20,000 / month","charge":"₹60,000–3,00,000 / yr","note":"Sized by students and campuses"},{"item":"Transactional email","cost":"Free – ≈ $20 / month","charge":"Included","note":"Resend's free tier covers about 3,000 emails a month"},{"item":"SMS (DLT registered)","cost":"₹0.12–0.25 / SMS + GST","charge":"Cost + 10–20%","note":"Prepaid packs; the institution registers on DLT once"},{"item":"WhatsApp Business messages","cost":"Meta per-message rates","charge":"Cost + 10–20%","note":"Check Meta's current India pricing"},{"item":"Payment gateway","cost":"≈ 2% per payment","charge":"Paid by client","note":"Deducted from the client's collections"},{"item":"App stores","cost":"Play $25 once · Apple $99 / yr","charge":"At cost","note":"Always in the client's own developer accounts"}],"addons":[{"item":"Extra website page","price":"₹3,000–6,000 per page","note":"Same design system"},{"item":"Extra UI/UX screen","price":"₹3,000–6,000 per screen","note":"Includes handoff"},{"item":"Second language (Hindi, Marathi…)","price":"+15–20% of price","note":"Client supplies or approves translations"},{"item":"Payment gateway (Razorpay, Cashfree)","price":"₹15,000–30,000","note":"Gateway fee of about 2% per payment is paid by the client"},{"item":"SMS or WhatsApp alerts","price":"₹12,000–25,000","note":"Integration only; messages billed separately"},{"item":"Data migration (Excel or old ERP)","price":"₹15,000–60,000","note":"Per institution; depends on how clean the data is"},{"item":"On-site staff training","price":"₹8,000–15,000 per day","note":"Plus travel outside our city"},{"item":"Logo and brand kit","price":"₹15,000–45,000","note":"Logo, colours, type, social templates"},{"item":"Monthly SEO and content","price":"₹12,000–30,000 / month","note":"3-month minimum"},{"item":"Copywriting","price":"₹1,500–3,000 per page","note":""},{"item":"Change requests","price":"₹1,200 / ₹1,500 / ₹2,500 per hr","note":"AMC clients / standard / urgent (within 24 hours)"}]}</script>
+<script type="application/json" id="pb-data">{"tax":{"gstOn":true,"gst":18,"mode":"normal","expenses":240000},"pkg":[{"cat":"Websites","name":"Starter website","d":"Up to 5 pages, custom design, mobile-ready, contact form, basic SEO, custom domain","t":"2–3 wks","o":1500,"floor":30000,"partner":36000,"std":42000,"max":60000,"amc":15,"q":5},{"cat":"Websites","name":"Business website","d":"6–12 pages, editable content (CMS), blog, SEO setup, analytics, custom domain","t":"3–5 wks","o":1500,"floor":68000,"partner":80000,"std":92000,"max":130000,"amc":15,"q":3},{"cat":"Websites","name":"Animated website","d":"Scroll and hover motion, animated headlines, smooth scrolling, 5–10 pages","t":"4–6 wks","o":1500,"floor":105000,"partner":123000,"std":140000,"max":200000,"amc":15,"q":2},{"cat":"Websites","name":"Premium interactive website","d":"Custom interactions, 3D or WebGL scenes, live demos and a design system","t":"7–10 wks","o":1500,"floor":205000,"partner":243000,"std":280000,"max":400000,"amc":15,"q":1},{"cat":"Websites","name":"E-commerce or dynamic website","d":"Catalogue, cart, online checkout, orders admin, stock and invoices","t":"6–9 wks","o":1500,"floor":190000,"partner":225000,"std":260000,"max":375000,"amc":18,"q":1},{"cat":"Design","name":"UI/UX design for an app or portal","d":"Research, user flows, wireframes, 15–25 screens, clickable prototype, mini design system, handoff","t":"3–5 wks","o":0,"floor":82000,"partner":96000,"std":110000,"max":160000,"amc":0,"q":2},{"cat":"Products","name":"Lean MVP","d":"Web app with sign-in, 3–5 core features, admin panel, analytics and launch","t":"6–8 wks","o":0,"floor":280000,"partner":330000,"std":380000,"max":540000,"amc":18,"q":1},{"cat":"Products","name":"Web application or advanced MVP","d":"Roles and permissions, payments, dashboards, APIs and integrations, audit logs","t":"10–16 wks","o":0,"floor":550000,"partner":650000,"std":750000,"max":1050000,"amc":20,"q":1},{"cat":"Products","name":"Mobile app (iOS + Android)","d":"One Flutter app on both stores, push notifications, connects to a backend","t":"8–12 wks","o":0,"floor":290000,"partner":345000,"std":400000,"max":560000,"amc":20,"q":0},{"cat":"Campus ERP","name":"School ERP","d":"Up to ~800 students: admissions, attendance, fees and reminders, exams and report cards, parent SMS, dashboard","t":"8–10 wks","o":0,"floor":340000,"partner":400000,"std":460000,"max":650000,"amc":18,"q":2},{"cat":"Campus ERP","name":"College ERP","d":"800–3,000 students: School ERP plus semesters, exam cell, timetable, library, hostel, transport, parent and student app, online fees","t":"14–20 wks","o":0,"floor":680000,"partner":800000,"std":920000,"max":1300000,"amc":18,"q":1},{"cat":"Campus ERP","name":"University or multi-campus ERP","d":"Multiple campuses and affiliated colleges, NAAC/NIRF reports, research and faculty records, fine-grained roles, single sign-on","t":"6–9 months","o":0,"floor":1500000,"partner":1750000,"std":2000000,"max":2900000,"amc":20,"q":0}],"saas":[{"name":"School ERP subscription","floor":120,"partner":150,"std":180,"max":250,"cost":50,"min":"₹50,000 a year minimum; setup ₹25,000–60,000","q":0},{"name":"College ERP subscription","floor":220,"partner":260,"std":300,"max":420,"cost":80,"min":"₹1,50,000 a year minimum; setup ₹60,000–1,50,000","q":0}],"run":[{"item":".com domain","cost":"₹1,000–1,600 / yr","charge":"₹1,800 / yr","note":"Renewals usually cost more than the first year"},{"item":".in domain","cost":"₹700–1,000 / yr","charge":"₹1,200 / yr","note":"Best for Indian schools and businesses"},{"item":".ac.in or .edu.in domain","cost":"ERNET India fee","charge":"Cost + ₹1,000","note":"Only for recognised institutions; they supply documents"},{"item":"Extra domain or microsite","cost":"₹1,000–1,600 / yr","charge":"₹2,000 setup + ₹1,800 / yr","note":"Each separate site or brand"},{"item":"Email on the client's domain","cost":"Provider's mailbox fee","charge":"₹3,000 setup","note":"Mailbox fees paid by the client to the provider"},{"item":"SSL certificate","cost":"Free","charge":"Included","note":"Automatic on modern hosting"},{"item":"Website Care (from year 2)","cost":"₹0–1,700 / month","charge":"₹6,000–12,000 / yr","note":"Domain renewal, hosting, SSL, uptime checks, backups. Vercel's free plan is non-commercial; use Cloudflare Pages, Netlify or Vercel Pro."},{"item":"Database for MVPs and apps","cost":"≈ ₹2,200 / month","charge":"Inside App Hosting","note":"Supabase Pro is about $25 a month plus usage. Never run a client app on a free tier."},{"item":"App Hosting","cost":"₹2,500–10,000 / month","charge":"₹40,000–1,20,000 / yr","note":"Server, database, backups, monitoring"},{"item":"ERP Hosting","cost":"₹5,000–20,000 / month","charge":"₹60,000–3,00,000 / yr","note":"Sized by students and campuses"},{"item":"Transactional email","cost":"Free – ≈ $20 / month","charge":"Included","note":"Resend's free tier covers about 3,000 emails a month"},{"item":"SMS (DLT registered)","cost":"₹0.12–0.25 / SMS + GST","charge":"Cost + 10–20%","note":"Prepaid packs; the institution registers on DLT once"},{"item":"WhatsApp Business messages","cost":"Meta per-message rates","charge":"Cost + 10–20%","note":"Check Meta's current India pricing"},{"item":"Payment gateway","cost":"≈ 2% per payment","charge":"Paid by client","note":"Deducted from the client's collections"},{"item":"App stores","cost":"Play $25 once · Apple $99 / yr","charge":"At cost","note":"Always in the client's own developer accounts"}],"addons":[{"item":"Extra website page","price":"₹3,000–6,000 per page","note":"Same design system"},{"item":"Extra UI/UX screen","price":"₹3,000–6,000 per screen","note":"Includes handoff"},{"item":"Second language (Hindi, Marathi…)","price":"+15–20% of price","note":"Client supplies or approves translations"},{"item":"Payment gateway (Razorpay, Cashfree)","price":"₹15,000–30,000","note":"Gateway fee of about 2% per payment is paid by the client"},{"item":"SMS or WhatsApp alerts","price":"₹12,000–25,000","note":"Integration only; messages billed separately"},{"item":"Data migration (Excel or old ERP)","price":"₹15,000–60,000","note":"Per institution; depends on how clean the data is"},{"item":"On-site staff training","price":"₹8,000–15,000 per day","note":"Plus travel outside our city"},{"item":"Logo and brand kit","price":"₹15,000–45,000","note":"Logo, colours, type, social templates"},{"item":"Monthly SEO and content","price":"₹12,000–30,000 / month","note":"3-month minimum"},{"item":"Copywriting","price":"₹1,500–3,000 per page","note":""},{"item":"Change requests","price":"₹1,200 / ₹1,500 / ₹2,500 per hr","note":"AMC clients / standard / urgent (within 24 hours)"}]}</script>
 
 <script id="pb-app">
 (() => {
@@ -307,29 +330,46 @@
   const $ = (s) => document.querySelector(s);
   const esc = (v) => String(v).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const inr = (n) => (n < 0 ? "−₹" : "₹") + Math.round(Math.abs(n)).toLocaleString("en-IN");
-  const pct = (n) => (isFinite(n) ? Math.round(n * 100) : 0) + "%";
+  const pct = (n) => (isFinite(n) ? Math.round(n * 1000) / 10 : 0) + "%";
   const val = (v) => (typeof v === "number" && isFinite(v) && v >= 0 ? v : 0);
   const get = (path) => path.split(".").reduce((o, k) => (o == null ? o : o[k]), S);
   const set = (path, v) => { const ks = path.split("."); const last = ks.pop(); const o = ks.reduce((a, k) => a[k], S); o[last] = v; };
 
   const numIn = (path, cls = "") => `<input class="in ${cls}" type="number" min="0" step="any" data-k="${path}" value="${esc(get(path))}" aria-label="${esc(path)}">`;
   const txtIn = (path, cls = "txt") => `<input class="in ${cls}" type="text" data-k="${path}" value="${esc(get(path))}" aria-label="${esc(path)}">`;
+  const gstRate = () => (S.tax.gstOn ? val(S.tax.gst) / 100 : 0);
 
-  const rate = () => val(S.assume.salary) * (1 + val(S.assume.overhead) / 100) / Math.max(1, val(S.assume.hours));
+  // ---- Income tax (India, new regime slabs FY 2025-26) ----
+  const SLABS = [[400000, 0], [800000, 0.05], [1200000, 0.10], [1600000, 0.15], [2000000, 0.20], [2400000, 0.25], [Infinity, 0.30]];
+  function slabTax(income) {
+    let tax = 0, prev = 0;
+    for (const [upTo, r] of SLABS) { if (income > prev) tax += (Math.min(income, upTo) - prev) * r; prev = upTo; }
+    if (income <= 1200000) return 0;                          // section 87A rebate
+    tax = Math.min(tax, income - 1200000);                     // marginal relief just above ₹12 lakh
+    const sur = income > 20000000 ? 0.25 : income > 10000000 ? 0.15 : income > 5000000 ? 0.10 : 0;
+    return tax * (1 + sur) * 1.04;                             // surcharge, then 4% cess
+  }
+  function incomeTax(revenue, profit) {
+    const mode = S.tax.mode;
+    if (mode === "company") return { tax: Math.max(0, profit) * 0.25168, note: "Company tax at 25.17% (22% + 10% surcharge + 4% cess). This is what the company keeps; paying it out to you later is taxed again." };
+    if (mode === "44ada") {
+      if (revenue <= 7500000) { const taxable = revenue * 0.5; return { tax: slabTax(taxable), note: `Presumptive 44ADA: tax on 50% of revenue (${inr(taxable)}), new-regime slabs, 4% cess. Confirm with a CA that your work qualifies.` }; }
+      return { tax: slabTax(Math.max(0, profit)), note: "Revenue is above ₹75 lakh, so 44ADA doesn't apply. Tax is on actual profit instead." };
+    }
+    return { tax: slabTax(Math.max(0, profit)), note: "Tax on actual profit with the new-regime slabs: nothing up to ₹12 lakh, then 15–30%, plus 4% cess." };
+  }
 
   function renderTables() {
     let html = "", cat = "";
     S.pkg.forEach((p, i) => {
-      if (p.cat !== cat) { cat = p.cat; html += `<tr class="cat"><td colspan="14">${esc(cat)}</td></tr>`; }
+      if (p.cat !== cat) { cat = p.cat; html += `<tr class="cat"><td colspan="10">${esc(cat)}</td></tr>`; }
       const L = (l) => `<td class="r" data-col="${l}">${numIn(`pkg.${i}.${l}`)}</td>`;
       html += `<tr>
         <td class="pkg"><b>${esc(p.name)}</b><small>${esc(p.d)}</small></td>
         <td class="num">${esc(p.t)}</td>
-        <td class="r">${numIn(`pkg.${i}.h`, "sm")}</td>
-        <td class="r">${numIn(`pkg.${i}.s`, "sm")}</td>
-        <td class="r">${numIn(`pkg.${i}.o`, "sm")}</td>
         ${L("floor")}${L("partner")}${L("std")}${L("max")}
-        <td class="r num" id="cost${i}"></td><td class="r num" id="profit${i}"></td><td class="r" id="margin${i}"></td>
+        <td class="r num" id="gross${i}"></td>
+        <td class="r">${numIn(`pkg.${i}.o`, "sm")}</td>
         <td class="r">${numIn(`pkg.${i}.amc`, "sm")}</td><td class="r num" id="amc${i}"></td>
       </tr>`;
     });
@@ -344,11 +384,15 @@
     $("#runTbl tbody").innerHTML = S.run.map((r, i) => `<tr><td><b>${esc(r.item)}</b></td><td>${txtIn(`run.${i}.cost`)}</td><td>${txtIn(`run.${i}.charge`)}</td><td>${esc(r.note)}</td></tr>`).join("");
     $("#addonTbl tbody").innerHTML = S.addons.map((a, i) => `<tr><td><b>${esc(a.item)}</b></td><td>${txtIn(`addons.${i}.price`)}</td><td>${esc(a.note)}</td></tr>`).join("");
 
-    const plan = S.pkg.map((p, i) => `<tr><td>${esc(p.name)}</td><td class="r">${numIn(`pkg.${i}.q`, "sm")}</td><td class="r num" id="rev${i}"></td><td class="r num" id="hrs${i}"></td></tr>`);
-    const sub = S.saas.map((p, i) => `<tr><td>${esc(p.name)} <span>(students)</span></td><td class="r">${numIn(`saas.${i}.q`, "sm")}</td><td class="r num" id="srev${i}"></td><td class="r num">—</td></tr>`);
+    const plan = S.pkg.map((p, i) => `<tr><td>${esc(p.name)}</td><td class="r">${numIn(`pkg.${i}.q`, "sm")}</td><td class="r num" id="rev${i}"></td></tr>`);
+    const sub = S.saas.map((p, i) => `<tr><td>${esc(p.name)} (students)</td><td class="r">${numIn(`saas.${i}.q`, "sm")}</td><td class="r num" id="srev${i}"></td></tr>`);
     $("#planTbl tbody").innerHTML = plan.join("") + sub.join("");
 
-    ["salary", "overhead", "hours", "team"].forEach((k) => { $("#a-" + k).value = S.assume[k]; });
+    $("#a-gstOn").checked = !!S.tax.gstOn;
+    $("#a-gst").value = S.tax.gst;
+    $("#a-mode").value = S.tax.mode;
+    $("#a-exp").value = S.tax.expenses;
+    $("#a-gst").disabled = !S.tax.gstOn;
     markLevel();
   }
 
@@ -357,60 +401,47 @@
     document.querySelectorAll("#levelSeg button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.l === level)));
   }
 
-  const pill = (m) => `<span class="pill${m < 0.25 ? " bad" : ""}">${pct(m)}</span>`;
-
   function compute() {
-    const r = rate();
-    $("#rate").textContent = inr(r);
-    let revenue = 0, hours = 0, amcNext = 0, projects = 0, other = 0, saasRev = 0, saasCost = 0;
+    const g = gstRate();
+    let revenue = 0, amcNext = 0, projects = 0, direct = 0, saasRev = 0, hosting = 0;
     S.pkg.forEach((p, i) => {
-      const cost = (val(p.h) + val(p.s)) * r + val(p.o);
-      const price = val(p[level]), profit = price - cost;
-      $("#cost" + i).textContent = inr(cost);
-      $("#profit" + i).textContent = inr(profit);
-      $("#margin" + i).innerHTML = price ? pill(profit / price) : "—";
+      const price = val(p[level]);
+      $("#gross" + i).textContent = inr(price * (1 + g));
       $("#amc" + i).textContent = val(p.amc) ? inr(price * val(p.amc) / 100) : "—";
       const q = Math.round(val(p.q));
-      revenue += q * price; hours += q * (val(p.h) + val(p.s)); projects += q; other += q * val(p.o); amcNext += q * price * val(p.amc) / 100;
+      revenue += q * price; projects += q; direct += q * val(p.o); amcNext += q * price * val(p.amc) / 100;
       $("#rev" + i).textContent = q ? inr(q * price) : "—";
-      $("#hrs" + i).textContent = q ? (q * (val(p.h) + val(p.s))).toLocaleString("en-IN") : "—";
     });
     S.saas.forEach((p, i) => {
       const price = val(p[level]);
-      $("#smargin" + i).innerHTML = price ? pill((price - val(p.cost)) / price) : "—";
+      $("#smargin" + i).textContent = price ? inr(price - val(p.cost)) : "—";
       const n = Math.round(val(p.q));
-      saasRev += n * price; saasCost += n * val(p.cost);
+      saasRev += n * price; hosting += n * val(p.cost);
       $("#srev" + i).textContent = n ? inr(n * price) : "—";
     });
-    const team = Math.max(1, Math.round(val(S.assume.team)));
-    const teamCost = team * val(S.assume.salary) * (1 + val(S.assume.overhead) / 100) * 12;
-    const capacity = team * Math.max(1, val(S.assume.hours)) * 12;
-    const util = hours / capacity;
     const total = revenue + saasRev;
-    const costs = teamCost + saasCost + other;
-    const profit = total - costs;
-    const margin = total ? profit / total : 0;
+    const gstAmt = total * g;
+    const expenses = val(S.tax.expenses);
+    const profit = total - direct - hosting - expenses;
+    const t = incomeTax(total, profit);
+    const take = profit - t.tax;
     $("#planOut").innerHTML = `
       <dt>Projects this year</dt><dd>${projects}</dd>
-      <dt>Project revenue</dt><dd>${inr(revenue)}</dd>
-      <dt>Subscription revenue</dt><dd>${inr(saasRev)}</dd>
-      <dt><b>Total revenue</b> (excluding GST)</dt><dd class="big">${inr(total)}</dd>
+      <dt>Clients pay you (with GST)</dt><dd>${inr(total + gstAmt)}</dd>
+      <dt>GST paid to the government${S.tax.gstOn ? ` (${val(S.tax.gst)}%)` : " (not registered)"}</dt><dd>− ${inr(gstAmt)}</dd>
       <hr>
-      <dt>Team cost for the year</dt><dd>${inr(teamCost)}</dd>
-      <dt>Other project costs (domains etc.)</dt><dd>${inr(other)}</dd>
-      <dt>Subscription running cost</dt><dd>${inr(saasCost)}</dd>
-      <dt>Revenue needed to break even</dt><dd>${inr(costs)}</dd>
+      <dt><b>Your revenue</b> (before GST)</dt><dd class="big">${inr(total)}</dd>
+      <dt>Project costs (domains and similar)</dt><dd>− ${inr(direct)}</dd>
+      <dt>Subscription hosting</dt><dd>− ${inr(hosting)}</dd>
+      <dt>Other business expenses</dt><dd>− ${inr(expenses)}</dd>
       <hr>
-      <dt><b>Studio profit</b> before tax</dt><dd class="big">${inr(profit)}</dd>
-      <dt>Studio margin</dt><dd>${pct(margin)}</dd>
-      <dt>AMC income next year (from these builds)</dt><dd>${inr(amcNext)}</dd>`;
-    $("#utilTxt").textContent = `${pct(util)} · ${Math.round(hours).toLocaleString("en-IN")} of ${capacity.toLocaleString("en-IN")} hours`;
-    $("#utilBar").style.width = Math.min(100, util * 100) + "%";
-    $("#verdict").textContent =
-      util > 0.9 ? "Over 90% booked. Deadlines will slip; hire, raise prices or say no to some work." :
-      profit < 0 ? `Loss of ${inr(-profit)}. Win more work, quote nearer Standard or List, or keep the paid team smaller until the pipeline grows.` :
-      util < 0.55 ? "Profitable, but the team is under 55% booked. There is room for more projects or subscriptions." :
-      `Healthy: ${pct(margin)} margin with the team ${pct(util)} booked, plus ${inr(amcNext)} AMC income lined up for next year.`;
+      <dt><b>Profit before tax</b></dt><dd class="big">${inr(profit)}</dd>
+      <dt>Income tax${total ? ` (${pct(t.tax / Math.max(1, profit))} of profit)` : ""}</dt><dd>− ${inr(t.tax)}</dd>
+      <hr class="thick">
+      <dt>AMC income already lined up for next year (before GST)</dt><dd>${inr(amcNext)}</dd>`;
+    $("#takeYear").textContent = inr(take);
+    $("#takeMonth").textContent = `About ${inr(take / 12)} a month`;
+    $("#taxNote").textContent = t.note + (total > 2000000 && !S.tax.gstOn ? " Revenue is above ₹20 lakh, so GST registration is required." : "");
   }
 
   function setStatus(msg) { $("#saveStatus").textContent = msg; }
@@ -425,8 +456,10 @@
     const el = e.target.closest("[data-k]");
     if (!el) return;
     const k = el.dataset.k;
-    if (el.type === "number") { const v = parseFloat(el.value); set(k, isFinite(v) && v >= 0 ? v : 0); }
+    if (el.type === "checkbox") set(k, el.checked);
+    else if (el.type === "number") { const v = parseFloat(el.value); set(k, isFinite(v) && v >= 0 ? v : 0); }
     else set(k, el.value);
+    if (k === "tax.gstOn") $("#a-gst").disabled = !el.checked;
     el.classList.add("changed");
     compute();
     setDirty(true);
@@ -471,6 +504,7 @@
   renderTables();
   compute();
   document.addEventListener("input", onInput);
+  document.addEventListener("change", (e) => { if (e.target.matches("select[data-k], input[type=checkbox][data-k]")) onInput(e); });
   $("#levelSeg").addEventListener("click", (e) => { const b = e.target.closest("button[data-l]"); if (!b) return; level = b.dataset.l; markLevel(); compute(); });
   $("#saveBtn").addEventListener("click", save);
   $("#undoBtn").addEventListener("click", undo);
