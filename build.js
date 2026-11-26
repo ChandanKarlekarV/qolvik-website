@@ -12,7 +12,7 @@ const path = require("path");
 const crypto = require("crypto");
 const { pathToFileURL } = require("url");
 
-const SITE_URL = (process.env.SITE_URL || "https://qolvik.vercel.app").replace(/\/$/, "");
+const SITE_URL = (process.env.SITE_URL || "https://qolvik.com").replace(/\/$/, "");
 const root = __dirname;
 const out = path.join(root, "dist");
 const PAGES = ["index.html", "projects.html", "design-system.html", "privacy.html", "terms.html", "404.html"];
