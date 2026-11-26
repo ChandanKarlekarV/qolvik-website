@@ -1,0 +1,460 @@
+<title>Qolvik Price Book</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@600;700&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
+<style>
+  /* Layout: one reading column of price tables, an assumptions bar that drives every profit number, and a planner at the end. */
+  :root {
+    --bg: #FBF7F3; --surface: #FFFFFF; --sunk: #F5EDE5; --ink: #141414; --muted: #5A5A5A; --line: #EADBCD;
+    --accent: #C2501A; --accent-ink: #8E3412; --accent-soft: #FBE7D6;
+    --teal: #1E5F66; --teal-soft: #DCEFED; --good: #1F6B3B; --good-soft: #E1F2E6; --bad: #A12A12; --bad-soft: #FBE3DC;
+    --display: "Inter Tight", "Manrope", system-ui, sans-serif;
+    --body: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+    --bg: #141210; --surface: #1D1A17; --sunk: #25201C; --ink: #F5EDE5; --muted: #B5ADA6; --line: #3A322C;
+    --accent: #E8853D; --accent-ink: #F2B783; --accent-soft: #3A2414;
+    --teal: #7FC4BE; --teal-soft: #123A3F; --good: #7FD39A; --good-soft: #15301F; --bad: #F29A82; --bad-soft: #3B1A12; color-scheme: dark; } }
+  :root[data-theme="dark"] {
+    --bg: #141210; --surface: #1D1A17; --sunk: #25201C; --ink: #F5EDE5; --muted: #B5ADA6; --line: #3A322C;
+    --accent: #E8853D; --accent-ink: #F2B783; --accent-soft: #3A2414;
+    --teal: #7FC4BE; --teal-soft: #123A3F; --good: #7FD39A; --good-soft: #15301F; --bad: #F29A82; --bad-soft: #3B1A12; color-scheme: dark; }
+
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--ink); font: 400 15px/1.6 var(--body); -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding-block: 40px 80px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; grid-template-columns: minmax(0, 1fr); gap: 56px; }
+  h1, h2, h3 { font-family: var(--display); letter-spacing: -.02em; text-wrap: balance; margin: 0; }
+  h1 { font-size: clamp(2rem, 5vw, 3.2rem); line-height: 1.05; }
+  h2 { font-size: 1.6rem; line-height: 1.15; }
+  h3 { font-size: 1.05rem; }
+  p { margin: 0; max-width: 70ch; }
+  .eyebrow { font: 600 .72rem/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--accent-ink); }
+  .muted { color: var(--muted); }
+  .num { font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  section { display: grid; gap: 18px; min-width: 0; }
+  .head { display: grid; gap: 8px; }
+
+  /* hero */
+  .hero { display: grid; gap: 18px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { font: 600 .75rem/1 var(--mono); padding: 8px 11px; border-radius: 999px; background: var(--sunk); color: var(--muted); border: 1px solid var(--line); }
+  .chip.warn { background: var(--accent-soft); color: var(--accent-ink); border-color: transparent; }
+
+  /* price levels legend */
+  .levels { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+  .level { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px; display: grid; gap: 6px; align-content: start; }
+  .level b { font: 700 1rem/1.2 var(--display); }
+  .level .tag { justify-self: start; font: 600 .68rem/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; padding: 5px 8px; border-radius: 999px; }
+  .t-floor { background: var(--bad-soft); color: var(--bad); }
+  .t-partner { background: var(--teal-soft); color: var(--teal); }
+  .t-std { background: var(--good-soft); color: var(--good); }
+  .t-max { background: var(--accent-soft); color: var(--accent-ink); }
+  .level p { font-size: .88rem; color: var(--muted); }
+
+  /* assumptions bar */
+  .assume { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: end; box-shadow: 0 10px 30px -18px rgb(20 20 20 / .35); }
+  body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+  .field { display: grid; gap: 4px; }
+  .field label { font: 600 .68rem/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .field input, .field select { font: 600 .95rem/1 var(--mono); color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; width: 9.5rem; }
+  .field input:focus-visible, .field select:focus-visible, .seg button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .out { display: grid; gap: 4px; }
+  .out span { font: 600 .68rem/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .out b { font: 700 1.15rem/1.1 var(--mono); color: var(--accent-ink); }
+  .seg { display: inline-flex; background: var(--sunk); border: 1px solid var(--line); border-radius: 10px; padding: 3px; gap: 2px; flex-wrap: wrap; }
+  .seg button { font: 600 .8rem/1 var(--body); border: 0; background: transparent; color: var(--muted); padding: 8px 11px; border-radius: 7px; cursor: pointer; }
+  .seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgb(0 0 0 / .15); }
+
+  /* tables */
+  .tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+  table { width: 100%; border-collapse: collapse; font-size: .84rem; }
+  th, td { padding: 10px 9px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); }
+  thead th { font: 600 .68rem/1.3 var(--mono); letter-spacing: .07em; text-transform: uppercase; color: var(--muted); background: var(--sunk); position: sticky; top: 0; white-space: nowrap; }
+  tbody tr:last-child td { border-bottom: 0; }
+  td.r, th.r { text-align: right; }
+  tr.cat td { background: var(--bg); font: 700 .8rem/1 var(--display); letter-spacing: .02em; color: var(--accent-ink); padding-block: 10px; }
+  .pkg b { font: 700 .95rem/1.25 var(--display); display: block; }
+  .pkg small { display: block; color: var(--muted); font-size: .8rem; margin-top: 3px; min-width: 12rem; max-width: 22rem; }
+  .p-floor { color: var(--bad); } .p-partner { color: var(--teal); } .p-std { color: var(--good); font-weight: 600; } .p-max { color: var(--accent-ink); }
+  .sel { background: color-mix(in srgb, var(--accent-soft) 55%, transparent); }
+  .pill { display: inline-block; font: 600 .75rem/1 var(--mono); padding: 5px 8px; border-radius: 999px; }
+  .pill.good { background: var(--good-soft); color: var(--good); }
+  .pill.ok { background: var(--teal-soft); color: var(--teal); }
+  .pill.bad { background: var(--bad-soft); color: var(--bad); }
+
+  /* cards */
+  .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+  .card ul, .card ol { margin: 0; padding-left: 1.1rem; display: grid; gap: 6px; }
+  .card li { font-size: .9rem; }
+  .note { font-size: .85rem; color: var(--muted); }
+
+  /* planner */
+  .planner { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+  .qty { width: 4.2rem; font: 600 .9rem/1 var(--mono); color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 7px 8px; text-align: right; }
+  .qty:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .result { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 96px); }
+  .kv { display: grid; grid-template-columns: 1fr auto; gap: 8px 14px; align-items: baseline; }
+  .kv dt { color: var(--muted); font-size: .88rem; }
+  .kv dd { margin: 0; font: 600 .95rem/1.2 var(--mono); text-align: right; font-variant-numeric: tabular-nums; }
+  .kv .big { font-size: 1.4rem; }
+  .kv hr { grid-column: 1 / -1; border: 0; border-top: 1px solid var(--line); margin: 2px 0; width: 100%; }
+  .bar { height: 10px; border-radius: 999px; background: var(--sunk); overflow: hidden; }
+  .bar i { display: block; height: 100%; background: linear-gradient(90deg, #F2B783, #E8853D 45%, #C2501A); border-radius: 999px; }
+  .verdict { font-size: .9rem; padding: 10px 12px; border-radius: 10px; }
+
+  footer { font-size: .82rem; color: var(--muted); display: grid; gap: 6px; }
+  footer a { color: var(--teal); }
+
+  @media (max-width: 860px) {
+    .levels { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid2, .planner { grid-template-columns: minmax(0, 1fr); }
+    .result, .assume { position: static; }
+  }
+  @media (max-width: 460px) { .levels { grid-template-columns: minmax(0, 1fr); } .field input, .field select { width: 8rem; } }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header class="hero">
+    <span class="eyebrow">Qolvik · Internal price book · FY 2026–27</span>
+    <h1>What we charge, what it costs us, and what we keep.</h1>
+    <p class="muted">Every package from a 5-page website to a university ERP, with four prices for bargaining, our real delivery cost, profit, running costs, support terms and a yearly profit planner. Change the cost assumptions in the bar below and every profit figure updates.</p>
+    <div class="chips">
+      <span class="chip">Prices in ₹, excluding GST</span>
+      <span class="chip">Year-1 support included in every build</span>
+      <span class="chip">Third-party costs checked Nov 2026</span>
+      <span class="chip warn">Internal only: never send the cost or profit columns to a client</span>
+    </div>
+  </header>
+
+  <section aria-labelledby="levels-h">
+    <div class="head"><span class="eyebrow">How to quote</span><h2 id="levels-h">Four prices for every package</h2></div>
+    <div class="levels">
+      <div class="level"><span class="tag t-max">List · max</span><b>Quote this first</b><p>The price in proposals and on calls. Leaves room to negotiate. About 65% margin.</p></div>
+      <div class="level"><span class="tag t-std">Standard · target</span><b>Close here</b><p>The fair, healthy price most deals should land on. About 50% margin.</p></div>
+      <div class="level"><span class="tag t-partner">Partner</span><b>Colleges that refer us</b><p>Halfway between Standard and Floor. Only for partner institutions and referrers, locked for 2 years.</p></div>
+      <div class="level"><span class="tag t-floor">Floor · minimum</span><b>Walk-away price</b><p>Never go below this. Under the floor, remove scope instead of cutting price. About 32% margin.</p></div>
+    </div>
+  </section>
+
+  <div class="assume" role="group" aria-label="Cost assumptions">
+    <div class="field"><label for="salary">Avg cost per person / month</label><input id="salary" type="number" min="5000" step="1000" value="45000"></div>
+    <div class="field"><label for="overhead">Overheads %</label><input id="overhead" type="number" min="0" max="200" step="5" value="40"></div>
+    <div class="field"><label for="hours">Billable hours / person / month</label><input id="hours" type="number" min="40" max="200" step="5" value="140"></div>
+    <div class="out"><span>Our cost per hour</span><b id="rate">₹450</b></div>
+    <div class="field"><label>Show profit at</label>
+      <div class="seg" id="levelSeg">
+        <button type="button" data-l="floor" aria-pressed="false">Floor</button>
+        <button type="button" data-l="partner" aria-pressed="false">Partner</button>
+        <button type="button" data-l="std" aria-pressed="true">Standard</button>
+        <button type="button" data-l="max" aria-pressed="false">List</button>
+      </div>
+    </div>
+  </div>
+
+  <section aria-labelledby="price-h">
+    <div class="head"><span class="eyebrow">One-time build price</span><h2 id="price-h">Price chart</h2>
+      <p class="muted">Effort is total team hours (design, development, testing, project management). Our cost = (build hours + included year-1 support hours) × our cost per hour. AMC is the yearly maintenance fee from year 2, as a share of the build price.</p></div>
+    <div class="tbl"><table id="priceTbl">
+      <thead><tr><th>Package</th><th>Time</th><th class="r">Hours<br>+ support</th><th class="r">Floor</th><th class="r">Partner</th><th class="r">Standard</th><th class="r">List</th><th class="r">Our cost</th><th class="r">Profit</th><th class="r">Margin</th><th class="r">AMC yr 2+</th></tr></thead>
+      <tbody></tbody>
+    </table></div>
+  </section>
+
+  <section aria-labelledby="saas-h">
+    <div class="head"><span class="eyebrow">Recurring revenue</span><h2 id="saas-h">Campus ERP as a subscription</h2>
+      <p class="muted">For institutions that can't pay a large build fee up front. One shared Qolvik ERP, configured per institution. Includes hosting, database, backups, updates and support. SMS and WhatsApp messages are billed separately at cost plus a margin.</p></div>
+    <div class="tbl"><table id="saasTbl">
+      <thead><tr><th>Plan</th><th class="r">Floor</th><th class="r">Partner</th><th class="r">Standard</th><th class="r">List</th><th class="r">Our cost</th><th class="r">Margin</th><th>Minimum and setup</th></tr></thead>
+      <tbody></tbody>
+    </table></div>
+    <p class="note">Example: a 1,000-student school on the Standard plan pays ₹1,80,000 every year, plus a one-time setup fee. Market rates seen in 2026 range from about ₹40 to ₹500 per student per year, so ₹120–250 is mid-market with custom fit as our edge.</p>
+  </section>
+
+  <section aria-labelledby="addon-h">
+    <div class="head"><span class="eyebrow">Extras</span><h2 id="addon-h">Add-ons and hourly work</h2></div>
+    <div class="tbl"><table>
+      <thead><tr><th>Add-on</th><th class="r">Price</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>Extra website page</td><td class="r num">₹3,000 – ₹6,000</td><td class="muted">Per page, same design system</td></tr>
+        <tr><td>Extra UI/UX screen</td><td class="r num">₹3,000 – ₹6,000</td><td class="muted">Per screen, including handoff</td></tr>
+        <tr><td>Second language (Hindi, Marathi…)</td><td class="r num">+15 – 20%</td><td class="muted">Of the website or app price; client supplies or approves translations</td></tr>
+        <tr><td>Payment gateway (Razorpay, Cashfree)</td><td class="r num">₹15,000 – ₹30,000</td><td class="muted">Gateway fee of about 2% per payment is paid by the client</td></tr>
+        <tr><td>SMS or WhatsApp alerts</td><td class="r num">₹12,000 – ₹25,000</td><td class="muted">Integration only; messages billed separately</td></tr>
+        <tr><td>Data migration (Excel or old ERP)</td><td class="r num">₹15,000 – ₹60,000</td><td class="muted">Per institution, depends on how clean the data is</td></tr>
+        <tr><td>On-site staff training</td><td class="r num">₹8,000 – ₹15,000</td><td class="muted">Per day, plus travel outside our city</td></tr>
+        <tr><td>Logo and brand kit</td><td class="r num">₹15,000 – ₹45,000</td><td class="muted">Logo, colours, type, social templates</td></tr>
+        <tr><td>Monthly SEO and content</td><td class="r num">₹12,000 – ₹30,000</td><td class="muted">Per month, 3-month minimum</td></tr>
+        <tr><td>Copywriting</td><td class="r num">₹1,500 – ₹3,000</td><td class="muted">Per page</td></tr>
+        <tr><td>Change requests (hourly)</td><td class="r num">₹1,200 / ₹1,500 / ₹2,500</td><td class="muted">AMC clients / standard / urgent (within 24 hours)</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section aria-labelledby="run-h">
+    <div class="head"><span class="eyebrow">Domain, hosting, database</span><h2 id="run-h">Running costs and what we charge</h2>
+      <p class="muted">Third-party bills are the client's, but we usually manage them. Sell them as a yearly managed plan and keep the difference. Accounts should be in the client's name; we get admin access.</p></div>
+    <div class="tbl"><table>
+      <thead><tr><th>Item</th><th class="r">Actual cost (approx.)</th><th class="r">We charge</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>.com domain</td><td class="r num">₹1,000 – ₹1,600 / yr</td><td class="r num">₹1,800 / yr</td><td class="muted">Renewals cost more than the first year at most registrars</td></tr>
+        <tr><td>.in domain</td><td class="r num">₹700 – ₹1,000 / yr</td><td class="r num">₹1,200 / yr</td><td class="muted">Good for Indian schools and businesses</td></tr>
+        <tr><td>.ac.in / .edu.in domain</td><td class="r num">ERNET India fee</td><td class="r num">Cost + ₹1,000</td><td class="muted">Only for recognised institutions; needs their documents. Check the current ERNET fee.</td></tr>
+        <tr><td>SSL certificate</td><td class="r num">Free</td><td class="r num">Included</td><td class="muted">Automatic on modern hosting</td></tr>
+        <tr><td>Website hosting (static or animated)</td><td class="r num">₹0 – ₹1,700 / month</td><td class="r num">₹6,000 – ₹12,000 / yr</td><td class="muted">"Website care" plan: domain, hosting, SSL, uptime checks, backups. Cloudflare Pages or Netlify free tiers allow business sites; Vercel's free Hobby plan is for non-commercial use, so client sites need Vercel Pro.</td></tr>
+        <tr><td>Database for MVPs and apps</td><td class="r num">≈ ₹2,200 / month</td><td class="r num">In app hosting plan</td><td class="muted">Supabase Pro is about $25/month plus usage. Never run a client app on a free database tier.</td></tr>
+        <tr><td>App or ERP server and database</td><td class="r num">₹2,500 – ₹20,000 / month</td><td class="r num">₹40,000 – ₹3,00,000 / yr</td><td class="muted">AWS or DigitalOcean, sized by users. Aim for 35–50% margin over the cloud bill.</td></tr>
+        <tr><td>Backups and uptime monitoring</td><td class="r num">₹0 – ₹2,500 / month</td><td class="r num">Included in plans</td><td class="muted">Daily backups for anything with a database</td></tr>
+        <tr><td>Transactional email</td><td class="r num">Free – ≈ $20 / month</td><td class="r num">Included</td><td class="muted">Resend's free tier covers about 3,000 emails a month</td></tr>
+        <tr><td>SMS (DLT registered)</td><td class="r num">₹0.12 – ₹0.25 / SMS + GST</td><td class="r num">Cost + 10–20%</td><td class="muted">Sell as prepaid packs. The institution must register on DLT (one-time).</td></tr>
+        <tr><td>WhatsApp Business messages</td><td class="r num">Meta per-message rates</td><td class="r num">Cost + 10–20%</td><td class="muted">Rates depend on message type; check Meta's current India pricing</td></tr>
+        <tr><td>Payment gateway</td><td class="r num">≈ 2% per payment</td><td class="r num">Client pays</td><td class="muted">Deducted from the client's collections, not our bill</td></tr>
+        <tr><td>App stores</td><td class="r num">Play $25 once · Apple $99 / yr</td><td class="r num">At cost</td><td class="muted">Always in the client's own developer accounts</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section aria-labelledby="sup-h">
+    <div class="head"><span class="eyebrow">After launch</span><h2 id="sup-h">Support for 1 year, then AMC</h2></div>
+    <div class="grid2">
+      <div class="card">
+        <h3>Included free for 12 months after go-live</h3>
+        <ul>
+          <li>Bug fixes for everything we delivered</li>
+          <li>Security patches and library updates</li>
+          <li>Uptime monitoring, and daily backups for apps and ERP</li>
+          <li>Small content edits, up to the support hours in the price chart</li>
+          <li>Monthly health report for ERP clients</li>
+        </ul>
+        <p class="note">Not included: new features, redesigns, third-party bills, or problems caused by changes the client made. These are change requests.</p>
+      </div>
+      <div class="card">
+        <h3>Response times</h3>
+        <div class="tbl" style="border:0"><table>
+          <thead><tr><th>Priority</th><th>Example</th><th>First reply</th><th>Fix target</th></tr></thead>
+          <tbody>
+            <tr><td><span class="pill bad">Critical</span></td><td>Site or ERP down, fees not collecting</td><td class="num">4 business hrs</td><td class="num">1 business day</td></tr>
+            <tr><td><span class="pill ok">High</span></td><td>A module broken for some users</td><td class="num">1 business day</td><td class="num">3 business days</td></tr>
+            <tr><td><span class="pill good">Normal</span></td><td>Text change, small bug</td><td class="num">2 business days</td><td class="num">Next weekly release</td></tr>
+          </tbody>
+        </table></div>
+        <p class="note">From year 2: AMC of 15% (websites) to 18–20% (apps and ERP) of the build price per year. A 2-year AMC paid up front gets 10% off.</p>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="partner-h">
+    <div class="head"><span class="eyebrow">Growth through colleges</span><h2 id="partner-h">Partner institution programme</h2>
+      <p class="muted">Colleges and trusts with strong networks bring the next customers. Give them a better price and a transparent referral reward.</p></div>
+    <div class="grid2">
+      <div class="card">
+        <h3>What a partner gets</h3>
+        <ul>
+          <li><b>Partner price</b> on every package, locked for 2 years</li>
+          <li><b>5% referral credit</b> on the first-year value of every institution they refer that signs. Applied against their own AMC or subscription.</li>
+          <li><b>Bundle discount:</b> 10% off a website when ordered with an ERP</li>
+          <li><b>Founding partners</b> (first 3 institutions): an extra 6 months of support, in return for a case study, testimonial and reference calls</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Rules that keep it clean</h3>
+        <ul>
+          <li>Rewards go to the institution, on an invoice or as credit, never as cash to an individual. This matters for government and aided colleges.</li>
+          <li>The partner price is the lowest public deal. Only the Floor is lower, and the Floor is for scope cuts, not favours.</li>
+          <li>A referral counts once the new institution pays its first milestone.</li>
+          <li>Put the programme in writing in the partner's contract.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="terms-h">
+    <div class="head"><span class="eyebrow">Contracts</span><h2 id="terms-h">Payment terms and bargaining rules</h2></div>
+    <div class="grid2">
+      <div class="card">
+        <h3>Payment milestones</h3>
+        <ul>
+          <li><b>Websites and design:</b> 50% advance, 50% before go-live</li>
+          <li><b>MVPs and apps:</b> 40% advance, 30% at the beta demo, 30% before go-live</li>
+          <li><b>ERP:</b> 30% advance, 30% at the module demo, 30% at go-live, 10% after 30 stable days</li>
+          <li>Source code and IP transfer to the client on final payment</li>
+          <li>Quotes are valid for 30 days. Scope is a written feature list; anything else is a change request.</li>
+          <li>Two revision rounds per design stage</li>
+        </ul>
+        <p class="note">GST: add 18% once Qolvik is GST-registered. Registration is required above ₹20 lakh yearly turnover for services, and GST collected is paid to the government, so it is never profit. Confirm with a CA.</p>
+      </div>
+      <div class="card">
+        <h3>How to bargain without losing money</h3>
+        <ol>
+          <li>Open with the List price.</li>
+          <li>Aim to close at Standard.</li>
+          <li>Give a discount only in exchange for something: full payment up front (−5%), a case study, a referral, or a longer timeline.</li>
+          <li>Below the Floor, cut scope instead: fewer pages, fewer modules, or move features to phase 2.</li>
+          <li>Never include unlimited changes or unlimited support.</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="plan-h">
+    <div class="head"><span class="eyebrow">How much we keep</span><h2 id="plan-h">Yearly profit planner</h2>
+      <p class="muted">Enter how many projects you expect this year. Team salaries are paid every month whether or not there is work, so the real profit is revenue minus the whole team's yearly cost. The project margins above only hold if the team stays busy.</p></div>
+    <div class="planner">
+      <div class="card" style="padding:0;overflow:hidden">
+        <div class="tbl" style="border:0;border-radius:0"><table id="planTbl">
+          <thead><tr><th>Package</th><th class="r">Projects</th><th class="r">Revenue</th><th class="r">Hours</th></tr></thead>
+          <tbody></tbody>
+        </table></div>
+      </div>
+      <div class="card result">
+        <div class="field"><label for="team">Team size (people paid monthly)</label><input id="team" type="number" min="1" max="100" step="1" value="5"></div>
+        <dl class="kv" id="planOut"></dl>
+        <div><div class="note" style="margin-bottom:6px">Team utilisation <b id="utilTxt"></b></div><div class="bar"><i id="utilBar"></i></div></div>
+        <div class="verdict" id="verdict"></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p><b>Sources and assumptions.</b> 2026 Indian market ranges for websites, MVPs and education ERP come from published agency and vendor guides, such as <a href="https://www.hostinger.com/in/tutorials/website-cost" target="_blank" rel="noopener">Hostinger India</a>, <a href="https://nletschool.com/cost-breakdown-of-implementing-a-school-management-system-in-india" target="_blank" rel="noopener">NLET</a>, <a href="https://codingclave.com/blog/college-erp-software-india" target="_blank" rel="noopener">Codingclave</a> and <a href="https://edutinker.com/?p=39687" target="_blank" rel="noopener">EduTinker</a>. Hosting and SMS rates come from <a href="https://supabase.com/pricing" target="_blank" rel="noopener">Supabase</a>, <a href="https://vercel.com/pricing" target="_blank" rel="noopener">Vercel</a> and <a href="https://www.messagecentral.com/blog/a2p-sms-pricing-india" target="_blank" rel="noopener">Message Central</a>. Dollar prices are converted at about ₹85 per $1.</p>
+    <p>Effort hours are estimates for a team that already has the Qolvik design system and ERP base, which is why the ERP effort is lower than a from-scratch build. Recheck third-party prices before quoting, and review this price book every 6 months.</p>
+  </footer>
+</div>
+
+<script>
+(() => {
+  const PKG = [
+    { cat: "Websites", name: "Starter website", d: "Up to 5 pages, custom design, mobile-ready, contact form, basic SEO, Google Business link", t: "2–3 wks", h: 40, s: 6, floor: 30000, std: 42000, max: 60000, amc: 15, q: 5 },
+    { cat: "Websites", name: "Business website", d: "6–12 pages, editable content (CMS), blog, SEO setup, analytics, speed score 90+", t: "3–5 wks", h: 90, s: 12, floor: 68000, std: 92000, max: 130000, amc: 15, q: 3 },
+    { cat: "Websites", name: "Animated website", d: "Scroll and hover motion, animated headlines, smooth scrolling, 5–10 pages, kept at 60 fps", t: "4–6 wks", h: 140, s: 16, floor: 105000, std: 140000, max: 200000, amc: 15, q: 2 },
+    { cat: "Websites", name: "Premium interactive website", d: "Custom interactions, 3D or WebGL scenes, live mini demos and a design system, like the Qolvik site", t: "7–10 wks", h: 280, s: 30, floor: 205000, std: 280000, max: 400000, amc: 15, q: 1 },
+    { cat: "Websites", name: "E-commerce or dynamic website", d: "Catalogue, cart, online checkout, orders admin, stock and invoices", t: "6–9 wks", h: 260, s: 30, floor: 190000, std: 260000, max: 375000, amc: 18, q: 1 },
+    { cat: "Design", name: "UI/UX design for an app or portal", d: "Research, user flows, wireframes, 15–25 screens, clickable prototype, mini design system, developer handoff", t: "3–5 wks", h: 120, s: 4, floor: 82000, std: 110000, max: 160000, amc: 0, q: 2 },
+    { cat: "Products", name: "Lean MVP", d: "Web app with sign-in, 3–5 core features, admin panel, analytics and launch", t: "6–8 wks", h: 380, s: 40, floor: 280000, std: 380000, max: 540000, amc: 18, q: 1 },
+    { cat: "Products", name: "Web application or advanced MVP", d: "Roles and permissions, payments, dashboards, APIs and integrations, audit logs", t: "10–16 wks", h: 750, s: 80, floor: 550000, std: 750000, max: 1050000, amc: 20, q: 1 },
+    { cat: "Products", name: "Mobile app (iOS + Android)", d: "One Flutter app on both stores, push notifications, connects to an existing backend", t: "8–12 wks", h: 400, s: 40, floor: 290000, std: 400000, max: 560000, amc: 20, q: 0 },
+    { cat: "Campus ERP", name: "School ERP", d: "Up to ~800 students: admissions, students, attendance, fees with reminders, exams and report cards, parent SMS, principal dashboard", t: "8–10 wks", h: 450, s: 60, floor: 340000, std: 460000, max: 650000, amc: 18, q: 2 },
+    { cat: "Campus ERP", name: "College ERP", d: "800–3,000 students: everything in School, plus semesters and electives, exam cell, timetable, library, hostel, transport, parent and student app, online fees", t: "14–20 wks", h: 900, s: 120, floor: 680000, std: 920000, max: 1300000, amc: 18, q: 1 },
+    { cat: "Campus ERP", name: "University or multi-campus ERP", d: "Several campuses and affiliated colleges, NAAC/NIRF reports, research and faculty records, fine-grained roles, single sign-on and integrations", t: "6–9 months", h: 2000, s: 250, floor: 1500000, std: 2000000, max: 2900000, amc: 20, q: 0 },
+  ];
+  PKG.forEach((p) => { p.partner = Math.round((p.floor + p.std) / 2 / 1000) * 1000; });
+
+  const SAAS = [
+    { name: "School ERP", unit: "per student / year", floor: 120, std: 180, max: 250, cost: 50, min: "₹50,000 / yr minimum · setup ₹25,000–60,000", q: 0 },
+    { name: "College ERP", unit: "per student / year", floor: 220, std: 300, max: 420, cost: 80, min: "₹1,50,000 / yr minimum · setup ₹60,000–1,50,000", q: 0 },
+  ];
+  SAAS.forEach((p) => { p.partner = Math.round((p.floor + p.std) / 2 / 10) * 10; });
+
+  const $ = (s) => document.querySelector(s);
+  const inr = (n) => (n < 0 ? "−₹" : "₹") + Math.round(Math.abs(n)).toLocaleString("en-IN");
+  const pct = (n) => (isFinite(n) ? Math.round(n * 100) : 0) + "%";
+  const num = (el, fallback) => { const v = parseFloat(el.value); return isFinite(v) && v >= 0 ? v : fallback; };
+  const LEVELS = ["floor", "partner", "std", "max"];
+  let level = "std";
+
+  const rate = () => {
+    const salary = num($("#salary"), 45000), over = num($("#overhead"), 40), hrs = Math.max(1, num($("#hours"), 140));
+    return salary * (1 + over / 100) / hrs;
+  };
+  const pill = (m) => `<span class="pill ${m >= 0.45 ? "good" : m >= 0.25 ? "ok" : "bad"}">${pct(m)}</span>`;
+
+  function renderPrices() {
+    const r = rate();
+    $("#rate").textContent = inr(r);
+    let html = "", cat = "";
+    for (const p of PKG) {
+      if (p.cat !== cat) { cat = p.cat; html += `<tr class="cat"><td colspan="11">${cat}</td></tr>`; }
+      const cost = (p.h + p.s) * r, price = p[level], profit = price - cost;
+      const cell = (l, cls) => `<td class="r num ${cls}${l === level ? " sel" : ""}">${inr(p[l])}</td>`;
+      html += `<tr>
+        <td class="pkg"><b>${p.name}</b><small>${p.d}</small></td>
+        <td class="num">${p.t}</td>
+        <td class="r num">${p.h.toLocaleString("en-IN")} h<br><span class="muted">+${p.s} h</span></td>
+        ${cell("floor", "p-floor")}${cell("partner", "p-partner")}${cell("std", "p-std")}${cell("max", "p-max")}
+        <td class="r num">${inr(cost)}</td>
+        <td class="r num">${inr(profit)}</td>
+        <td class="r">${pill(profit / price)}</td>
+        <td class="r num">${p.amc ? `${p.amc}%<br><span class="muted">${inr(p[level] * p.amc / 100)}/yr</span>` : "—"}</td>
+      </tr>`;
+    }
+    $("#priceTbl tbody").innerHTML = html;
+
+    $("#saasTbl tbody").innerHTML = SAAS.map((p) => {
+      const price = p[level], m = (price - p.cost) / price;
+      const cell = (l, cls) => `<td class="r num ${cls}${l === level ? " sel" : ""}">₹${p[l]}</td>`;
+      return `<tr><td class="pkg"><b>${p.name}</b><small>${p.unit}, incl. hosting, updates and support</small></td>
+        ${cell("floor", "p-floor")}${cell("partner", "p-partner")}${cell("std", "p-std")}${cell("max", "p-max")}
+        <td class="r num">₹${p.cost}</td><td class="r">${pill(m)}</td><td class="muted">${p.min}</td></tr>`;
+    }).join("");
+  }
+
+  function renderPlanRows() {
+    const rows = PKG.map((p, i) => `<tr><td>${p.name}</td><td class="r"><input class="qty" id="q${i}" type="number" min="0" max="99" step="1" value="${p.q}" aria-label="Projects: ${p.name}"></td><td class="r num" id="rev${i}"></td><td class="r num" id="hrs${i}"></td></tr>`);
+    const saas = SAAS.map((p, i) => `<tr><td>${p.name} subscription <span class="muted">(students)</span></td><td class="r"><input class="qty" id="s${i}" type="number" min="0" max="200000" step="100" value="${p.q}" aria-label="Students on ${p.name} subscription" style="width:5.6rem"></td><td class="r num" id="srev${i}"></td><td class="r num muted">—</td></tr>`);
+    $("#planTbl tbody").innerHTML = rows.join("") + saas.join("");
+  }
+
+  function renderPlan() {
+    const r = rate();
+    const team = Math.max(1, Math.round(num($("#team"), 5)));
+    const salary = num($("#salary"), 45000), over = num($("#overhead"), 40), hrsMonth = Math.max(1, num($("#hours"), 140));
+    let revenue = 0, hours = 0, amcNext = 0, saasRev = 0, saasCost = 0, projects = 0;
+    PKG.forEach((p, i) => {
+      const q = Math.max(0, Math.round(num($("#q" + i), 0)));
+      const rev = q * p[level], h = q * (p.h + p.s);
+      revenue += rev; hours += h; projects += q; amcNext += q * p[level] * p.amc / 100;
+      $("#rev" + i).textContent = q ? inr(rev) : "—";
+      $("#hrs" + i).textContent = q ? h.toLocaleString("en-IN") : "—";
+    });
+    SAAS.forEach((p, i) => {
+      const n = Math.max(0, Math.round(num($("#s" + i), 0)));
+      const rev = n * p[level]; saasRev += rev; saasCost += n * p.cost;
+      $("#srev" + i).textContent = n ? inr(rev) : "—";
+    });
+    const teamCost = team * salary * (1 + over / 100) * 12;
+    const capacity = team * hrsMonth * 12;
+    const util = hours / capacity;
+    const total = revenue + saasRev;
+    const projectProfit = revenue - hours * r;
+    const profit = total - teamCost - saasCost;
+    const margin = total ? profit / total : 0;
+    const breakEven = teamCost + saasCost;
+
+    $("#planOut").innerHTML = `
+      <dt>Projects this year</dt><dd>${projects}</dd>
+      <dt>Project revenue</dt><dd>${inr(revenue)}</dd>
+      <dt>Subscription revenue</dt><dd>${inr(saasRev)}</dd>
+      <dt><b>Total revenue</b> (ex-GST)</dt><dd class="big">${inr(total)}</dd>
+      <hr>
+      <dt>Team cost for the year</dt><dd>${inr(teamCost)}</dd>
+      <dt>Subscription running cost</dt><dd>${inr(saasCost)}</dd>
+      <dt>Revenue needed to break even</dt><dd>${inr(breakEven)}</dd>
+      <hr>
+      <dt><b>Studio profit</b> before tax</dt><dd class="big" style="color:var(${profit >= 0 ? "--good" : "--bad"})">${inr(profit)}</dd>
+      <dt>Studio margin</dt><dd>${pct(margin)}</dd>
+      <dt>Profit if the team were fully booked</dt><dd>${inr(projectProfit)}</dd>
+      <dt>AMC income next year (from these builds)</dt><dd>${inr(amcNext)}</dd>`;
+    $("#utilTxt").textContent = `${pct(util)} · ${hours.toLocaleString("en-IN")} of ${capacity.toLocaleString("en-IN")} hours`;
+    $("#utilBar").style.width = Math.min(100, util * 100) + "%";
+    const v = $("#verdict");
+    if (util > 0.9) { v.style.background = "var(--bad-soft)"; v.style.color = "var(--bad)"; v.textContent = "Over 90% booked. Deadlines will slip; hire, raise prices or say no to some work."; }
+    else if (profit < 0) { v.style.background = "var(--bad-soft)"; v.style.color = "var(--bad)"; v.textContent = `Loss of ${inr(-profit)}. Win more work, quote nearer Standard or List, or keep the paid team smaller until the pipeline grows.`; }
+    else if (util < 0.55) { v.style.background = "var(--teal-soft)"; v.style.color = "var(--teal)"; v.textContent = "Profitable, but the team is under 55% booked. There is room for more projects or subscriptions."; }
+    else { v.style.background = "var(--good-soft)"; v.style.color = "var(--good)"; v.textContent = `Healthy: ${pct(margin)} margin with the team ${pct(util)} booked. Plus ${inr(amcNext)} AMC income already lined up for next year.`; }
+  }
+
+  function setLevel(l) {
+    level = l;
+    document.querySelectorAll("#levelSeg button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.l === l)));
+    renderPrices(); renderPlan();
+  }
+
+  renderPlanRows();
+  renderPrices();
+  renderPlan();
+  $("#levelSeg").addEventListener("click", (e) => { const b = e.target.closest("button[data-l]"); if (b && LEVELS.includes(b.dataset.l)) setLevel(b.dataset.l); });
+  ["#salary", "#overhead", "#hours", "#team"].forEach((s) => $(s).addEventListener("input", () => { renderPrices(); renderPlan(); }));
+  $("#planTbl").addEventListener("input", (e) => { if (e.target.classList.contains("qty")) renderPlan(); });
+})();
+</script>
