@@ -3,38 +3,57 @@
 <head>
 <meta charset="utf-8" />
 <title>Qolvik — LinkedIn banner</title>
-<!-- Minimal brand banner, built on the site's design tokens (styles/tokens.css). -->
-<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@700&display=swap" rel="stylesheet" />
+<!-- Minimal brand banner, built on the site's design tokens (styles/tokens.css).
+     Render: personal 1584x396 (default) · company cover 1128x191 (?company)
+     Variant: tagline (default) · QOLVIK letters (?acro)  e.g. banner.html?company&acro -->
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="../../styles/tokens.css" />
 <style>
-  /* Render: personal 1584x396 (default) · company cover 1128x191 (banner.html?company) */
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body { width: 1584px; height: 396px; overflow: hidden; }
-  body { position: relative; display: grid; place-items: center; background: var(--mono-900); -webkit-font-smoothing: antialiased; }
-
-  /* one soft copper glow behind the mark, a whisper of teal for depth */
+  body { position: relative; background: var(--mono-900); -webkit-font-smoothing: antialiased; }
   body::before { content: ""; position: absolute; inset: 0;
     background:
-      radial-gradient(420px 260px at 50% 50%, rgb(232 133 61 / .22), transparent 70%),
-      radial-gradient(900px 420px at 50% 140%, rgb(194 80 26 / .28), transparent 70%),
-      radial-gradient(700px 380px at 100% -20%, rgb(30 95 102 / .30), transparent 70%); }
+      radial-gradient(520px 300px at 80% 50%, rgb(232 133 61 / .20), transparent 70%),
+      radial-gradient(900px 420px at 78% 150%, rgb(194 80 26 / .30), transparent 70%),
+      radial-gradient(700px 380px at 0% -30%, rgb(30 95 102 / .30), transparent 70%); }
 
-  .lockup { position: relative; display: flex; align-items: center; gap: 26px; }
-  .lockup img { width: 112px; height: 112px; filter: drop-shadow(0 12px 30px rgb(194 80 26 / .45)); }
-  .lockup b { font: 700 104px/1 var(--font-display); letter-spacing: -.045em; color: var(--clay-50); }
+  .id { position: absolute; right: 110px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: flex-end; }
+  .lockup { display: flex; align-items: center; gap: 20px; }
+  .lockup img { width: 92px; height: 92px; filter: drop-shadow(0 12px 30px rgb(194 80 26 / .45)); }
+  .lockup b { font: 700 88px/1 var(--font-display); letter-spacing: -.045em; color: var(--clay-50); }
+
+  .tag { margin-top: 18px; font: 400 44px/1 var(--font-serif); color: var(--clay-100); letter-spacing: -.005em; }
+  .tag em { background: var(--brand-gradient); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: 4px; }
+
+  p.acro { display: none; margin-top: 22px; gap: 22px; font: 500 15px/1 var(--font-mono); letter-spacing: .06em; color: var(--mono-400); }
+  p.acro span b { color: var(--clay-400); font-weight: 600; }
+  html.acro .tag { display: none; }
+  html.acro p.acro { display: flex; }
 
   .rule { position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: var(--brand-gradient); }
 
   html.company, html.company body { width: 1128px; height: 191px; }
-  .company .lockup { gap: 14px; }
-  .company .lockup img { width: 62px; height: 62px; }
-  .company .lockup b { font-size: 58px; }
+  .company .id { right: 56px; }
+  .company .lockup { gap: 11px; }
+  .company .lockup img { width: 48px; height: 48px; }
+  .company .lockup b { font-size: 46px; }
+  .company .tag { margin-top: 9px; font-size: 24px; }
+  .company p.acro { margin-top: 12px; gap: 12px; font-size: 9px; }
   .company .rule { height: 3px; }
 </style>
-<script>if (location.search.includes("company")) document.documentElement.classList.add("company");</script>
+<script>
+  const q = location.search;
+  if (q.includes("company")) document.documentElement.classList.add("company");
+  if (q.includes("acro")) document.documentElement.classList.add("acro");
+</script>
 </head>
 <body>
-  <div class="lockup"><img src="../../assets/qolvik-logo.png" alt="" /><b>Qolvik</b></div>
+  <div class="id">
+    <div class="lockup"><img src="../../assets/qolvik-logo.png" alt="" /><b>Qolvik</b></div>
+    <p class="tag">From sketch <em>to scale.</em></p>
+    <p class="acro"><span><b>Q</b>uality</span><span><b>O</b>wnership</span><span><b>L</b>ogic</span><span><b>V</b>ision</span><span><b>I</b>nnovation</span><span><b>K</b>nowledge</span></p>
+  </div>
   <div class="rule"></div>
 </body>
 </html>
