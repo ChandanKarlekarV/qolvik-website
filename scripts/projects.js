@@ -13,7 +13,7 @@ const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 // ---------- Cards (also pre-rendered into the HTML by build.js) ----------
 const grid = $("[data-pgrid]");
 grid.innerHTML = projectCardsHTML();
-$$(".pcard", grid).forEach((c) => mountMini($("[data-mini-host]", c), PROJECTS.find((p) => p.id === c.dataset.id).mini, { interactive: false }));
+$$(".pcard", grid).forEach((c) => { const p = PROJECTS.find((x) => x.id === c.dataset.id); mountMini($("[data-mini-host]", c), p.mini, { interactive: false, stage: p.stage }); });
 grid.setAttribute("data-stagger", "");
 $("[data-p-tabs]").innerHTML = PILL + tabButtons(PROJECT_TABS);
 
@@ -55,7 +55,7 @@ function openProject(id) {
         <div><a class="btn btn--primary btn--lg" href="index.html#contact"><span class="btn__label">Build something like this</span><span class="btn__arrow" aria-hidden="true"><svg><use href="#arrow"/></svg><svg><use href="#arrow"/></svg></span></a></div>
       </div>
     </div>`;
-  mountMini($("[data-demo]", content), p.mini);
+  mountMini($("[data-demo]", content), p.mini, { stage: p.stage });
   enhanceButtons(content);
   $(".sheet__body").scrollTop = 0;
   sheet.inert = false;

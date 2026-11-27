@@ -1,7 +1,7 @@
 // Shared browser behaviour used by every page
 import { ANALYTICS, BRAND, CONTACT } from "./config.js";
 import { mountMini } from "./minis.js";
-import { socialsHTML, telHref, catalogCard } from "./templates.js";
+import { socialsHTML, telHref, waHref, catalogCard } from "./templates.js";
 
 export { catalogCard };
 
@@ -41,10 +41,13 @@ export function mountCards(root) {
   root.querySelectorAll(".ccard").forEach((c) => mountMini(c.querySelector("[data-mini-host]"), c.dataset.key));
 }
 
-// Email / phone links + city, filled from config on every page
+// Email / phone / WhatsApp links + city, filled from config on every page.
+// Anything left empty in config.js is removed, so no placeholder ever shows.
 export function fillContact() {
+  const drop = (el) => (el.closest("[data-reach]") || el).remove();
   document.querySelectorAll("[data-brand-email]").forEach((a) => { a.textContent = BRAND.email; a.href = `mailto:${BRAND.email}`; });
-  document.querySelectorAll("[data-brand-phone]").forEach((a) => { a.textContent = CONTACT.phone; a.href = telHref(); });
-  document.querySelectorAll("[data-brand-city]").forEach((el) => (el.textContent = `${CONTACT.city}, India`));
+  document.querySelectorAll("[data-brand-phone]").forEach((a) => { if (!CONTACT.phone) return drop(a); a.textContent = CONTACT.phone; a.href = telHref(); });
+  document.querySelectorAll("[data-brand-wa]").forEach((a) => { if (!CONTACT.phone) return drop(a); a.href = waHref(); });
+  document.querySelectorAll("[data-brand-city]").forEach((el) => { if (!CONTACT.city) return drop(el); el.textContent = `${CONTACT.city}, India`; });
 }
 

@@ -65,15 +65,20 @@ const TONES = [
 ];
 const initials = (n) => n.split(/\s+/).map((w) => w[0]).join("").slice(0, 2).toUpperCase();
 export const TEAM_TABS = ["All", ...TEAM_GROUPS];
-export const teamCountText = () => `${TEAM.length} people across ${TEAM_GROUPS.length} teams — no account managers, you talk to the builders.`;
+export const teamCountText = () => `${TEAM.length} people, two co-founders — no account managers, you talk to the people who design and build.`;
+const realUrl = (u) => /^https?:\/\//.test(u || "");
+// Photo: a black-and-white layer with the colour photo on top, faded in on hover (opacity only = smooth).
+const photoHTML = (m) => `
+          <img class="member__img member__img--bw" src="${m.photo}" alt="" aria-hidden="true" loading="lazy" decoding="async" width="720" height="756" />
+          <img class="member__img member__img--color" src="${m.photo}" alt="${m.name}, ${m.role} at Qolvik" loading="lazy" decoding="async" width="720" height="756" />`;
 export const teamHTML = () => TEAM.map((m, i) => {
   const t = TONES[i % TONES.length];
-  const links = Object.entries(m.links || {}).map(([k, url]) =>
-    `<a href="${url}" aria-label="${m.name} on ${k}" target="_blank" rel="noopener">${icon(k)}</a>`).join("");
+  const links = Object.entries(m.links || {}).filter(([, url]) => realUrl(url)).map(([k, url]) =>
+    `<a href="${url}" aria-label="${m.name} on ${k === "linkedin" ? "LinkedIn" : k}" target="_blank" rel="noopener me">${icon(k)}</a>`).join("");
   return `
       <article class="member" data-team-of="${m.team}" tabindex="0">
-        <div class="member__photo" style="--tone:${t.tone};--ink:${t.ink}">
-          ${m.photo ? `<img src="${m.photo}" alt="Photo of ${m.name}" loading="lazy" width="400" height="420" />` : `<span class="member__initials">${initials(m.name)}</span>`}
+        <div class="member__photo${m.photo ? " has-photo" : ""}" style="--tone:${t.tone};--ink:${t.ink}">
+          ${m.photo ? photoHTML(m) : `<span class="member__initials" aria-hidden="true">${initials(m.name)}</span>`}
           <div class="member__overlay"><p>${m.bio}</p>${links ? `<div class="member__links">${links}</div>` : ""}</div>
         </div>
         <div class="member__info"><div><h3>${m.name}</h3><span class="member__role">${m.role}</span></div><span class="member__team">${m.team}</span></div>
@@ -106,7 +111,7 @@ export const projectCardsHTML = () => PROJECTS.map((p) => `
   </article>`).join("");
 
 // ---------- Social links ----------
-export const socialsHTML = () => SOCIALS.map((s) => `
+export const socialsHTML = () => SOCIALS.filter((s) => realUrl(s.url)).map((s) => `
     <a class="social" href="${s.url}" target="_blank" rel="noopener" aria-label="${s.name} — ${s.handle}">
       <span class="social__icon">${icon(s.key)}</span>
       <span class="social__text"><b>${s.name}</b><small>${s.handle}</small></span>
@@ -115,3 +120,4 @@ export const socialsHTML = () => SOCIALS.map((s) => `
 
 // ---------- Contact helpers ----------
 export const telHref = () => `tel:${CONTACT.phone.replace(/[^\d+]/g, "")}`;
+export const waHref = () => `https://wa.me/${CONTACT.phone.replace(/\D/g, "")}?text=${encodeURIComponent("Hi Qolvik, I'd like to talk about a project.")}`;

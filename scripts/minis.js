@@ -217,11 +217,14 @@ export const MINIS = {
 };
 
 // Mount a mini into a host element. interactive=false → a static screenshot-like preview.
-export function mountMini(host, key, { interactive = true } = {}) {
+// stage: optional backdrop (beige | sand | grey | dark) so projects that share a design still look distinct.
+export function mountMini(host, key, { interactive = true, stage } = {}) {
   const m = MINIS[key];
   if (!m) return;
   host.innerHTML = `<div class="mini${interactive ? " is-live" : ""}" data-mini="${key}">${m.html()}</div>`;
   const root = host.firstElementChild;
+  const st = stage && root.querySelector(".m-stage");
+  if (st) st.className = st.className.replace(/m-stage--\w+/, `m-stage--${stage}`);
   if (interactive) m.init(root);
   else root.setAttribute("inert", "");
   return root;

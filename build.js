@@ -53,7 +53,12 @@ async function main() {
   const common = (html) => html
     .replace(/<span data-year><\/span>/g, `<span data-year>${new Date().getFullYear()}</span>`)
     .replace(/(<a\b[^>]*data-brand-email)([^>]*)href="#"([^>]*)><\/a>/g, `$1$2href="mailto:${C.BRAND.email}"$3>${C.BRAND.email}</a>`)
+    // Empty phone / city in config.js → the whole row is left out (no placeholders online)
+    //   (each data-reach row sits on its own line in the HTML)
+    .replace(/^[ \t]*<span data-reach>.*data-brand-(phone|wa|city).*\r?\n/gm,
+      (m, kind) => ((kind === "city" ? C.CONTACT.city : C.CONTACT.phone) ? m : ""))
     .replace(/(<a\b[^>]*data-brand-phone)([^>]*)href="#"([^>]*)><\/a>/g, `$1$2href="${T.telHref()}"$3>${C.CONTACT.phone}</a>`)
+    .replace(/(<a\b[^>]*data-brand-wa)([^>]*)href="#"/g, `$1$2href="${T.waHref().replace(/&/g, "&amp;")}"`)
     .replace(/<span data-brand-city><\/span>/g, `<span data-brand-city>${C.CONTACT.city}, India</span>`);
 
   const prerender = {
@@ -73,18 +78,33 @@ async function main() {
       h = fill(h, "data-socials", T.socialsHTML());
       h = h.replace('data-count="24" data-count-stack></span>', `data-count="${T.STACK_ALL.length}" data-count-stack>${T.STACK_ALL.length}</span>`);
       h = h.replace(/<span data-count="(\d+)"( data-suffix="([^"]*)")?><\/span>/g, (_, n, __, s = "") => `<span data-count="${n}"${s ? ` data-suffix="${s}"` : ""}>${n}${s}</span>`);
-      // Business details for Google (local search)
+      // Business details for Google: company, co-founders, team, services and FAQ
       const same = C.SOCIALS.map((s) => s.url).filter((u) => /^https?:/.test(u));
-      const ld = {
-        "@context": "https://schema.org", "@type": "ProfessionalService", name: C.BRAND.name, url: `${SITE_URL}/`,
-        logo: `${SITE_URL}/assets/apple-touch-icon.png`, image: `${SITE_URL}/assets/og-image.jpg`,
-        description: "Design and engineering studio building MVPs, web applications, websites and campus ERP for schools and colleges.",
-        email: C.BRAND.email, telephone: C.CONTACT.phone,
-        address: { "@type": "PostalAddress", addressLocality: C.CONTACT.city, addressRegion: C.CONTACT.region, addressCountry: C.CONTACT.country },
-        areaServed: "IN", knowsAbout: ["UI/UX design", "Web application development", "MVP development", "Website development", "School ERP", "College ERP"],
-        ...(same.length ? { sameAs: same } : {}),
-      };
-      return h.replace("<!--LD-JSON-->", `<script type="application/ld+json">${JSON.stringify(ld)}</script>`);
+      const ORG = `${SITE_URL}/#org`;
+      const person = (m) => ({
+        "@type": "Person", name: m.name, jobTitle: m.role, worksFor: { "@id": ORG },
+        ...(m.photo ? { image: `${SITE_URL}/${m.photo}` } : {}),
+        ...(m.links?.linkedin?.startsWith("http") ? { sameAs: [m.links.linkedin] } : {}),
+      });
+      const addr = { "@type": "PostalAddress", addressCountry: C.CONTACT.country,
+        ...(C.CONTACT.city ? { addressLocality: C.CONTACT.city } : {}), ...(C.CONTACT.region ? { addressRegion: C.CONTACT.region } : {}) };
+      const ld = { "@context": "https://schema.org", "@graph": [
+        {
+          "@type": ["Organization", "ProfessionalService"], "@id": ORG, name: C.BRAND.name,
+          url: `${SITE_URL}/`, logo: `${SITE_URL}/assets/apple-touch-icon.png`, image: `${SITE_URL}/assets/og-image.jpg`, slogan: C.BRAND.tagline,
+          description: "Design and engineering studio in India building MVPs, web applications, websites, mobile apps and campus ERP for schools and colleges.",
+          email: C.BRAND.email, ...(C.CONTACT.phone ? { telephone: C.CONTACT.phone } : {}), address: addr,
+          areaServed: "IN", knowsAbout: ["UI/UX design", "Web application development", "MVP development", "Website development", "Mobile app development", "School ERP", "College ERP"],
+          founder: C.TEAM.filter((m) => /co-founder/i.test(m.role)).map(person),
+          employee: C.TEAM.filter((m) => !/co-founder/i.test(m.role)).map(person),
+          numberOfEmployees: { "@type": "QuantitativeValue", value: C.TEAM.length },
+          hasOfferCatalog: { "@type": "OfferCatalog", name: "Services", itemListElement: C.SERVICES.map((s) => ({ "@type": "Offer", itemOffered: { "@type": "Service", name: s.title, description: s.desc } })) },
+          ...(same.length ? { sameAs: same } : {}),
+        },
+        { "@type": "WebSite", "@id": `${SITE_URL}/#site`, url: `${SITE_URL}/`, name: C.BRAND.name, publisher: { "@id": ORG }, inLanguage: "en-IN" },
+        { "@type": "FAQPage", mainEntity: C.FAQ.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })) },
+      ] };
+      return h.replace("<!--LD-JSON-->", `<script type="application/ld+json">${JSON.stringify(ld).replace(/</g, "\\u003c")}</script>`);
     },
     "projects.html": (h) => fillTabs(fill(fill(h, "data-pgrid", T.projectCardsHTML()), "data-socials", T.socialsHTML()), "data-p-tabs", T.PROJECT_TABS),
     "privacy.html": (h) => fill(h, "data-socials", T.socialsHTML()),
