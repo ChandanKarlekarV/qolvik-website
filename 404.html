@@ -6,6 +6,9 @@
   <title>Page not found — Qolvik</title>
   <meta name="robots" content="noindex" />
   <meta name="theme-color" content="#F4F2EC" />
+  <meta property="og:image" content="__SITE_URL__/assets/og-image.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="__SITE_URL__/assets/og-image.jpg" />
   <link rel="icon" href="assets/favicon-32.png" type="image/png" sizes="32x32" />
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -22,18 +25,18 @@
       <a href="index.html" class="brand" aria-label="Qolvik home"><img src="assets/qolvik-mark.webp" alt="" width="30" height="30" /><b>Qolvik</b></a>
       <nav class="nav__links" aria-label="Main">
         <a href="index.html#erp">Campus ERP</a>
-        <a href="index.html#studio">Studio</a>
+        <a href="index.html#pricing">Pricing</a>
+        <a href="studio.html">Studio</a>
         <a href="projects.html">Work</a>
-        <a href="index.html#team">Team</a>
-        <a href="index.html#faq">FAQ</a>
+        <a href="index.html#guides">Guides</a>
       </nav>
-      <a href="index.html#contact" class="btn btn--sm nav__cta">Book a demo</a>
+      <a href="index.html#contact" class="btn btn--sm nav__cta" data-book>Book a demo</a>
       <button class="nav__burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="menu"><i></i><i></i></button>
     </div>
   </header>
   <div class="menu" id="menu" inert>
-    <a href="index.html#erp">Campus ERP</a><a href="index.html#studio">Studio</a><a href="projects.html">Work</a><a href="index.html#team">Team</a><a href="index.html#faq">FAQ</a>
-    <a href="index.html#contact" class="btn">Book a 20-minute demo</a>
+    <a href="index.html#erp">Campus ERP</a><a href="index.html#pricing">Pricing</a><a href="studio.html">Studio</a><a href="projects.html">Work</a><a href="index.html#guides">Guides</a><a href="index.html#contact">Contact</a>
+    <a href="index.html#contact" class="btn" data-book>Book a 20-minute demo</a>
   </div>
 
   <main id="main" class="wrap lost">
@@ -54,15 +57,18 @@
       <div class="foot__grid">
         <div class="foot__brand">
           <a href="index.html" class="brand" aria-label="Qolvik home"><img src="assets/qolvik-mark.webp" alt="" width="30" height="30" /><b>Qolvik</b></a>
-          <p>Campus ERP for schools and colleges, and a design &amp; engineering studio for everyone else. From sketch to scale.</p>
+          <p>Campus ERP for schools and colleges, and a design &amp; engineering studio. From sketch to scale.</p>
+          <p class="foot__addr"><span data-brand-address></span><br /><a data-brand-phone href="#"></a></p>
         </div>
-        <nav aria-label="Product"><b>Product</b><a href="index.html#erp">Campus ERP</a><a href="index.html#switch">How switching works</a><a href="index.html#contact">Book a demo</a></nav>
-        <nav aria-label="Studio"><b>Studio</b><a href="index.html#studio">Services</a><a href="projects.html">Work</a><a href="index.html#team">Team</a></nav>
-        <nav aria-label="Company"><b>Company</b><a href="index.html#faq">FAQ</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><span class="foot__social" data-socials></span></nav>
+        <nav aria-label="Product"><b>Product</b><a href="index.html#erp">Campus ERP</a><a href="index.html#pricing">Pricing</a><a href="index.html#calculator">Fee calculator</a><a href="index.html#contact" data-book>Book a demo</a></nav>
+        <nav aria-label="Resources"><b>Resources</b><a href="guide-choose-school-erp.html">Choosing an ERP</a><a href="guide-reduce-late-fees.html">Reducing late fees</a><a href="guide-excel-to-erp.html">Excel to ERP</a><a href="assets/qolvik-erp-brochure.pdf" download>Brochure (PDF)</a></nav>
+        <nav aria-label="Company"><b>Company</b><a href="studio.html">Studio</a><a href="projects.html">Work</a><a href="index.html#team">Team</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><span class="foot__social" data-socials></span></nav>
       </div>
-      <div class="foot__bottom"><span>© <span data-year></span> Qolvik · Made in India</span><a href="#top">Back to top ↑</a></div>
+      <div class="foot__bottom"><span>© <span data-year></span> Qolvik · Bengaluru, India</span><a href="#top">Back to top ↑</a></div>
     </div>
   </footer>
+
+  <a class="wa-float" data-brand-wa href="#" target="_blank" rel="noopener" aria-label="Chat with Qolvik on WhatsApp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l1.3-3.9A8 8 0 1 1 8 18.8L4 20Zm5-11.5c0 3.5 3 6.5 6.5 6.5l1-1.6-2-1-1 .9a4.8 4.8 0 0 1-2.8-2.8l.9-1-1-2-1.6 1Z"/></svg><span>WhatsApp</span></a>
 
   <script type="module" src="scripts/page.js"></script>
 </body>

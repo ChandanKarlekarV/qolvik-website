@@ -2,9 +2,9 @@
 //  Shared browser behaviour used by every page
 //  (no animation libraries — CSS does the motion)
 // =========================================================
-import { ANALYTICS, BRAND, CONTACT, FORM, PROJECTS } from "./config.js";
+import { ANALYTICS, BRAND, CONTACT, FORM, PROJECTS, BOOKING_URL } from "./config.js";
 import { mountMini } from "./minis.js";
-import { telHref, waHref } from "./templates.js";
+import { telHref, waHref, addressText } from "./templates.js";
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -44,6 +44,7 @@ export function fillContact() {
   $$("[data-brand-phone]").forEach((a) => { if (!CONTACT.phone) return drop(a); a.textContent = CONTACT.phone; a.href = telHref(); });
   $$("[data-brand-wa]").forEach((a) => { if (!CONTACT.phone) return drop(a); a.href = waHref(); });
   $$("[data-brand-city]").forEach((el) => { if (!CONTACT.city) return drop(el); el.textContent = `${CONTACT.city}${CONTACT.region ? ", " + CONTACT.region : ""}, India`; });
+  $$("[data-brand-address]").forEach((el) => { if (!CONTACT.street) return drop(el); el.textContent = addressText(); });
   $$("[data-year]").forEach((el) => (el.textContent = new Date().getFullYear()));
 }
 
@@ -104,13 +105,25 @@ export function contactForm() {
 
     btn.disabled = true; form.setAttribute("aria-busy", "true"); label.textContent = "Sending…";
     const data = new FormData(form);
-    const name = field("name").value.trim(), org = field("org").value.trim();
+    const name = field("name").value.trim(), org = field("org").value.trim(), phone = field("phone")?.value.trim() || "";
     const interest = data.getAll("interest");
     try {
       if (!isBot) {
         const email = field("email").value.trim(), message = field("message").value.trim();
         let res, out;
-        if (FORM.web3formsKey) {
+        const z = FORM.zoho;
+        if (z?.xnQsjsdp && z?.xmIwtLD) {
+          // Zoho CRM Web-to-Lead: creates a Lead in your CRM (Zoho also emails you).
+          // Zoho doesn't allow reading the reply from another site, so a sent request counts as delivered.
+          const body = new URLSearchParams({
+            xnQsjsdp: z.xnQsjsdp, xmIwtLD: z.xmIwtLD, actionType: "TGVhZHM=", zc_gad: "",
+            "Last Name": name, Email: email, Phone: phone, Company: org || "Not given",
+            Description: `${message}\n\nInterested in: ${interest.join(", ") || "Not specified"}`,
+            "Lead Source": "Website",
+          });
+          await fetch(z.action, { method: "POST", mode: "no-cors", body });
+          res = { ok: true, status: 200 }; out = { ok: true };
+        } else if (FORM.web3formsKey) {
           res = await fetch("https://api.web3forms.com/submit", {
             method: "POST",
             headers: { "Content-Type": "application/json", Accept: "application/json" },
@@ -118,7 +131,7 @@ export function contactForm() {
               access_key: FORM.web3formsKey,
               subject: `New enquiry: ${interest.join(", ") || "General"} — ${name}${org ? ` (${org})` : ""}`,
               from_name: `${BRAND.name} website`, name, email, replyto: email, message,
-              "School or company": org || "—", "Interested in": interest.join(", ") || "Not specified", botcheck: "",
+              "School or company": org || "—", Phone: phone || "—", "Interested in": interest.join(", ") || "Not specified", botcheck: "",
             }),
           });
           out = await res.json().catch(() => ({}));
@@ -128,7 +141,7 @@ export function contactForm() {
         } else {
           res = await fetch("/api/contact", {
             method: "POST", headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name, email, message: org ? `${message}\n\n— ${org}` : message, interest, company_website: field("company_website").value }),
+            body: JSON.stringify({ name, email, message: [message, org && `— ${org}`, phone && `Phone: ${phone}`].filter(Boolean).join("\n\n"), interest, company_website: field("company_website").value }),
           });
           out = await res.json().catch(() => ({}));
         }
@@ -152,9 +165,16 @@ export function contactForm() {
   });
 }
 
+// "Book a demo" buttons → Zoho Bookings page when BOOKING_URL is set
+export function initBooking() {
+  if (!/^https:\/\//.test(BOOKING_URL || "")) return;
+  $$("[data-book]").forEach((a) => { a.href = BOOKING_URL; a.target = "_blank"; a.rel = "noopener"; });
+}
+
 // Everything a plain page needs
 export function initPage() {
   initMenu();
+  initBooking();
   fillContact();
   initAnalytics();
 }

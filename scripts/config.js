@@ -5,28 +5,55 @@
 export const BRAND = {
   name: "Qolvik",
   tagline: "From sketch to scale.",
-  email: "hello@qolvik.com", // placeholder — replace with your real email
+  email: "hello@qolvik.com", // must be a real inbox — set it up in Zoho Mail (docs/zoho-setup.md, step 1)
 };
 
 // ---------------------------------------------------------
-//  CONTACT FORM DELIVERY — Web3Forms (free, 250 messages/month).
-//  Get a key at https://web3forms.com (enter the inbox that should receive messages),
-//  paste it below. This key is designed to be public — it only lets people send TO you.
-//  Empty = the form falls back to the /api/contact function (Resend) if that is configured.
+//  CONTACT FORM DELIVERY — tried in this order:
+//  1. Zoho CRM  — every enquiry becomes a Lead in Zoho CRM (docs/zoho-setup.md, step 2).
+//                 Paste the two codes from your Zoho "Web-to-Lead" form. They are meant to be public.
+//  2. Web3Forms — web3formsKey from https://web3forms.com (emails you each message).
+//  3. /api/contact on Vercel (serverEmail: true + RESEND_API_KEY + CONTACT_TO).
+//  None set up → the visitor's email app opens with the message filled in.
 // ---------------------------------------------------------
-// serverEmail: set to true once RESEND_API_KEY + CONTACT_TO are added in Vercel (uses /api/contact).
-export const FORM = { web3formsKey: "", serverEmail: false };
+export const FORM = {
+  zoho: {
+    action: "https://crm.zoho.in/crm/WebToLeadForm", // .in = Zoho's India data centre
+    xnQsjsdp: "",  // ← paste from the Zoho form code
+    xmIwtLD: "",   // ← paste from the Zoho form code
+  },
+  web3formsKey: "",
+  serverEmail: false,
+};
 
 // ---------------------------------------------------------
-//  CONTACT — PLACEHOLDERS: replace with your real number and city.
-//  phone is shown on the site; city is used for local search
+//  BOOK A DEMO — paste your Zoho Bookings page link (docs/zoho-setup.md, step 3).
+//  Empty = "Book a demo" buttons scroll to the contact form instead.
 // ---------------------------------------------------------
-// Leave phone / city empty ("") to hide them — nothing fake is ever shown.
+export const BOOKING_URL = "";
+
+// ---------------------------------------------------------
+//  CONTACT — shown on the site and sent to Google for local search.
+//  Leave a value empty ("") to hide it — nothing fake is ever shown.
+// ---------------------------------------------------------
 export const CONTACT = {
-  phone: "",      // e.g. "+91 98765 43210" — also turns on the WhatsApp button
-  city: "",       // e.g. "Bengaluru"
-  region: "",     // e.g. "Karnataka"
+  phone: "+91 90193 40778",  // also turns on the WhatsApp buttons
+  city: "Bengaluru",
+  region: "Karnataka",
+  street: "8th Cross, Shivananda Nagar, Moodalapalya",
+  postalCode: "",            // e.g. "560072" — add it so Google Maps places you exactly
   country: "IN",
+};
+
+// ---------------------------------------------------------
+//  ERP PRICING shown on the site (₹ per student per year, before GST).
+//  Range = Standard → List from the internal price book.
+// ---------------------------------------------------------
+export const ERP_PRICING = {
+  school: { from: 180, to: 250, minYear: 50000 },
+  college: { from: 300, to: 420, minYear: 150000 },
+  setupFrom: 25000,       // one-time setup and data import, from
+  foundingSpots: 5,       // founding schools for the 2026–27 year
 };
 
 // ---------------------------------------------------------
@@ -102,11 +129,21 @@ export const FOUNDER_NOTE = {
 };
 
 // ---------------------------------------------------------
+//  GUIDES — helpful articles for school leaders (bring visitors from Google)
+//  Each one is its own page: <slug>.html
+// ---------------------------------------------------------
+export const GUIDES = [
+  { slug: "guide-choose-school-erp", title: "How to choose school ERP software: a 12-point checklist", short: "How to choose school ERP software", desc: "Twelve questions to ask any school ERP vendor before you sign — from data ownership to what happens on exam day.", read: "6 min read" },
+  { slug: "guide-reduce-late-fees", title: "How to reduce late fee payments in your school", short: "How to reduce late fee payments", desc: "Practical steps that help parents pay on time — clear schedules, reminders that get read, and easy ways to pay.", read: "5 min read" },
+  { slug: "guide-excel-to-erp", title: "Moving from Excel to a school ERP in two weeks", short: "From Excel to ERP in two weeks", desc: "A day-by-day plan for switching your school from spreadsheets to an ERP without disrupting classes.", read: "5 min read" },
+];
+
+// ---------------------------------------------------------
 //  FAQ — also sent to Google as FAQ data
 // ---------------------------------------------------------
 export const FAQ = [
-  { q: "How long does it take to switch to Qolvik ERP?", a: "About two weeks for a school. We import your students and fee records from Excel or your old software for free, set up your fee rules and report-card formats, and train your staff." },
-  { q: "How is the ERP priced?", a: "Per student, per year — so there is no big upfront fee. Hosting, backups, updates and support are included. SMS and WhatsApp messages are billed at cost. Ask us for a quote for your school." },
+  { q: "How long does it take to switch to Qolvik ERP?", a: "About two weeks for a school. We import your students and fee records from Excel or your old software, set up your fee rules and report-card formats, and train your staff." },
+  { q: "How is the ERP priced?", a: "Per student, per year: ₹180–₹250 for schools and ₹300–₹420 for colleges, plus 18% GST, with a one-time setup from ₹25,000. Hosting, backups, updates and support are included; SMS and WhatsApp messages are billed at cost. Founding schools get setup free and their price locked for three years." },
   { q: "Is our students' data safe?", a: "Every user sees only what their role allows, all connections are encrypted, and data is backed up daily. The data is yours: you can export it at any time." },
   { q: "Can it follow our own rules and formats?", a: "Yes. Fee instalments, concessions, attendance rules and report-card layouts are settings, not custom code — so updates never break your setup." },
   { q: "Do you also build websites and apps?", a: "Yes. Our studio designs and builds websites, web apps, MVPs and mobile apps for schools, startups and businesses. Every project ends with a full handover of code, designs and accounts." },

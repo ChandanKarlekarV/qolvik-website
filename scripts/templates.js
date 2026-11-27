@@ -3,7 +3,7 @@
 //  Used in the browser AND by build.js to pre-render content
 //  into the HTML, so search engines see it without JavaScript.
 // =========================================================
-import { SERVICES, ERP, TEAM, FAQ, PROJECTS, SOCIALS, CONTACT, FOUNDER_NOTE } from "./config.js";
+import { SERVICES, ERP, TEAM, FAQ, PROJECTS, SOCIALS, CONTACT, FOUNDER_NOTE, ERP_PRICING, GUIDES } from "./config.js";
 import { icon } from "./icons.js";
 
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -74,6 +74,37 @@ export const projectCardsHTML = () => PROJECTS.map((p) => `
 // ---------- Social links (only real URLs are shown) ----------
 export const socialsHTML = () => SOCIALS.filter((s) => realUrl(s.url)).map((s) => `<a href="${s.url}" target="_blank" rel="noopener">${esc(s.name)}</a>`).join("");
 
+// ---------- ERP pricing ----------
+export const inr = (n) => "₹" + Math.round(n).toLocaleString("en-IN");
+export const pricingHTML = () => {
+  const P = ERP_PRICING;
+  const plan = (name, p, who) => `
+          <div class="box price" data-reveal>
+            <span class="label">${name}</span>
+            <p class="price__num"><b>${inr(p.from)}–${inr(p.to)}</b><span>per student, per year</span></p>
+            <p class="muted">${who}. Minimum ${inr(p.minYear)} a year.</p>
+            <ul class="stars"><li>Hosting, daily backups and updates</li><li>Parent ${name === "Colleges" ? "and student " : ""}app</li><li>Training and first-year support</li></ul>
+          </div>`;
+  return plan("Schools", P.school, "Up to ~1,500 students") + plan("Colleges", P.college, "Degree, PU and professional colleges") + `
+          <div class="box box--ink price" data-reveal>
+            <span class="label">Founding schools · ${P.foundingSpots} spots for 2026–27</span>
+            <h3>Be one of our first schools.</h3>
+            <ul class="stars"><li>Setup and data import free (normally from ${inr(P.setupFrom)})</li><li>Your price locked for 3 years</li><li>A direct line to the founders</li></ul>
+            <p>In return: honest feedback, and a short case study once you're happy.</p>
+            <div><a class="btn" href="#contact" data-book>Apply for a founding spot</a></div>
+          </div>`;
+};
+
+// ---------- Guides ----------
+export const guidesHTML = () => GUIDES.map((g, i) => `
+        <a class="guide" href="${g.slug}.html" data-reveal>
+          <span class="label">Guide ${String(i + 1).padStart(2, "0")} · ${esc(g.read)}</span>
+          <h3>${esc(g.short)}</h3>
+          <p>${esc(g.desc)}</p>
+          <span class="guide__go">Read the guide ${icon("arrow")}</span>
+        </a>`).join("");
+
 // ---------- Contact helpers ----------
+export const addressText = () => [CONTACT.street, CONTACT.city + (CONTACT.postalCode ? ` ${CONTACT.postalCode}` : ""), CONTACT.region].filter(Boolean).join(", ");
 export const telHref = () => `tel:${CONTACT.phone.replace(/[^\d+]/g, "")}`;
 export const waHref = () => `https://wa.me/${CONTACT.phone.replace(/\D/g, "")}?text=${encodeURIComponent("Hi Qolvik, I'd like to talk about a project.")}`;

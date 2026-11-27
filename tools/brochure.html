@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Qolvik Campus ERP — brochure</title>
+<!-- Source for assets/qolvik-erp-brochure.pdf (2 × A4).
+     Re-render: chrome --headless=new --no-pdf-header-footer --print-to-pdf=assets/qolvik-erp-brochure.pdf tools/brochure.html -->
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@700;800&family=JetBrains+Mono:wght@600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root { --paper: #F4F2EC; --band: #E4E4DA; --card: #FBFAF6; --ink: #111; --ink2: #45453F; --accent: #C2501A; --rule: 1.5px solid #111; }
+  body { font: 400 10.5pt/1.5 "Manrope", sans-serif; color: var(--ink); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .page { width: 210mm; height: 297mm; padding: 16mm 15mm; background: var(--paper); display: flex; flex-direction: column; gap: 9mm; page-break-after: always; overflow: hidden; }
+  .page:last-child { page-break-after: auto; }
+  h1, h2, h3 { font-family: "Inter Tight", sans-serif; font-weight: 800; letter-spacing: -0.03em; line-height: 1.05; }
+  h1 { font-size: 38pt; letter-spacing: -0.045em; }
+  h2 { font-size: 18pt; }
+  h3 { font-size: 11.5pt; letter-spacing: -0.01em; }
+  .tag { display: inline-block; padding: 2.2mm 3.4mm; border: var(--rule); background: var(--card); font: 700 7.5pt/1 "JetBrains Mono", monospace; letter-spacing: .12em; text-transform: uppercase; transform: rotate(-1.5deg); }
+  .label { font: 700 7pt/1.2 "JetBrains Mono", monospace; letter-spacing: .14em; text-transform: uppercase; }
+  .top { display: flex; justify-content: space-between; align-items: center; padding-bottom: 5mm; border-bottom: var(--rule); }
+  .brand { display: flex; align-items: center; gap: 3mm; font: 800 15pt/1 "Inter Tight", sans-serif; letter-spacing: -0.04em; }
+  .brand img { width: 9mm; height: 9mm; }
+  .scribble { position: relative; white-space: nowrap; }
+  .scribble svg { position: absolute; left: -2%; bottom: -1.6mm; width: 104%; height: 3.4mm; }
+  .scribble path { fill: none; stroke: var(--accent); stroke-width: 3; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+  .lead { font-size: 12pt; color: var(--ink2); max-width: 150mm; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); border-top: var(--rule); border-left: var(--rule); }
+  .grid3 > div { padding: 4.5mm; border-right: var(--rule); border-bottom: var(--rule); display: grid; gap: 1.5mm; align-content: start; }
+  .grid3 p, .steps p { color: var(--ink2); font-size: 9.5pt; }
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5mm; }
+  .steps > div { border-top: var(--rule); padding-top: 3mm; display: grid; gap: 1.2mm; align-content: start; }
+  .stars { list-style: none; display: grid; gap: 1.8mm; }
+  .stars li { display: grid; grid-template-columns: 5mm 1fr; }
+  .stars li::before { content: "✱"; font: 800 9pt "JetBrains Mono", monospace; }
+  .box { border: var(--rule); border-radius: 4mm; background: var(--card); padding: 5mm; display: grid; gap: 2.5mm; align-content: start; }
+  .ink { background: var(--ink); color: var(--paper); }
+  .ink .stars li, .ink p { color: #E4E2DA; }
+  .price { font: 800 22pt/1 "Inter Tight", sans-serif; letter-spacing: -0.04em; }
+  .row { display: grid; grid-template-columns: 1fr 1fr 1.15fr; gap: 5mm; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; }
+  .fine { font: 600 7.5pt/1.5 "JetBrains Mono", monospace; color: var(--ink2); }
+  .team { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; }
+  .person { display: grid; grid-template-columns: 22mm 1fr; gap: 4mm; align-items: center; }
+  .person img { width: 22mm; height: 23mm; object-fit: cover; object-position: 50% 30%; border: var(--rule); border-radius: 3mm; filter: grayscale(1); }
+  .contact { margin-top: auto; display: grid; grid-template-columns: 1.2fr 1fr; gap: 6mm; padding-top: 6mm; border-top: var(--rule); align-items: end; }
+  .contact b { font: 800 11pt "JetBrains Mono", monospace; }
+  .big { font: 800 20pt/1.1 "Inter Tight", sans-serif; letter-spacing: -0.03em; }
+</style>
+</head>
+<body>
+  <!-- ============ PAGE 1 ============ -->
+  <section class="page">
+    <div class="top"><span class="brand"><img src="../assets/qolvik-mark.png" alt="" />Qolvik</span><span class="label">Campus ERP · Bengaluru · qolvik.com</span></div>
+    <div style="display:grid;gap:5mm">
+      <span><span class="tag">For principals &amp; trustees</span></span>
+      <h1>School software your teachers will <span class="scribble">actually use.<svg viewBox="0 0 200 12" preserveAspectRatio="none"><path d="M2 8C40 2 80 11 120 5s60-1 78 2"/></svg></span></h1>
+      <p class="lead">Attendance, fees, report cards and a parent app in one simple system — live in about two weeks, and set up around how your school already works.</p>
+    </div>
+    <div style="display:grid;gap:4mm">
+      <span class="label">What it does</span>
+      <div class="grid3">
+        <div><h3>Attendance in seconds</h3><p>One tap per class. Parents of absent students get an SMS straight away.</p></div>
+        <div><h3>Fees without chasing</h3><p>Instalments, concessions, online payment, receipts and automatic reminders.</p></div>
+        <div><h3>Report cards, your format</h3><p>CBSE, ICSE and State board layouts — printed, or shared on the app.</p></div>
+        <div><h3>Parent app included</h3><p>Homework, circulars, fees and results on every parent's phone.</p></div>
+        <div><h3>Timetable &amp; substitutions</h3><p>Build the week once. Find a free teacher in one click.</p></div>
+        <div><h3>Staff, transport &amp; more</h3><p>Staff attendance and payroll, bus routes, library and admissions.</p></div>
+      </div>
+    </div>
+    <div style="display:grid;gap:4mm">
+      <span class="label">Switching takes about two weeks</span>
+      <div class="steps">
+        <div><span class="label">Days 1–3</span><h3>We import</h3><p>Your Excel sheets or old-software data — students, staff and fees.</p></div>
+        <div><span class="label">Days 4–7</span><h3>We set up</h3><p>Fee heads, concessions and report cards, exactly as you run them.</p></div>
+        <div><span class="label">Week 2</span><h3>We train</h3><p>Short hands-on sessions for office staff and teachers.</p></div>
+        <div><span class="label">Go live</span><h3>We stay</h3><p>A direct line to the team, with a year of support included.</p></div>
+      </div>
+    </div>
+    <div class="row2" style="margin-top:auto">
+      <div class="box"><span class="label">Your data stays yours</span><ul class="stars"><li>Every user sees only what their role allows</li><li>Encrypted connections and daily backups</li><li>Export all your data, any time</li></ul></div>
+      <div class="box"><span class="label">Every plan includes</span><ul class="stars"><li>Hosting, updates and new features</li><li>Parent app on Android and iPhone</li><li>Training and a year of support</li></ul></div>
+    </div>
+  </section>
+
+  <!-- ============ PAGE 2 ============ -->
+  <section class="page">
+    <div class="top"><span class="brand"><img src="../assets/qolvik-mark.png" alt="" />Qolvik</span><span class="label">Pricing · Team · Contact</span></div>
+    <div style="display:grid;gap:4mm">
+      <span><span class="tag">Pricing</span></span>
+      <h2>Pay per student, per year.</h2>
+      <div class="row">
+        <div class="box"><span class="label">Schools</span><p class="price">₹180–₹250</p><span class="label">per student, per year</span><p>Minimum ₹50,000 a year.</p></div>
+        <div class="box"><span class="label">Colleges</span><p class="price">₹300–₹420</p><span class="label">per student, per year</span><p>Minimum ₹1,50,000 a year.</p></div>
+        <div class="box ink"><span class="label">Founding schools · 5 spots, 2026–27</span><ul class="stars"><li>Setup and data import free</li><li>Price locked for 3 years</li><li>A direct line to the founders</li></ul></div>
+      </div>
+      <p class="fine">✱ Prices before 18% GST. One-time setup and data import from ₹25,000. SMS and WhatsApp messages billed at cost.</p>
+    </div>
+    <div style="display:grid;gap:4mm">
+      <span><span class="tag">The people you'll talk to</span></span>
+      <div class="team">
+        <div class="person"><img src="../assets/team/chandan.webp" alt="" /><div><h3>Chandan Karlekar V</h3><p class="fine">Co-founder &amp; CEO</p><p style="font-size:9.5pt;color:#45453F">Clients, partnerships and product direction.</p></div></div>
+        <div class="person"><img src="../assets/team/druva.webp" alt="" /><div><h3>Druva Teja</h3><p class="fine">Co-founder &amp; CTO</p><p style="font-size:9.5pt;color:#45453F">Architecture, security and code quality.</p></div></div>
+      </div>
+      <p style="color:#45453F">A team of six in Bengaluru. No account managers — you talk to the people who build it.</p>
+    </div>
+    <div class="box" style="gap:3mm">
+      <span class="label">Questions to ask any ERP vendor — including us</span>
+      <ul class="stars" style="grid-template-columns:1fr 1fr;column-gap:6mm">
+        <li>Can a teacher take attendance in a minute?</li><li>Can you export all your data, any time?</li>
+        <li>What is the full 3-year price, in writing?</li><li>Who imports the data and trains staff?</li>
+        <li>What happens on results day?</li><li>Can you speak to schools using it?</li>
+      </ul>
+    </div>
+    <div class="contact">
+      <div style="display:grid;gap:3mm"><span class="label">Book a 20-minute demo</span><p class="big">qolvik.com</p><p style="color:#45453F">8th Cross, Shivananda Nagar, Moodalapalya, Bengaluru, Karnataka</p></div>
+      <div style="display:grid;gap:2mm;justify-items:end;text-align:right"><span class="label">Call or WhatsApp</span><b>+91 90193 40778</b><span class="label" style="margin-top:2mm">Email</span><b>hello@qolvik.com</b></div>
+    </div>
+  </section>
+</body>
+</html>

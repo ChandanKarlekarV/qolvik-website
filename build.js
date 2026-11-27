@@ -15,10 +15,10 @@ const { pathToFileURL } = require("url");
 const SITE_URL = (process.env.SITE_URL || "https://qolvik.com").replace(/\/$/, "");
 const root = __dirname;
 const out = path.join(root, "dist");
-const PAGES = ["index.html", "projects.html", "privacy.html", "terms.html", "404.html"];
+const PAGES = ["index.html", "studio.html", "projects.html", "guide-choose-school-erp.html", "guide-reduce-late-fees.html", "guide-excel-to-erp.html", "privacy.html", "terms.html", "404.html"];
 const COPY = [...PAGES, "assets", "scripts", "styles", "favicon.ico", "_headers"];
-// Homepage "Selected work" picks (ids from PROJECTS in scripts/config.js)
-const HOME_WORK = ["pulse", "nimbus", "kirana-khata"];
+// Studio page "Selected work" picks — one per service (ids from PROJECTS in scripts/config.js)
+const STUDIO_WORK = ["nimbus", "pulse", "kiln", "kirana-khata", "clinicly", "coachpoint"];
 const SKIP = new Set(["package.json", "brand", "qolvik-logo.png", "qolvik-mark.png"]); // source artwork stays out of the build
 
 async function main() {
@@ -53,8 +53,9 @@ async function main() {
     .replace(/(<a\b[^>]*data-brand-email)([^>]*)href="#"([^>]*)><\/a>/g, `$1$2href="mailto:${C.BRAND.email}"$3>${C.BRAND.email}</a>`)
     // Empty phone / city in config.js → the whole row is left out (no placeholders online)
     //   (each data-reach row sits on its own line in the HTML)
-    .replace(/^[ \t]*<(?:span|li) data-reach>.*data-brand-(phone|wa|city).*\r?\n/gm,
-      (m, kind) => ((kind === "city" ? C.CONTACT.city : C.CONTACT.phone) ? m : ""))
+    .replace(/^[ \t]*<(?:span|li) data-reach>.*data-brand-(phone|wa|city|address).*\r?\n/gm,
+      (m, kind) => ((kind === "city" ? C.CONTACT.city : kind === "address" ? C.CONTACT.street : C.CONTACT.phone) ? m : ""))
+    .replace(/<span data-brand-address><\/span>/g, C.CONTACT.street ? `<span data-brand-address>${T.addressText()}</span>` : "")
     .replace(/(<a\b[^>]*data-brand-phone)([^>]*)href="#"([^>]*)><\/a>/g, `$1$2href="${T.telHref()}"$3>${C.CONTACT.phone}</a>`)
     .replace(/(<a\b[^>]*data-brand-wa)([^>]*)href="#"/g, `$1$2href="${T.waHref().replace(/&/g, "&amp;")}"`)
     .replace(/<span data-brand-city><\/span>/g, `<span data-brand-city>${city}, India</span>`);
@@ -63,7 +64,8 @@ async function main() {
     "index.html": (h) => {
       h = fill(h, "data-erp-feats", T.erpFeatsHTML("school"));
       h = fill(h, "data-services", T.servicesHTML());
-      h = fill(h, "data-work", T.workHTML(HOME_WORK));
+      h = fill(h, "data-pricing", T.pricingHTML());
+      h = fill(h, "data-guides", T.guidesHTML());
       h = fill(h, "data-team", T.teamHTML());
       h = fill(h, "data-founder", T.founderHTML());
       h = fill(h, "data-faq", T.faqHTML());
@@ -76,14 +78,16 @@ async function main() {
         ...(m.links?.linkedin?.startsWith("http") ? { sameAs: [m.links.linkedin] } : {}),
       });
       const addr = { "@type": "PostalAddress", addressCountry: C.CONTACT.country,
+        ...(C.CONTACT.street ? { streetAddress: C.CONTACT.street } : {}), ...(C.CONTACT.postalCode ? { postalCode: C.CONTACT.postalCode } : {}),
         ...(C.CONTACT.city ? { addressLocality: C.CONTACT.city } : {}), ...(C.CONTACT.region ? { addressRegion: C.CONTACT.region } : {}) };
       const ld = { "@context": "https://schema.org", "@graph": [
         {
           "@type": ["Organization", "ProfessionalService"], "@id": ORG, name: C.BRAND.name,
           url: `${SITE_URL}/`, logo: `${SITE_URL}/assets/apple-touch-icon.png`, image: `${SITE_URL}/assets/og-image.jpg`, slogan: C.BRAND.tagline,
-          description: "Design and engineering studio in India building MVPs, web applications, websites, mobile apps and campus ERP for schools and colleges.",
+          description: "Bengaluru company building Campus ERP for schools and colleges, plus websites, web apps, MVPs and mobile apps.",
+          priceRange: "₹₹", areaServed: [{ "@type": "City", name: "Bengaluru" }, { "@type": "Country", name: "India" }],
           email: C.BRAND.email, ...(C.CONTACT.phone ? { telephone: C.CONTACT.phone } : {}), address: addr,
-          areaServed: "IN", knowsAbout: ["UI/UX design", "Web application development", "MVP development", "Website development", "Mobile app development", "School ERP", "College ERP"],
+          knowsAbout: ["UI/UX design", "Web application development", "MVP development", "Website development", "Mobile app development", "School ERP", "College ERP"],
           founder: C.TEAM.filter((m) => /co-founder/i.test(m.role)).map(person),
           employee: C.TEAM.filter((m) => !/co-founder/i.test(m.role)).map(person),
           numberOfEmployees: { "@type": "QuantitativeValue", value: C.TEAM.length },
@@ -95,6 +99,7 @@ async function main() {
       ] };
       return h.replace("<!--LD-JSON-->", `<script type="application/ld+json">${JSON.stringify(ld).replace(/</g, "\\u003c")}</script>`);
     },
+    "studio.html": (h) => fill(fill(h, "data-services", T.servicesHTML()), "data-work", T.workHTML(STUDIO_WORK)),
     "projects.html": (h) => fill(fill(h, "data-pgrid", T.projectCardsHTML()), "data-p-tabs", T.tabButtons(T.PROJECT_TABS)),
     // The source 404 uses relative paths so it also works when opened from disk.
     // Online it is served at any depth (/a/b/c), so make every local link root-absolute.
@@ -121,7 +126,7 @@ async function main() {
   // ---------- robots.txt + sitemap.xml ----------
   fs.writeFileSync(path.join(out, "robots.txt"), `User-agent: *\nAllow: /\nDisallow: /404.html\n\nSitemap: ${SITE_URL}/sitemap.xml\n`);
   const today = new Date().toISOString().slice(0, 10);
-  const urls = [["/", "1.0", "weekly"], ["/projects.html", "0.8", "monthly"], ["/privacy.html", "0.2", "yearly"], ["/terms.html", "0.2", "yearly"]];
+  const urls = [["/", "1.0", "weekly"], ["/projects.html", "0.8", "monthly"], ["/studio.html", "0.8", "monthly"], ...C.GUIDES.map((g) => [`/${g.slug}.html`, "0.7", "monthly"]), ["/privacy.html", "0.2", "yearly"], ["/terms.html", "0.2", "yearly"]];
   fs.writeFileSync(path.join(out, "sitemap.xml"),
     `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
     urls.map(([u, p, c]) => `  <url><loc>${SITE_URL}${u}</loc><lastmod>${today}</lastmod><changefreq>${c}</changefreq><priority>${p}</priority></url>`).join("\n") +
