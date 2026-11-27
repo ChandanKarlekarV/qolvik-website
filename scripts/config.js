@@ -30,90 +30,86 @@ export const CONTACT = {
 };
 
 // ---------------------------------------------------------
-//  SERVICES — numbered rows on the homepage
+//  STUDIO SERVICES — the "Also from our studio" grid
+//  icon: a line icon from scripts/icons.js
 // ---------------------------------------------------------
 export const SERVICES = [
-  { title: "UI/UX Design", desc: "Research, wireframes, interfaces and prototypes people understand on day one.", tags: ["Research", "Wireframes", "Figma", "Prototyping"], preview: "finance" },
-  { title: "Web Applications", desc: "Dashboards, portals and internal tools with roles, APIs and integrations.", tags: ["React", "Node.js", "APIs", "Auth"], preview: "dashboard" },
-  { title: "MVP Development", desc: "From idea to a launched product in weeks — scoped tightly, measured from day one.", tags: ["Scoping", "Prototype", "Launch", "Analytics"], preview: "shop" },
-  { title: "Websites", desc: "Fast, beautiful, search-friendly websites that turn visitors into enquiries.", tags: ["Next.js", "SEO", "CMS", "Performance"], preview: "landing" },
-  { title: "Mobile Apps", desc: "iOS and Android apps from one codebase — parent apps, field apps and consumer products.", tags: ["Flutter", "iOS", "Android", "Push"], preview: "onboard" },
-  { title: "Campus ERP", desc: "ERP for schools, colleges and coaching institutes — admissions, attendance, fees and exams.", tags: ["Admissions", "Fees", "Exams", "Parent app"], preview: "erp" },
+  { title: "Websites", icon: "website", desc: "Fast, search-friendly websites for schools, clinics and businesses — built to bring enquiries." },
+  { title: "Web Applications", icon: "webapp", desc: "Dashboards, portals and internal tools with roles, payments and integrations." },
+  { title: "MVP Development", icon: "mvp", desc: "From idea to a launched product in weeks — scoped tightly and measured from day one." },
+  { title: "Mobile Apps", icon: "mobile", desc: "One Flutter app for iOS and Android — parent apps, field apps and consumer products." },
+  { title: "UI/UX Design", icon: "uiux", desc: "Research, flows and clickable prototypes people understand on day one." },
+  { title: "Campus ERP", icon: "erp", desc: "Our own product for schools, colleges and coaching institutes — see it above." },
 ];
 
 // ---------------------------------------------------------
-//  TECH STACK — CHANGE THIS to match what your team really uses.
-//  mono: 2–3 letters shown on the tile.
+//  CAMPUS ERP — feature grid under the live demo (one list per tab)
 // ---------------------------------------------------------
-export const STACK = {
-  Languages: [
-    { name: "TypeScript", mono: "TS", note: "Type-safe front and back end" },
-    { name: "JavaScript", mono: "JS", note: "The language of the web" },
-    { name: "Python", mono: "Py", note: "APIs, data and automation" },
-    { name: "Dart", mono: "Da", note: "Cross-platform mobile apps" },
-    { name: "SQL", mono: "SQL", note: "Queries, reports, analytics" },
-    { name: "HTML & CSS", mono: "</>", note: "Accessible, responsive UI" },
+export const ERP = {
+  school: [
+    { icon: "attendance", t: "Attendance in seconds", d: "One tap per class. Parents of absent students get an SMS straight away." },
+    { icon: "fees", t: "Fees without chasing", d: "Instalments, concessions, online payment, receipts and automatic reminders." },
+    { icon: "report", t: "Report cards, your format", d: "CBSE, ICSE and State board layouts — printed, or shared on the parent app." },
+    { icon: "parent", t: "Parent app included", d: "Homework, circulars, fees and results on every parent's phone." },
+    { icon: "timetable", t: "Timetable & substitutions", d: "Build the week once. Find a free teacher for a substitution in one click." },
+    { icon: "staff", t: "Staff, transport & more", d: "Staff attendance and payroll, bus routes, library and admissions." },
   ],
-  Frameworks: [
-    { name: "React", mono: "Re", note: "Component-driven interfaces" },
-    { name: "Next.js", mono: "Nx", note: "Fast, SEO-friendly web apps" },
-    { name: "Node.js", mono: "No", note: "APIs and real-time services" },
-    { name: "Django", mono: "Dj", note: "Robust admin-heavy backends" },
-    { name: "Flutter", mono: "Fl", note: "iOS & Android from one codebase" },
-    { name: "Tailwind CSS", mono: "Tw", note: "Design-system styling" },
-  ],
-  Databases: [
-    { name: "PostgreSQL", mono: "PG", note: "Our default relational database" },
-    { name: "MySQL", mono: "My", note: "Proven for ERP workloads" },
-    { name: "MongoDB", mono: "Mo", note: "Flexible document storage" },
-    { name: "Redis", mono: "Rd", note: "Caching, queues, sessions" },
-    { name: "Firebase", mono: "Fb", note: "Realtime data & auth for MVPs" },
-    { name: "Supabase", mono: "Sb", note: "Postgres with auth & storage" },
-  ],
-  "Cloud & tools": [
-    { name: "AWS", mono: "AWS", note: "Scalable cloud hosting" },
-    { name: "Vercel", mono: "Ve", note: "Instant web deployments" },
-    { name: "Docker", mono: "Dk", note: "Consistent environments" },
-    { name: "GitHub Actions", mono: "CI", note: "Automated tests & deploys" },
-    { name: "Figma", mono: "Fi", note: "Design & prototyping" },
-    { name: "Postman", mono: "Pm", note: "API design & testing" },
+  college: [
+    { icon: "attendance", t: "Semester registration", d: "Credit-based courses, electives and approvals, all online." },
+    { icon: "exam", t: "Exam cell workflows", d: "Internal marks with locks, hall tickets for eligible students, results." },
+    { icon: "fees", t: "Fees & scholarships", d: "Fee heads per course, instalments, scholarships and online payment." },
+    { icon: "hostel", t: "Hostel & library", d: "Room allotment, mess fees and book issue in one place." },
+    { icon: "placement", t: "Placements & alumni", d: "Drives, offers and alumni records, all tracked." },
+    { icon: "parent", t: "Student & parent app", d: "Timetable, attendance, marks and notices on every phone." },
   ],
 };
 
 // ---------------------------------------------------------
 //  TEAM — add as many members as you like.
 //  photo: optional, e.g. "assets/team/name.webp" (720×756, face centred)
-//  No photo yet → initials are shown.
+//  No photo yet → initials and "Photo coming soon" are shown.
 // ---------------------------------------------------------
-export const TEAM_GROUPS = ["Leadership", "Engineering"];
-
 export const TEAM = [
-  { name: "Chandan Karlekar V", role: "Co-founder & CEO", team: "Leadership", photo: "assets/team/chandan.webp",
+  { name: "Chandan Karlekar V", role: "Co-founder & CEO", photo: "assets/team/chandan.webp",
     bio: "Leads clients, partnerships and product direction — the first call on every project.",
     links: { linkedin: "https://www.linkedin.com/in/chandan-karlekar-v-6b41b03b3/" } },
-  { name: "Druva Teja", role: "Co-founder & CTO", team: "Leadership", photo: "assets/team/druva.webp",
+  { name: "Druva Teja", role: "Co-founder & CTO", photo: "assets/team/druva.webp",
     bio: "Owns architecture, security and code quality across the ERP and every client build.",
     links: { linkedin: "https://www.linkedin.com/in/druva-teja-c/" } },
-  { name: "Ullas Gowda", role: "Chief Marketing Officer", team: "Leadership",
+  { name: "Ullas Gowda", role: "Chief Marketing Officer",
     bio: "Brand, campaigns and partnerships — how schools and founders find Qolvik.",
     links: { linkedin: "https://www.linkedin.com/in/ullas-gowda-8b4993413/" } },
-  { name: "Arvind Patil", role: "Developer", team: "Engineering",
+  { name: "Arvind Patil", role: "Developer",
     bio: "APIs, databases and the business logic behind fees, attendance and reports.",
     links: { linkedin: "https://www.linkedin.com/in/arvind-patil-5221893b3/" } },
-  { name: "Pallavi B R", role: "Frontend Developer", team: "Engineering", photo: "assets/team/pallavi.webp",
+  { name: "Pallavi B R", role: "Frontend Developer", photo: "assets/team/pallavi.webp",
     bio: "Turns approved designs into fast, accessible, pixel-accurate screens.",
     links: { linkedin: "https://www.linkedin.com/in/pallavi-br-0b2287448/" } },
-  { name: "Anushka P", role: "Frontend Developer", team: "Engineering", photo: "assets/team/anushka.webp",
+  { name: "Anushka P", role: "Frontend Developer", photo: "assets/team/anushka.webp",
     bio: "Responsive layouts, motion and polish that hold up on every phone.",
     links: { linkedin: "https://www.linkedin.com/in/anushka-p-429100452/" } },
 ];
 
+// ---------------------------------------------------------
+//  FOUNDER NOTE — a short note in the founder's own words (edit freely)
+// ---------------------------------------------------------
+export const FOUNDER_NOTE = {
+  by: "Chandan Karlekar V", role: "Co-founder & CEO", photo: "assets/team/chandan.webp",
+  text: [
+    "Most school software is built for the office, not for the teacher standing in front of forty students. We started Qolvik to change that.",
+    "Our ERP is quick to learn, works on an ordinary phone, and is set up around how your school already runs. We're a team of six, so you will always talk to the people who build it.",
+  ],
+};
+
+// ---------------------------------------------------------
+//  FAQ — also sent to Google as FAQ data
+// ---------------------------------------------------------
 export const FAQ = [
-  { q: "What does a typical project look like?", a: "A short discovery call, a scoped plan with screens, then weekly working demos until launch. You always know what's next.", ex: "kiln", exNote: "Kiln & Co. went from first call to a live store in 6 weekly sprints." },
-  { q: "Do you only design, or also build?", a: "Both. Our designers and engineers work together, so what you approve in Figma is exactly what ships.", ex: "ledger", exNote: "Ledger: researched, designed and prototyped in Figma, then built in Flutter by the same team." },
-  { q: "Which tech stack will you use?", a: "The one that fits your product. Most projects use TypeScript, React/Next.js, Node.js and PostgreSQL — we'll explain every choice.", ex: "pulse", exNote: "Pulse Analytics runs on Next.js, TypeScript and PostgreSQL, deployed on Vercel." },
-  { q: "Who owns the code and designs?", a: "You do. Every project ends with a documented handover of code, designs and accounts.", ex: "nimbus", exNote: "Nimbus received its full codebase, Figma files, CMS access and a launch checklist." },
-  { q: "Can the Campus ERP be customised for us?", a: "That's the point. We map your forms, fee rules and report formats before we build.", ex: "campus-one", exNote: "Campus One maps a school's own attendance rules and sends parent SMS automatically." },
+  { q: "How long does it take to switch to Qolvik ERP?", a: "About two weeks for a school. We import your students and fee records from Excel or your old software for free, set up your fee rules and report-card formats, and train your staff." },
+  { q: "How is the ERP priced?", a: "Per student, per year — so there is no big upfront fee. Hosting, backups, updates and support are included. SMS and WhatsApp messages are billed at cost. Ask us for a quote for your school." },
+  { q: "Is our students' data safe?", a: "Every user sees only what their role allows, all connections are encrypted, and data is backed up daily. The data is yours: you can export it at any time." },
+  { q: "Can it follow our own rules and formats?", a: "Yes. Fee instalments, concessions, attendance rules and report-card layouts are settings, not custom code — so updates never break your setup." },
+  { q: "Do you also build websites and apps?", a: "Yes. Our studio designs and builds websites, web apps, MVPs and mobile apps for schools, startups and businesses. Every project ends with a full handover of code, designs and accounts." },
 ];
 
 // ---------------------------------------------------------

@@ -15,8 +15,10 @@ const { pathToFileURL } = require("url");
 const SITE_URL = (process.env.SITE_URL || "https://qolvik.com").replace(/\/$/, "");
 const root = __dirname;
 const out = path.join(root, "dist");
-const PAGES = ["index.html", "projects.html", "design-system.html", "privacy.html", "terms.html", "404.html"];
-const COPY = [...PAGES, "assets", "scripts", "styles", "vendor", "tokens", "favicon.ico", "_headers"];
+const PAGES = ["index.html", "projects.html", "privacy.html", "terms.html", "404.html"];
+const COPY = [...PAGES, "assets", "scripts", "styles", "favicon.ico", "_headers"];
+// Homepage "Selected work" picks (ids from PROJECTS in scripts/config.js)
+const HOME_WORK = ["pulse", "nimbus", "kirana-khata"];
 const SKIP = new Set(["package.json", "brand", "qolvik-logo.png", "qolvik-mark.png"]); // source artwork stays out of the build
 
 async function main() {
@@ -35,7 +37,7 @@ async function main() {
   // ---------- Build version from the content of all code + styles ----------
   const walk = (d) => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walk(path.join(d, e.name)) : [path.join(d, e.name)]));
   const hash = crypto.createHash("sha1");
-  for (const dir of ["scripts", "styles", "vendor"]) for (const f of walk(path.join(out, dir)).sort()) hash.update(fs.readFileSync(f));
+  for (const dir of ["scripts", "styles"]) for (const f of walk(path.join(out, dir)).sort()) hash.update(fs.readFileSync(f));
   const V = hash.digest("hex").slice(0, 10);
 
   // ---------- 2. Pre-render helpers ----------
@@ -45,39 +47,26 @@ async function main() {
     if (!re.test(html)) throw new Error(`Pre-render target not found: ${attr}`);
     return html.replace(re, (_, open, _tag, close) => open + content + close);
   };
-  const fillTabs = (html, attr, values) => {
-    const re = new RegExp(`(<div[^>]*\\s${esc(attr)}(?=[\\s>])[^>]*>\\s*${esc(T.PILL)})(</div>)`);
-    if (!re.test(html)) throw new Error(`Tabs target not found: ${attr}`);
-    return html.replace(re, (_, open, close) => open + T.tabButtons(values) + close);
-  };
-  const common = (html) => html
+  const city = [C.CONTACT.city, C.CONTACT.region].filter(Boolean).join(", ");
+  const common = (html) => fill(html, "data-socials", T.socialsHTML())
     .replace(/<span data-year><\/span>/g, `<span data-year>${new Date().getFullYear()}</span>`)
     .replace(/(<a\b[^>]*data-brand-email)([^>]*)href="#"([^>]*)><\/a>/g, `$1$2href="mailto:${C.BRAND.email}"$3>${C.BRAND.email}</a>`)
     // Empty phone / city in config.js → the whole row is left out (no placeholders online)
     //   (each data-reach row sits on its own line in the HTML)
-    .replace(/^[ \t]*<span data-reach>.*data-brand-(phone|wa|city).*\r?\n/gm,
+    .replace(/^[ \t]*<(?:span|li) data-reach>.*data-brand-(phone|wa|city).*\r?\n/gm,
       (m, kind) => ((kind === "city" ? C.CONTACT.city : C.CONTACT.phone) ? m : ""))
     .replace(/(<a\b[^>]*data-brand-phone)([^>]*)href="#"([^>]*)><\/a>/g, `$1$2href="${T.telHref()}"$3>${C.CONTACT.phone}</a>`)
     .replace(/(<a\b[^>]*data-brand-wa)([^>]*)href="#"/g, `$1$2href="${T.waHref().replace(/&/g, "&amp;")}"`)
-    .replace(/<span data-brand-city><\/span>/g, `<span data-brand-city>${C.CONTACT.city}, India</span>`);
+    .replace(/<span data-brand-city><\/span>/g, `<span data-brand-city>${city}, India</span>`);
 
   const prerender = {
     "index.html": (h) => {
-      h = fill(h, 'data-marquee="0"', T.marqueeHTML(0));
-      h = fill(h, 'data-marquee="1"', T.marqueeHTML(1));
+      h = fill(h, "data-erp-feats", T.erpFeatsHTML("school"));
       h = fill(h, "data-services", T.servicesHTML());
-      h = fill(h, "data-catalog", T.catalogHTML());
-      h = fillTabs(h, "data-cat-tabs", T.CATALOG_TABS);
-      h = fillTabs(h, "data-stack-tabs", T.STACK_TABS);
-      h = fill(h, "data-stack-tiles", T.stackTilesHTML(T.STACK_TABS[0]));
-      h = fill(h, "data-erp-list", T.erpFeatsHTML("school"));
-      h = fillTabs(h, "data-team-tabs", T.TEAM_TABS);
-      h = fill(h, "data-team-count", T.teamCountText());
+      h = fill(h, "data-work", T.workHTML(HOME_WORK));
       h = fill(h, "data-team", T.teamHTML());
+      h = fill(h, "data-founder", T.founderHTML());
       h = fill(h, "data-faq", T.faqHTML());
-      h = fill(h, "data-socials", T.socialsHTML());
-      h = h.replace('data-count="24" data-count-stack></span>', `data-count="${T.STACK_ALL.length}" data-count-stack>${T.STACK_ALL.length}</span>`);
-      h = h.replace(/<span data-count="(\d+)"( data-suffix="([^"]*)")?><\/span>/g, (_, n, __, s = "") => `<span data-count="${n}"${s ? ` data-suffix="${s}"` : ""}>${n}${s}</span>`);
       // Business details for Google: company, co-founders, team, services and FAQ
       const same = C.SOCIALS.map((s) => s.url).filter((u) => /^https?:/.test(u));
       const ORG = `${SITE_URL}/#org`;
@@ -106,9 +95,7 @@ async function main() {
       ] };
       return h.replace("<!--LD-JSON-->", `<script type="application/ld+json">${JSON.stringify(ld).replace(/</g, "\\u003c")}</script>`);
     },
-    "projects.html": (h) => fillTabs(fill(fill(h, "data-pgrid", T.projectCardsHTML()), "data-socials", T.socialsHTML()), "data-p-tabs", T.PROJECT_TABS),
-    "privacy.html": (h) => fill(h, "data-socials", T.socialsHTML()),
-    "terms.html": (h) => fill(h, "data-socials", T.socialsHTML()),
+    "projects.html": (h) => fill(fill(h, "data-pgrid", T.projectCardsHTML()), "data-p-tabs", T.tabButtons(T.PROJECT_TABS)),
     // The source 404 uses relative paths so it also works when opened from disk.
     // Online it is served at any depth (/a/b/c), so make every local link root-absolute.
     "404.html": (h) => h.replace(/((?:href|src)=")(?!https?:|\/|#|data:|mailto:|tel:)([^"]*)"/g,
@@ -121,7 +108,7 @@ async function main() {
     let h = fs.readFileSync(f, "utf8");
     if (prerender[page]) h = prerender[page](h);
     h = common(h).replaceAll("__SITE_URL__", SITE_URL);
-    h = h.replace(/((?:href|src)=")(\/?(?:scripts|styles|vendor)\/[^"?#]+)"/g, `$1$2?v=${V}"`);
+    h = h.replace(/((?:href|src)=")(\/?(?:scripts|styles)\/[^"?#]+)"/g, `$1$2?v=${V}"`);
     fs.writeFileSync(f, h);
   }
   // Version every relative import inside the JS modules
@@ -134,7 +121,7 @@ async function main() {
   // ---------- robots.txt + sitemap.xml ----------
   fs.writeFileSync(path.join(out, "robots.txt"), `User-agent: *\nAllow: /\nDisallow: /404.html\n\nSitemap: ${SITE_URL}/sitemap.xml\n`);
   const today = new Date().toISOString().slice(0, 10);
-  const urls = [["/", "1.0", "weekly"], ["/projects.html", "0.8", "monthly"], ["/design-system.html", "0.5", "monthly"], ["/privacy.html", "0.2", "yearly"], ["/terms.html", "0.2", "yearly"]];
+  const urls = [["/", "1.0", "weekly"], ["/projects.html", "0.8", "monthly"], ["/privacy.html", "0.2", "yearly"], ["/terms.html", "0.2", "yearly"]];
   fs.writeFileSync(path.join(out, "sitemap.xml"),
     `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
     urls.map(([u, p, c]) => `  <url><loc>${SITE_URL}${u}</loc><lastmod>${today}</lastmod><changefreq>${c}</changefreq><priority>${p}</priority></url>`).join("\n") +

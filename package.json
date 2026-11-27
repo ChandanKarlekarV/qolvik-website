@@ -11,10 +11,6 @@
   },
   "license": "UNLICENSED",
   "type": "commonjs",
-  "dependencies": {
-    "lenis": "^1.1.18",
-    "motion": "^11.18.2"
-  },
   "devDependencies": {
     "sharp": "^0.33.5"
   }
