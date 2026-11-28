@@ -4,7 +4,8 @@
 // =========================================================
 import { ANALYTICS, BRAND, CONTACT, FORM, PROJECTS, BOOKING_URL } from "./config.js";
 import { mountMini } from "./minis.js";
-import { telHref, waHref, addressText } from "./templates.js";
+import * as T from "./templates.js";
+const { telHref, waHref, addressText } = T;
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -159,8 +160,30 @@ export function initBooking() {
   $$("[data-book]").forEach((a) => { a.href = BOOKING_URL; a.target = "_blank"; a.rel = "noopener"; });
 }
 
+// build.js pre-renders these sections into the HTML. If the page is served
+// without building (raw files, another host), fill any empty ones here.
+const SECTIONS = {
+  "data-erp-feats": () => T.erpFeatsHTML("school"),
+  "data-services": T.servicesHTML,
+  "data-pricing": T.pricingHTML,
+  "data-guides": T.guidesHTML,
+  "data-team": T.teamHTML,
+  "data-founder": T.founderHTML,
+  "data-faq": T.faqHTML,
+  "data-socials": T.socialsHTML,
+  "data-pgrid": T.projectCardsHTML,
+  "data-p-tabs": () => T.tabButtons(T.PROJECT_TABS),
+};
+const STUDIO_WORK = ["nimbus", "pulse", "kiln", "kirana-khata", "clinicly", "coachpoint"];
+function hydrate() {
+  for (const [attr, html] of Object.entries(SECTIONS))
+    $$(`[${attr}]`).forEach((el) => { if (!el.firstElementChild) el.innerHTML = html(); });
+  $$("[data-work]").forEach((el) => { if (!el.firstElementChild) el.innerHTML = T.workHTML(STUDIO_WORK); });
+}
+
 // Everything a plain page needs
 export function initPage() {
+  hydrate();
   initMenu();
   initBooking();
   fillContact();
