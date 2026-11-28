@@ -1,6 +1,6 @@
 # Zoho setup for qolvik.com
 
-Three things to switch on in Zoho, about 45 minutes in total. After each step, either paste the value into `scripts/config.js` yourself or send it to Claude — none of these values are secret.
+Three things to switch on (Zoho Mail, Web3Forms, Zoho Bookings), about 30 minutes in total. After each step, either paste the value into `scripts/config.js` yourself or send it to Claude — none of these values are secret.
 
 Use the **India** Zoho sites (`zoho.in`), so your data stays in Zoho's India data centre.
 
@@ -25,28 +25,19 @@ The website shows `hello@qolvik.com`. Until this inbox exists, mail sent to it i
 
 ---
 
-## Step 2 — Website enquiries go into Zoho CRM
+## Step 2 — Website enquiries by email (Web3Forms)
 
-Every message from the contact form becomes a **Lead** in Zoho CRM, and Zoho emails you about it.
+Every message from the contact form is emailed to you. No server, no password.
 
-1. Go to **crm.zoho.in** and sign in with the same Zoho account.
-2. Open **Setup (gear icon) → Developer Hub (or Developer Space) → Webforms → Leads → Create Form**.
-3. Add these fields to the form: **Last Name, Email, Phone, Company, Description, Lead Source**.
-   - If *Lead Source* has no "Website" option: *Setup → Modules and Fields → Leads → Lead Source* → add **Website**.
-4. Click **Next** and set:
-   - Landing page URL: `https://qolvik.com/`
-   - Assign owner: you
-   - **Notify owner on new lead: ON**
-   - Acknowledge the visitor: optional (Zoho sends them an email)
-   - **CAPTCHA: OFF** — the website has its own spam protection, and Zoho's captcha would block it.
-5. **Save** → choose **Embed options → Source code**.
-6. In that code, find these two lines and copy only the `value` parts:
-   ```
-   name='xnQsjsdp' value='COPY-THIS'
-   name='xmIwtLD'  value='COPY-THIS-TOO'
-   ```
-7. Paste them into `scripts/config.js` → `FORM.zoho.xnQsjsdp` and `FORM.zoho.xmIwtLD` (or send both to Claude).
-8. After the next deploy, send a test message from the website and check **CRM → Leads**.
+1. Go to **web3forms.com** → *Create your Access Key*.
+2. Enter the inbox that should receive enquiries (hello@qolvik.com once Step 1 works, or your Gmail for now) → *Create Access Key*.
+3. Open that inbox and find the email from Web3Forms (check Spam). It contains the **Access Key**, like `a1b2c3d4-…`.
+4. Paste it into `scripts/config.js` → `FORM.web3formsKey: "a1b2c3d4-…"` (or send it to Claude).
+   - This key is **meant to be public**: it can only send mail *to you*, never to anyone else.
+5. Rebuild (`node build.js`), deploy, then send a test message from the live site.
+6. Optional: log in at **app.web3forms.com** with the same email to see every submission, change the receiving email, or add *Allowed domains → qolvik.com* (paid plan) so the key only works from your site.
+
+Free plan: 250 messages a month. Emails come from `notify@web3forms.com` — mark the first one *Not spam*, and use **Reply** to answer the visitor directly.
 
 ---
 

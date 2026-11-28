@@ -111,19 +111,7 @@ export function contactForm() {
       if (!isBot) {
         const email = field("email").value.trim(), message = field("message").value.trim();
         let res, out;
-        const z = FORM.zoho;
-        if (z?.xnQsjsdp && z?.xmIwtLD) {
-          // Zoho CRM Web-to-Lead: creates a Lead in your CRM (Zoho also emails you).
-          // Zoho doesn't allow reading the reply from another site, so a sent request counts as delivered.
-          const body = new URLSearchParams({
-            xnQsjsdp: z.xnQsjsdp, xmIwtLD: z.xmIwtLD, actionType: "TGVhZHM=", zc_gad: "",
-            "Last Name": name, Email: email, Phone: phone, Company: org || "Not given",
-            Description: `${message}\n\nInterested in: ${interest.join(", ") || "Not specified"}`,
-            "Lead Source": "Website",
-          });
-          await fetch(z.action, { method: "POST", mode: "no-cors", body });
-          res = { ok: true, status: 200 }; out = { ok: true };
-        } else if (FORM.web3formsKey) {
+        if (FORM.web3formsKey) {
           res = await fetch("https://api.web3forms.com/submit", {
             method: "POST",
             headers: { "Content-Type": "application/json", Accept: "application/json" },

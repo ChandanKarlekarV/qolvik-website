@@ -48,7 +48,10 @@ async function main() {
     return html.replace(re, (_, open, _tag, close) => open + content + close);
   };
   const city = [C.CONTACT.city, C.CONTACT.region].filter(Boolean).join(", ");
+  // Copper loading curtain on every page (pure CSS: it lifts by itself, even if scripts fail)
+  const LOADER = `\n  <div class="loader" aria-hidden="true"><div class="loader__in"><span class="loader__word">Qolvik<i>.</i></span><span class="loader__bar"><b></b></span><span class="loader__tag">${C.BRAND.tagline}</span></div></div>`;
   const common = (html) => fill(html, "data-socials", T.socialsHTML())
+    .replace(/<body([^>]*)>/, (m) => m + LOADER)
     .replace(/<span data-year><\/span>/g, `<span data-year>${new Date().getFullYear()}</span>`)
     .replace(/(<a\b[^>]*data-brand-email)([^>]*)href="#"([^>]*)><\/a>/g, `$1$2href="mailto:${C.BRAND.email}"$3>${C.BRAND.email}</a>`)
     // Empty phone / city in config.js → the whole row is left out (no placeholders online)

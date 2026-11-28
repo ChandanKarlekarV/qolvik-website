@@ -370,6 +370,105 @@ button, input, textarea, select { font: inherit; color: inherit; }
 .lost__in .tag-box { justify-self: center; }
 .lost h1 { font-size: clamp(5rem, 18vw, 11rem); line-height: .85; letter-spacing: -0.06em; }
 
+/* =========================================================
+   COPPER LAYER — the accent that makes the paper pop.
+   Copper on paper: #C2501A for shapes and large text,
+   --accent-ink (#A8441A, 5.4:1) for small text,
+   --accent-soft (#E8875A, 8:1) on black.
+   ========================================================= */
+:root { --accent-ink: #A8441A; --accent-soft: #E8875A; }
+::selection { background: var(--accent); color: #fff; }
+.link { text-decoration-color: var(--accent); }
+
+/* Labels and lists */
+.tag-box::before { content: ""; flex: none; width: .6em; height: .6em; background: var(--accent); }
+.stars li::before, .sheet__list li::before { color: var(--accent); }
+.step .label, .wcard__meta .label { color: var(--accent-ink); }
+.box--ink .label, .sec--ink .label { color: var(--accent-soft); }
+
+/* Icons */
+.feat svg, .svc svg { color: var(--accent); }
+
+/* Buttons: a hard copper shadow that the button lifts off */
+.btn { box-shadow: 4px 4px 0 var(--accent); }
+.btn--sm { box-shadow: 3px 3px 0 var(--accent); }
+.btn:hover { transform: translate(-2px, -2px); }
+.btn:active { transform: translate(1px, 1px); }
+.btn--line { box-shadow: none; transition: transform .35s var(--ease-out), color .25s; }
+.btn--line:hover { color: var(--accent-ink); }
+.box--ink .btn { box-shadow: 4px 4px 0 var(--accent); }
+.btn:disabled, .btn:disabled:hover { transform: none; box-shadow: none; }
+
+/* Nav: copper underline, plus a thin copper reading-progress line */
+.nav__links a:hover, .nav__links a[aria-current] { border-color: var(--accent); }
+
+/* Frames and photos */
+.hero__preview .wcard__frame { box-shadow: 10px 10px 0 var(--accent); }
+.letter__photo { box-shadow: 10px 10px 0 var(--accent); }
+.person__name { box-shadow: 3px 3px 0 var(--accent); }
+.person__photo::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 4px; z-index: 3; background: var(--accent); transform: scaleX(0); transform-origin: 0 50%; transition: transform .6s var(--ease-out); }
+.person:hover .person__photo::after, .person:focus-within .person__photo::after { transform: scaleX(1); }
+.person__in:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+/* Feature cells: a copper bar slides in along the top on hover */
+.feat { position: relative; }
+.feat::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: var(--accent); transform: scaleX(0); transform-origin: 0 50%; transition: transform .5s var(--ease-out); }
+.feat:hover::before { transform: scaleX(1); }
+.guide { transition: transform .4s var(--ease-out); }
+.guide__go { transition: color .25s; }
+.guide:hover .guide__go { color: var(--accent-ink); }
+
+/* Form + FAQ */
+.chip input:checked + span { background: var(--accent-ink); border-color: var(--accent-ink); color: #fff; }
+.qa summary { transition: color .25s; }
+.qa summary:hover { color: var(--accent-ink); }
+.qa summary i { transition: background-color .3s, border-color .3s; }
+.qa[open] summary i { background: var(--accent); border-color: var(--accent); }
+.qa[open] summary i::before, .qa[open] summary i::after { background: #fff; }
+
+/* Calculator (on black) */
+.slider input[type="range"] { accent-color: var(--accent); }
+.calc__big b { color: var(--accent-soft); }
+
+/* Footer + 404 */
+.foot__word::after { content: "."; color: var(--accent); }
+.lost h1 { color: var(--accent); }
+
+/* ---------- Loading screen (CSS only — never blocks the page) ----------
+   Paper curtain with the wordmark and a copper line that fills,
+   then the curtain lifts away. Total ≈ 1.1 s. */
+.loader { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; background: var(--paper); pointer-events: none; animation: loader-out .6s cubic-bezier(.76, 0, .24, 1) .55s both; }
+.loader::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 6px; background: var(--accent); }
+.loader__in { display: grid; gap: 14px; justify-items: center; animation: loader-in .35s var(--ease-out) both; }
+.loader__word { font: 800 clamp(2.4rem, 7vw, 3.6rem)/1 var(--font-display); letter-spacing: -0.05em; color: var(--ink); }
+.loader__word i { font-style: normal; color: var(--accent); }
+.loader__bar { width: 140px; height: 3px; background: rgb(17 17 17 / .12); overflow: hidden; }
+.loader__bar b { display: block; height: 100%; background: var(--accent); transform: scaleX(0); transform-origin: 0 50%; animation: loader-fill .5s var(--ease-out) .05s both; }
+.loader__tag { font: 600 .68rem/1 var(--font-mono); letter-spacing: .16em; text-transform: uppercase; color: var(--ink-3); }
+@keyframes loader-in { from { opacity: 0; transform: translateY(8px); } }
+@keyframes loader-fill { to { transform: scaleX(1); } }
+@keyframes loader-out { to { transform: translateY(-101%); visibility: hidden; } }
+
+/* ---------- Entrance after the curtain lifts ---------- */
+@keyframes draw { from { transform: scaleX(0); } }
+@keyframes blink { 50% { opacity: .35; } }
+@keyframes grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@media (prefers-reduced-motion: no-preference) {
+  .hero__text > *, .p-head > *, .article header > *, .legal header > *, .lost__in > * { animation: rise .8s var(--ease-out) both; animation-delay: .75s; }
+  .hero__text > :nth-child(2), .p-head > :nth-child(2), .article header > :nth-child(2), .legal header > :nth-child(2), .lost__in > :nth-child(2) { animation-delay: .83s; }
+  .hero__text > :nth-child(3), .p-head > :nth-child(3), .article header > :nth-child(3), .legal header > :nth-child(3), .lost__in > :nth-child(3) { animation-delay: .91s; }
+  .hero__text > :nth-child(n+4), .p-head > :nth-child(n+4), .article header > :nth-child(n+4), .legal header > :nth-child(n+4), .lost__in > :nth-child(n+4) { animation-delay: .99s; }
+  .hero__preview { animation: rise 1s var(--ease-out) .9s both; }
+  .hero .scribble svg, .p-head .scribble svg { transform-origin: 0 50%; animation: draw .9s var(--ease-out) 1.25s both; }
+  .hero__text > .tag-box::before { animation: blink 2.6s ease-in-out 2s infinite; }
+}
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .nav::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1.5px; height: 3px; background: var(--accent); transform-origin: 0 50%; animation: grow linear both; animation-timeline: scroll(root); }
+  }
+}
+@media (prefers-reduced-motion: reduce) { .loader { display: none; } }
+
 /* ---------- Scroll reveal (CSS-only, opacity + transform) ---------- */
 @keyframes rise { from { opacity: 0; transform: translateY(26px); } }
 @supports (animation-timeline: view()) {

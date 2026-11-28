@@ -10,19 +10,15 @@ export const BRAND = {
 
 // ---------------------------------------------------------
 //  CONTACT FORM DELIVERY — tried in this order:
-//  1. Zoho CRM  — every enquiry becomes a Lead in Zoho CRM (docs/zoho-setup.md, step 2).
-//                 Paste the two codes from your Zoho "Web-to-Lead" form. They are meant to be public.
-//  2. Web3Forms — web3formsKey from https://web3forms.com (emails you each message).
-//  3. /api/contact on Vercel (serverEmail: true + RESEND_API_KEY + CONTACT_TO).
+//  1. Web3Forms — paste your Access Key from https://web3forms.com (docs/zoho-setup.md, step 2).
+//                 Every message is emailed to the inbox you signed up with.
+//                 The key is meant to sit in public code; it can only send mail TO you.
+//  2. /api/contact on Vercel (serverEmail: true + RESEND_API_KEY + CONTACT_TO).
 //  None set up → the visitor's email app opens with the message filled in.
 // ---------------------------------------------------------
 export const FORM = {
-  zoho: {
-    action: "https://crm.zoho.in/crm/WebToLeadForm", // .in = Zoho's India data centre
-    xnQsjsdp: "",  // ← paste from the Zoho form code
-    xmIwtLD: "",   // ← paste from the Zoho form code
-  },
-  web3formsKey: "",
+  web3formsKey: "62842f04-54d9-4b93-814d-90e88a775bf4", // ← paste your Web3Forms Access Key here
+
   serverEmail: false,
 };
 
@@ -103,10 +99,10 @@ export const TEAM = [
   { name: "Druva Teja", role: "Co-founder & CTO", photo: "assets/team/druva.webp",
     bio: "Owns architecture, security and code quality across the ERP and every client build.",
     links: { linkedin: "https://www.linkedin.com/in/druva-teja-c/" } },
-  { name: "Ullas Gowda", role: "Chief Marketing Officer",
+  { name: "Ullas Gowda", role: "Chief Marketing Officer", photo: "assets/team/ullas.webp",
     bio: "Brand, campaigns and partnerships — how schools and founders find Qolvik.",
     links: { linkedin: "https://www.linkedin.com/in/ullas-gowda-8b4993413/" } },
-  { name: "Arvind Patil", role: "Developer",
+  { name: "Arvind Patil", role: "Developer", photo: "assets/team/arvind.webp",
     bio: "APIs, databases and the business logic behind fees, attendance and reports.",
     links: { linkedin: "https://www.linkedin.com/in/arvind-patil-5221893b3/" } },
   { name: "Pallavi B R", role: "Frontend Developer", photo: "assets/team/pallavi.webp",
