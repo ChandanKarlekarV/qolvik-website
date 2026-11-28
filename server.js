@@ -32,17 +32,6 @@ const send = (res, status, file) => {
 };
 
 http.createServer((req, res) => {
-  // Local stand-in for Vercel's /api/contact function
-  if (req.url.split("?")[0] === "/api/contact") {
-    let raw = "";
-    req.on("data", (c) => { if (raw.length < 20000) raw += c; }); // oversized bodies are rejected by the handler (413)
-    req.on("end", () => {
-      try { req.body = raw ? JSON.parse(raw) : {}; } catch { req.body = raw; }
-      for (const [k, v] of Object.entries(headers)) res.setHeader(k, v);
-      require("./api/contact.js")(req, res);
-    });
-    return;
-  }
   if (req.method !== "GET" && req.method !== "HEAD") { res.writeHead(405, { Allow: "GET, HEAD", ...headers }); return res.end("Method not allowed"); }
   let p;
   try { p = decodeURIComponent(req.url.split("?")[0]); } catch { res.writeHead(400); return res.end("Bad request"); }

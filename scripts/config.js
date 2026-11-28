@@ -9,17 +9,13 @@ export const BRAND = {
 };
 
 // ---------------------------------------------------------
-//  CONTACT FORM DELIVERY — tried in this order:
-//  1. Web3Forms — paste your Access Key from https://web3forms.com (docs/zoho-setup.md, step 2).
-//                 Every message is emailed to the inbox you signed up with.
-//                 The key is meant to sit in public code; it can only send mail TO you.
-//  2. /api/contact on Vercel (serverEmail: true + RESEND_API_KEY + CONTACT_TO).
-//  None set up → the visitor's email app opens with the message filled in.
+//  CONTACT FORM — Web3Forms (docs/zoho-setup.md, step 2).
+//  Every message is emailed to the recipient set in the Web3Forms dashboard (hello@qolvik.com).
+//  The key is meant to sit in public code; it can only send mail TO you.
+//  No key → the visitor's email app opens with the message filled in.
 // ---------------------------------------------------------
 export const FORM = {
   web3formsKey: "62842f04-54d9-4b93-814d-90e88a775bf4", // ← paste your Web3Forms Access Key here
-
-  serverEmail: false,
 };
 
 // ---------------------------------------------------------

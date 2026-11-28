@@ -125,14 +125,8 @@ export function contactForm() {
           });
           out = await res.json().catch(() => ({}));
           out.ok = res.ok && out.success === true;
-        } else if (!FORM.serverEmail) {
-          throw new Error("503"); // no email service switched on → show the email-app fallback
         } else {
-          res = await fetch("/api/contact", {
-            method: "POST", headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name, email, message: [message, org && `— ${org}`, phone && `Phone: ${phone}`].filter(Boolean).join("\n\n"), interest, company_website: field("company_website").value }),
-          });
-          out = await res.json().catch(() => ({}));
+          throw new Error("503"); // no Web3Forms key → show the email-app fallback
         }
         if (res.status === 429) { setStatus(out.error || "Too many messages — please try again in a few minutes.", "warn"); return; }
         if (!res.ok || !out.ok) throw new Error(String(res.status));
